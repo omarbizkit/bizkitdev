@@ -1,0 +1,353 @@
+openapi: 3.0.3
+info:
+  title: Bizkit.dev Portfolio API
+  description: API contracts for portfolio website interactions
+  version: 1.0.0
+  contact:
+    email: omarbizkit@hotmail.com
+
+servers:
+  - url: https://bizkit.dev/api
+    description: Production API
+  - url: http://localhost:4321/api
+    description: Development API
+
+paths:
+  /subscribe:
+    post:
+      summary: Subscribe to project updates
+      description: Add email to subscriber list with confirmation
+      operationId: subscribe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscribeRequest'
+      responses:
+        '201':
+          description: Subscription created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscribeResponse'
+        '400':
+          description: Invalid email format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Email already subscribed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /subscribe/confirm:
+    get:
+      summary: Confirm email subscription
+      description: Confirm subscription via email link
+      operationId: confirmSubscription
+      parameters:
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+          description: Confirmation token from email
+      responses:
+        '200':
+          description: Subscription confirmed successfully
+          content:
+            text/html:
+              schema:
+                type: string
+                description: HTML confirmation page
+        '400':
+          description: Invalid or expired token
+          content:
+            text/html:
+              schema:
+                type: string
+                description: HTML error page
+        '404':
+          description: Token not found
+          content:
+            text/html:
+              schema:
+                type: string
+                description: HTML error page
+
+  /subscribe/unsubscribe:
+    get:
+      summary: Unsubscribe from updates
+      description: Unsubscribe via email link
+      operationId: unsubscribe
+      parameters:
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+          description: Unsubscribe token from email
+      responses:
+        '200':
+          description: Successfully unsubscribed
+          content:
+            text/html:
+              schema:
+                type: string
+                description: HTML confirmation page
+        '400':
+          description: Invalid token
+          content:
+            text/html:
+              schema:
+                type: string
+                description: HTML error page
+        '404':
+          description: Subscription not found
+          content:
+            text/html:
+              schema:
+                type: string
+                description: HTML error page
+
+  /projects:
+    get:
+      summary: Get all projects (static data)
+      description: Retrieve project metadata for client-side rendering
+      operationId: getProjects
+      parameters:
+        - in: query
+          name: status
+          required: false
+          schema:
+            $ref: '#/components/schemas/ProjectStatus'
+          description: Filter by project status
+        - in: query
+          name: featured
+          required: false
+          schema:
+            type: boolean
+          description: Filter by featured projects only
+      responses:
+        '200':
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectsResponse'
+
+  /projects/{projectId}:
+    get:
+      summary: Get project details
+      description: Retrieve detailed information for a specific project
+      operationId: getProject
+      parameters:
+        - in: path
+          name: projectId
+          required: true
+          schema:
+            type: string
+          description: Project ID
+      responses:
+        '200':
+          description: Project details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/session:
+    get:
+      summary: Get current user session
+      description: Retrieve authenticated user information
+      operationId: getSession
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: User session information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    ProjectStatus:
+      type: string
+      enum: [idea, development, live, archived]
+      description: Current development status of project
+
+    Project:
+      type: object
+      required:
+        - id
+        - name
+        - description_short
+        - description_long
+        - status
+        - tech_stack
+        - subdomain_url
+        - github_url
+        - created_date
+        - featured
+      properties:
+        id:
+          type: string
+          pattern: '^[a-z0-9-]+$'
+          description: Unique project identifier
+        name:
+          type: string
+          maxLength: 100
+          description: Project display name
+        description_short:
+          type: string
+          maxLength: 150
+          description: Brief description for cards
+        description_long:
+          type: string
+          description: Full project description (markdown supported)
+        status:
+          $ref: '#/components/schemas/ProjectStatus'
+        tech_stack:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          description: Technologies used in project
+        subdomain_url:
+          type: string
+          format: uri
+          description: URL to live application
+        github_url:
+          type: string
+          format: uri
+          pattern: '^https://github\.com/'
+          description: GitHub repository URL
+        screenshot_url:
+          type: string
+          format: uri
+          nullable: true
+          description: Project screenshot or banner
+        created_date:
+          type: string
+          format: date
+          description: Project creation date
+        featured:
+          type: boolean
+          description: Whether project is featured on homepage
+
+    ProjectsResponse:
+      type: object
+      required:
+        - projects
+        - total
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+        total:
+          type: integer
+          minimum: 0
+          description: Total number of projects
+
+    SubscribeRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 254
+          description: Subscriber email address
+
+    SubscribeResponse:
+      type: object
+      required:
+        - success
+        - message
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Please check your email to confirm your subscription"
+        subscriber_id:
+          type: string
+          format: uuid
+          description: Unique subscriber identifier
+
+    SessionResponse:
+      type: object
+      required:
+        - authenticated
+      properties:
+        authenticated:
+          type: boolean
+          description: Whether user is authenticated
+        user:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: string
+              format: uuid
+            email:
+              type: string
+              format: email
+            provider:
+              type: string
+              enum: [google, email]
+          description: User information if authenticated
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+        message:
+          type: string
+          description: Human-readable error message
+        details:
+          type: object
+          nullable: true
+          description: Additional error context
+
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: sb-access-token
+      description: Supabase session cookie
+
+security:
+  - {}  # Most endpoints are public
