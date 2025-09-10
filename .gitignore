@@ -1,2 +1,5 @@
 # Ignore the specification document
 Bizkit.devProjectSpecification.md
+
+# Ignore VS Code workspace settings
+bizkitdev.code-workspace
