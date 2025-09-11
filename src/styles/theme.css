@@ -95,14 +95,8 @@
 /* ======================== */
 
 [data-theme="light"] body {
-  /* Clean, minimal background with subtle futuristic accents */
-  background: 
-    /* Primary clean background */
-    var(--bg-primary),
-    /* Subtle geometric grid pattern */
-    linear-gradient(90deg, rgba(99, 102, 241, 0.02) 1px, transparent 1px),
-    linear-gradient(rgba(99, 102, 241, 0.02) 1px, transparent 1px);
-  background-size: 100% 100%, 60px 60px, 60px 60px;
+  /* Pure clean white background */
+  background: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
 }
@@ -114,10 +108,10 @@
   z-index: 0;
   pointer-events: none;
   background: 
-    /* Clean accent gradients in corners */
-    radial-gradient(ellipse 600px 400px at 0% 0%, rgba(99, 102, 241, 0.04) 0%, transparent 50%),
-    radial-gradient(ellipse 400px 600px at 100% 100%, rgba(14, 165, 233, 0.04) 0%, transparent 50%);
-  opacity: 0.8;
+    /* Very subtle corner accents only */
+    radial-gradient(ellipse 800px 600px at 0% 0%, rgba(99, 102, 241, 0.02) 0%, transparent 60%),
+    radial-gradient(ellipse 600px 800px at 100% 100%, rgba(14, 165, 233, 0.02) 0%, transparent 60%);
+  opacity: 0.3;
 }
 
 /* ======================== */
