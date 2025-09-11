@@ -35,7 +35,7 @@ describe('GET /api/subscribe/confirm - Contract Tests', () => {
       // Response should be HTML content
       expect(typeof responseBody).toBe('string');
       expect(responseBody.length).toBeGreaterThan(0);
-      expect(responseBody).toContain('<html>');
+      expect(responseBody).toMatch(/<html[^>]*>/i);
       expect(responseBody).toContain('</html>');
       
       // Should contain confirmation message
@@ -65,7 +65,7 @@ describe('GET /api/subscribe/confirm - Contract Tests', () => {
       expect(response.headers.get('content-type')).toContain('text/html');
 
       const responseBody = await response.text();
-      expect(responseBody).toContain('<html>');
+      expect(responseBody).toMatch(/<html[^>]*>/i);
       expect(responseBody.toLowerCase()).toMatch(/error|invalid|token/);
     });
 
@@ -80,7 +80,7 @@ describe('GET /api/subscribe/confirm - Contract Tests', () => {
       expect(response.headers.get('content-type')).toContain('text/html');
 
       const responseBody = await response.text();
-      expect(responseBody).toContain('<html>');
+      expect(responseBody).toMatch(/<html[^>]*>/i);
       expect(responseBody.toLowerCase()).toMatch(/error|invalid|token/);
     });
 
@@ -97,7 +97,7 @@ describe('GET /api/subscribe/confirm - Contract Tests', () => {
       expect(response.headers.get('content-type')).toContain('text/html');
 
       const responseBody = await response.text();
-      expect(responseBody).toContain('<html>');
+      expect(responseBody).toMatch(/<html[^>]*>/i);
       expect(responseBody.toLowerCase()).toMatch(/error|expired|invalid|not found/);
     });
 
@@ -120,7 +120,7 @@ describe('GET /api/subscribe/confirm - Contract Tests', () => {
         expect(response.headers.get('content-type')).toContain('text/html');
         
         const responseBody = await response.text();
-        expect(responseBody).toContain('<html>');
+        expect(responseBody).toMatch(/<html[^>]*>/i);
       }
     });
   });
@@ -138,7 +138,7 @@ describe('GET /api/subscribe/confirm - Contract Tests', () => {
       expect(response.headers.get('content-type')).toContain('text/html');
 
       const responseBody = await response.text();
-      expect(responseBody).toContain('<html>');
+      expect(responseBody).toMatch(/<html[^>]*>/i);
       expect(responseBody).toContain('</html>');
       expect(responseBody.toLowerCase()).toMatch(/not found|error/);
     });
@@ -224,7 +224,7 @@ describe('GET /api/subscribe/confirm - Contract Tests', () => {
         const responseBody = await response.text();
         
         // Basic HTML structure validation
-        expect(responseBody).toContain('<html>');
+        expect(responseBody).toMatch(/<html[^>]*>/i);
         expect(responseBody).toContain('</html>');
         expect(responseBody).toMatch(/<head>.*<\/head>/s);
         expect(responseBody).toMatch(/<body>.*<\/body>/s);
