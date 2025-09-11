@@ -1,95 +1,101 @@
 ---
-import Icon from './Icon.astro'
+// Theme Toggle Component
 ---
 
-<theme-toggle>
-  <button>
-    <span class="sr-only">Dark theme</span>
-    <span class="icon light"><Icon icon="sun" /></span>
-    <span class="icon dark"><Icon icon="moon-stars" /></span>
-  </button>
-</theme-toggle>
+<button 
+  id="theme-toggle"
+  class="theme-toggle fixed top-20 right-6 z-50 w-12 h-12 rounded-full border-2 border-current backdrop-blur-lg transition-all duration-300 flex items-center justify-center group hover:scale-110"
+  aria-label="Toggle theme"
+>
+  <!-- Sun icon (for light theme) -->
+  <svg class="sun-icon w-5 h-5 transition-opacity duration-300" fill="currentColor" viewBox="0 0 20 20">
+    <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
+  </svg>
+  
+  <!-- Moon icon (for dark theme) -->
+  <svg class="moon-icon w-5 h-5 transition-opacity duration-300" fill="currentColor" viewBox="0 0 20 20">
+    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+  </svg>
+</button>
 
 <style>
-  button {
-    display: flex;
-    border: 0;
-    border-radius: 999rem;
-    padding: 0;
-    background-color: var(--gray-999);
-    box-shadow: inset 0 0 0 1px var(--accent-overlay);
-    cursor: pointer;
+  .theme-toggle {
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--accent-cyan);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
   }
-
-  .icon {
-    z-index: 1;
-    position: relative;
-    display: flex;
-    padding: 0.5rem;
-    width: 2rem;
-    height: 2rem;
-    font-size: 1rem;
-    color: var(--accent-overlay);
+  
+  .theme-toggle:hover {
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
   }
-
-  .icon.light::before {
-    content: '';
-    z-index: -1;
-    position: absolute;
-    inset: 0;
-    background-color: var(--accent-regular);
-    border-radius: 999rem;
+  
+  /* Theme-specific visibility */
+  [data-theme="dark"] .theme-toggle .sun-icon {
+    opacity: 0;
   }
-
-  :global(.theme-dark) .icon.light::before {
-    transform: translateX(100%);
+  
+  [data-theme="dark"] .theme-toggle .moon-icon {
+    opacity: 1;
   }
-
-  :global(.theme-dark) .icon.dark,
-  :global(html:not(.theme-dark)) .icon.light,
-  button[aria-pressed='false'] .icon.light {
-    color: var(--accent-text-over);
+  
+  [data-theme="light"] .theme-toggle .sun-icon {
+    opacity: 1;
   }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .icon,
-    .icon.light::before {
-      transition:
-        transform var(--theme-transition),
-        color var(--theme-transition);
-    }
+  
+  [data-theme="light"] .theme-toggle .moon-icon {
+    opacity: 0;
   }
-
-  @media (forced-colors: active) {
-    .icon.light::before {
-      background-color: SelectedItem;
-    }
+  
+  /* Light theme styles */
+  [data-theme="light"] .theme-toggle {
+    background: rgba(255, 255, 255, 0.3);
+    color: var(--accent-purple);
+    box-shadow: 0 0 20px rgba(159, 64, 255, 0.3);
+  }
+  
+  [data-theme="light"] .theme-toggle:hover {
+    box-shadow: 0 0 30px rgba(159, 64, 255, 0.5);
   }
 </style>
 
 <script>
-  class ThemeToggle extends HTMLElement {
-    constructor() {
-      super()
-
-      const button = this.querySelector('button')!
-
-      /** Set the theme to dark/light mode. */
-      const setTheme = (dark: boolean) => {
-        document.documentElement.classList[dark ? 'add' : 'remove']('theme-dark')
-        button.setAttribute('aria-pressed', String(dark))
-      }
-
-      // Toggle the theme when a user clicks the button.
-      button.addEventListener('click', () => setTheme(!this.isDark()))
-
-      // Initialize button state to reflect current theme.
-      setTheme(this.isDark())
-    }
-
-    isDark() {
-      return document.documentElement.classList.contains('theme-dark')
+  function initThemeToggle() {
+    const toggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    
+    // Check for saved theme or default to dark
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    html.setAttribute('data-theme', savedTheme);
+    
+    // Apply theme-specific classes
+    applyTheme(savedTheme);
+    
+    toggle?.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      
+      applyTheme(newTheme);
+    });
+  }
+  
+  function applyTheme(theme) {
+    const body = document.body;
+    
+    if (theme === 'light') {
+      body.classList.add('light-theme');
+      body.classList.remove('dark-theme');
+    } else {
+      body.classList.add('dark-theme');
+      body.classList.remove('light-theme');
     }
   }
-  customElements.define('theme-toggle', ThemeToggle)
+  
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', initThemeToggle);
+  
+  // Re-initialize on navigation for Astro
+  document.addEventListener('astro:page-load', initThemeToggle);
 </script>

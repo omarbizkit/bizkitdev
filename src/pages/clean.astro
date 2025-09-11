@@ -102,7 +102,7 @@ import ModernHero from '../components/ModernHero.astro';
             With expertise in machine learning, data visualization, and artificial intelligence, I help businesses leverage their data to make informed decisions and create innovative products.
           </p>
           
-          <div class="grid grid-cols-2 gap-6 mb-8">
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
             <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-lg p-4">
               <div class="text-2xl font-bold text-cyan-400 mb-1">5+</div>
               <div class="text-sm text-gray-400">Years Experience</div>
@@ -129,6 +129,20 @@ import ModernHero from '../components/ModernHero.astro';
                 </div>
               </div>
               <div class="text-xs text-gray-400">Coffee Consumed Today</div>
+            </div>
+            <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-lg p-4">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-orange-400">🚀</span>
+                <span id="commits-counter" class="text-2xl font-bold text-orange-400">0</span>
+              </div>
+              <div class="text-sm text-gray-400">Commits Today</div>
+            </div>
+            <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-lg p-4">
+              <div class="flex items-center gap-2 mb-1">
+                <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span id="uptime-counter" class="text-xl font-bold text-blue-400">00:00:00</span>
+              </div>
+              <div class="text-sm text-gray-400">System Uptime</div>
             </div>
           </div>
           
@@ -313,4 +327,83 @@ import ModernHero from '../components/ModernHero.astro';
     currentLinesCount = calculateCurrentLines();
     updateDisplay();
   }, 30000); // Check every 30 seconds
+
+  // Commits Today Counter
+  function updateCommitsToday() {
+    const commitsElement = document.getElementById('commits-counter');
+    if (!commitsElement) return;
+    
+    // Get current time in MST for date calculation
+    const now = new Date();
+    const mstOffset = -7 * 60; // MST is UTC-7
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const mstTime = new Date(utc + (mstOffset * 60000));
+    
+    const hours = mstTime.getHours();
+    const minutes = mstTime.getMinutes();
+    const currentTimeInMinutes = hours * 60 + minutes;
+    
+    // Simulate realistic commit patterns (6 AM - 11 PM)
+    const workStart = 6 * 60; // 6 AM
+    const workEnd = 23 * 60;   // 11 PM
+    const maxCommits = 12;     // Max commits per day
+    
+    let commits = 0;
+    if (currentTimeInMinutes >= workStart && currentTimeInMinutes <= workEnd) {
+      // More commits during peak hours (9 AM - 6 PM)
+      const peakStart = 9 * 60;
+      const peakEnd = 18 * 60;
+      
+      if (currentTimeInMinutes >= peakStart && currentTimeInMinutes <= peakEnd) {
+        // Peak hours: 60% of daily commits
+        const peakProgress = (currentTimeInMinutes - peakStart) / (peakEnd - peakStart);
+        commits = Math.floor(peakProgress * maxCommits * 0.6);
+      }
+      
+      // Add gradual commits for non-peak hours
+      const totalProgress = (currentTimeInMinutes - workStart) / (workEnd - workStart);
+      commits += Math.floor(totalProgress * maxCommits * 0.4);
+      
+      // Add some realistic variation
+      const dayOfYear = Math.floor((mstTime - new Date(mstTime.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+      const variation = Math.sin(dayOfYear * 0.1) * 2;
+      commits = Math.max(0, Math.min(maxCommits, commits + Math.floor(variation)));
+    }
+    
+    commitsElement.textContent = commits.toString();
+  }
+  
+  // System Uptime Counter
+  const startTime = Date.now();
+  
+  function updateUptime() {
+    const uptimeElement = document.getElementById('uptime-counter');
+    if (!uptimeElement) return;
+    
+    const currentTime = Date.now();
+    const uptimeMs = currentTime - startTime;
+    
+    // Convert to hours, minutes, seconds
+    const hours = Math.floor(uptimeMs / (1000 * 60 * 60));
+    const minutes = Math.floor((uptimeMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((uptimeMs % (1000 * 60)) / 1000);
+    
+    // Format as HH:MM:SS
+    const formattedTime = 
+      `${hours.toString().padStart(2, '0')}:` +
+      `${minutes.toString().padStart(2, '0')}:` +
+      `${seconds.toString().padStart(2, '0')}`;
+    
+    uptimeElement.textContent = formattedTime;
+  }
+  
+  // Initialize and update new counters
+  updateCommitsToday();
+  updateUptime();
+  
+  // Update commits every 5 minutes
+  setInterval(updateCommitsToday, 5 * 60 * 1000);
+  
+  // Update uptime every second
+  setInterval(updateUptime, 1000);
 </script>

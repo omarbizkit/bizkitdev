@@ -22,10 +22,58 @@ import ModernHero from '../components/ModernHero.astro';
         </p>
       </div>
       
+      <!-- Project Filters & Search -->
+      <div class="mb-12">
+        <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+          <!-- Search Bar -->
+          <div class="relative flex-1 max-w-md">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </div>
+            <input
+              type="text"
+              id="project-search"
+              placeholder="Search projects..."
+              class="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-colors"
+            />
+          </div>
+          
+          <!-- Filter Buttons -->
+          <div class="flex flex-wrap gap-2">
+            <button data-filter="all" class="filter-btn active px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-cyan-500 text-white">
+              All Projects
+            </button>
+            <button data-filter="live" class="filter-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gray-700 text-gray-300 hover:bg-gray-600">
+              Live
+            </button>
+            <button data-filter="development" class="filter-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gray-700 text-gray-300 hover:bg-gray-600">
+              In Development
+            </button>
+            <button data-filter="ai" class="filter-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gray-700 text-gray-300 hover:bg-gray-600">
+              AI/ML
+            </button>
+            <button data-filter="web" class="filter-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gray-700 text-gray-300 hover:bg-gray-600">
+              Web Dev
+            </button>
+          </div>
+        </div>
+        
+        <!-- Results Counter -->
+        <div class="mt-4 text-center">
+          <span id="results-counter" class="text-sm text-gray-400">Showing all projects</span>
+        </div>
+      </div>
+      
       <!-- Project Grid -->
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- Project Card 1 -->
-        <div class="group bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-cyan-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10">
+        <div class="project-card group bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-cyan-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10" 
+             data-title="AI Trading System" 
+             data-description="Machine learning model for automated cryptocurrency trading with 85% accuracy" 
+             data-status="live" 
+             data-tags="ai,python,tensorflow,crypto">
           <div class="aspect-video bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-lg mb-4 flex items-center justify-center">
             <span class="text-4xl">🤖</span>
           </div>
@@ -42,7 +90,11 @@ import ModernHero from '../components/ModernHero.astro';
         </div>
         
         <!-- Project Card 2 -->
-        <div class="group bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-purple-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10">
+        <div class="project-card group bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-purple-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10" 
+             data-title="Data Visualization Platform" 
+             data-description="Interactive dashboard for real-time analytics and business intelligence" 
+             data-status="live" 
+             data-tags="web,react,d3js,nodejs">
           <div class="aspect-video bg-gradient-to-br from-green-500/20 to-blue-500/20 rounded-lg mb-4 flex items-center justify-center">
             <span class="text-4xl">📊</span>
           </div>
@@ -59,7 +111,11 @@ import ModernHero from '../components/ModernHero.astro';
         </div>
         
         <!-- Project Card 3 -->
-        <div class="group bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-pink-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/10">
+        <div class="project-card group bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-pink-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/10" 
+             data-title="Neural Network Framework" 
+             data-description="Custom deep learning framework built from scratch for educational purposes" 
+             data-status="development" 
+             data-tags="ai,python,deeplearning,research">
           <div class="aspect-video bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-lg mb-4 flex items-center justify-center">
             <span class="text-4xl">🧠</span>
           </div>
@@ -104,7 +160,7 @@ import ModernHero from '../components/ModernHero.astro';
             With expertise in machine learning, data visualization, and artificial intelligence, I help businesses leverage their data to make informed decisions and create innovative products.
           </p>
           
-          <div class="grid grid-cols-2 gap-6 mb-8">
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
             <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-lg p-4">
               <div class="text-2xl font-bold text-cyan-400 mb-1">15+</div>
               <div class="text-sm text-gray-400">Years Experience</div>
@@ -131,6 +187,20 @@ import ModernHero from '../components/ModernHero.astro';
                 </div>
               </div>
               <div class="text-xs text-gray-400">Coffee Consumed Today</div>
+            </div>
+            <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-lg p-4">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-orange-400">🚀</span>
+                <span id="commits-counter" class="text-2xl font-bold text-orange-400">0</span>
+              </div>
+              <div class="text-sm text-gray-400">Commits Today</div>
+            </div>
+            <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-lg p-4">
+              <div class="flex items-center gap-2 mb-1">
+                <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span id="uptime-counter" class="text-xl font-bold text-blue-400">00:00:00</span>
+              </div>
+              <div class="text-sm text-gray-400">System Uptime</div>
             </div>
           </div>
           
@@ -315,4 +385,208 @@ import ModernHero from '../components/ModernHero.astro';
     currentLinesCount = calculateCurrentLines();
     updateDisplay();
   }, 30000); // Check every 30 seconds
+
+  // Commits Today Counter
+  function updateCommitsToday() {
+    const commitsElement = document.getElementById('commits-counter');
+    if (!commitsElement) return;
+    
+    // Get current time in MST for date calculation
+    const now = new Date();
+    const mstOffset = -7 * 60; // MST is UTC-7
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const mstTime = new Date(utc + (mstOffset * 60000));
+    
+    const hours = mstTime.getHours();
+    const minutes = mstTime.getMinutes();
+    const currentTimeInMinutes = hours * 60 + minutes;
+    
+    // Simulate realistic commit patterns (6 AM - 11 PM)
+    const workStart = 6 * 60; // 6 AM
+    const workEnd = 23 * 60;   // 11 PM
+    const maxCommits = 12;     // Max commits per day
+    
+    let commits = 0;
+    if (currentTimeInMinutes >= workStart && currentTimeInMinutes <= workEnd) {
+      // More commits during peak hours (9 AM - 6 PM)
+      const peakStart = 9 * 60;
+      const peakEnd = 18 * 60;
+      
+      if (currentTimeInMinutes >= peakStart && currentTimeInMinutes <= peakEnd) {
+        // Peak hours: 60% of daily commits
+        const peakProgress = (currentTimeInMinutes - peakStart) / (peakEnd - peakStart);
+        commits = Math.floor(peakProgress * maxCommits * 0.6);
+      }
+      
+      // Add gradual commits for non-peak hours
+      const totalProgress = (currentTimeInMinutes - workStart) / (workEnd - workStart);
+      commits += Math.floor(totalProgress * maxCommits * 0.4);
+      
+      // Add some realistic variation
+      const dayOfYear = Math.floor((mstTime - new Date(mstTime.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+      const variation = Math.sin(dayOfYear * 0.1) * 2;
+      commits = Math.max(0, Math.min(maxCommits, commits + Math.floor(variation)));
+    }
+    
+    commitsElement.textContent = commits.toString();
+  }
+  
+  // System Uptime Counter
+  const startTime = Date.now();
+  
+  function updateUptime() {
+    const uptimeElement = document.getElementById('uptime-counter');
+    if (!uptimeElement) return;
+    
+    const currentTime = Date.now();
+    const uptimeMs = currentTime - startTime;
+    
+    // Convert to hours, minutes, seconds
+    const hours = Math.floor(uptimeMs / (1000 * 60 * 60));
+    const minutes = Math.floor((uptimeMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((uptimeMs % (1000 * 60)) / 1000);
+    
+    // Format as HH:MM:SS
+    const formattedTime = 
+      `${hours.toString().padStart(2, '0')}:` +
+      `${minutes.toString().padStart(2, '0')}:` +
+      `${seconds.toString().padStart(2, '0')}`;
+    
+    uptimeElement.textContent = formattedTime;
+  }
+  
+  // Initialize and update new counters
+  updateCommitsToday();
+  updateUptime();
+  
+  // Update commits every 5 minutes
+  setInterval(updateCommitsToday, 5 * 60 * 1000);
+  
+  // Update uptime every second
+  setInterval(updateUptime, 1000);
+
+  // Project Filtering and Search
+  let currentFilter = 'all';
+  let currentSearch = '';
+  
+  function initProjectFiltering() {
+    const searchInput = document.getElementById('project-search');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const projectCards = document.querySelectorAll('.project-card');
+    const resultsCounter = document.getElementById('results-counter');
+    
+    if (!searchInput || !filterButtons.length || !projectCards.length) return;
+    
+    // Search functionality
+    searchInput.addEventListener('input', (e) => {
+      currentSearch = e.target.value.toLowerCase().trim();
+      filterProjects();
+    });
+    
+    // Filter functionality
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Update active button
+        filterButtons.forEach(btn => {
+          btn.classList.remove('active', 'bg-cyan-500', 'text-white');
+          btn.classList.add('bg-gray-700', 'text-gray-300');
+        });
+        button.classList.add('active', 'bg-cyan-500', 'text-white');
+        button.classList.remove('bg-gray-700', 'text-gray-300');
+        
+        currentFilter = button.dataset.filter;
+        filterProjects();
+      });
+    });
+    
+    function filterProjects() {
+      let visibleCount = 0;
+      
+      projectCards.forEach(card => {
+        const title = card.dataset.title?.toLowerCase() || '';
+        const description = card.dataset.description?.toLowerCase() || '';
+        const tags = card.dataset.tags?.toLowerCase() || '';
+        const status = card.dataset.status?.toLowerCase() || '';
+        
+        // Check search match
+        const searchMatch = currentSearch === '' || 
+          title.includes(currentSearch) ||
+          description.includes(currentSearch) ||
+          tags.includes(currentSearch);
+        
+        // Check filter match
+        let filterMatch = false;
+        if (currentFilter === 'all') {
+          filterMatch = true;
+        } else if (currentFilter === 'ai') {
+          filterMatch = tags.includes('ai') || tags.includes('deeplearning') || tags.includes('tensorflow');
+        } else if (currentFilter === 'web') {
+          filterMatch = tags.includes('web') || tags.includes('react') || tags.includes('nodejs');
+        } else {
+          filterMatch = status === currentFilter;
+        }
+        
+        // Show/hide card with smooth animation
+        if (searchMatch && filterMatch) {
+          card.style.display = 'block';
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(20px)';
+          
+          // Animate in
+          requestAnimationFrame(() => {
+            card.style.transition = 'all 0.3s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          });
+          
+          visibleCount++;
+        } else {
+          card.style.transition = 'all 0.3s ease';
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(-20px)';
+          
+          setTimeout(() => {
+            if (card.style.opacity === '0') {
+              card.style.display = 'none';
+            }
+          }, 300);
+        }
+      });
+      
+      // Update results counter
+      let counterText = '';
+      if (currentSearch && currentFilter !== 'all') {
+        counterText = `Showing ${visibleCount} project${visibleCount !== 1 ? 's' : ''} for "${currentSearch}" in ${getFilterName(currentFilter)}`;
+      } else if (currentSearch) {
+        counterText = `Showing ${visibleCount} project${visibleCount !== 1 ? 's' : ''} for "${currentSearch}"`;
+      } else if (currentFilter !== 'all') {
+        counterText = `Showing ${visibleCount} ${getFilterName(currentFilter).toLowerCase()} project${visibleCount !== 1 ? 's' : ''}`;
+      } else {
+        counterText = `Showing all ${visibleCount} projects`;
+      }
+      
+      if (resultsCounter) {
+        resultsCounter.textContent = counterText;
+      }
+    }
+    
+    function getFilterName(filter) {
+      const filterNames = {
+        'live': 'Live',
+        'development': 'In Development',
+        'ai': 'AI/ML',
+        'web': 'Web Dev'
+      };
+      return filterNames[filter] || filter;
+    }
+    
+    // Initialize with all projects visible
+    filterProjects();
+  }
+  
+  // Initialize project filtering when page loads
+  document.addEventListener('DOMContentLoaded', initProjectFiltering);
+  
+  // Re-initialize for Astro navigation
+  document.addEventListener('astro:page-load', initProjectFiltering);
 </script>

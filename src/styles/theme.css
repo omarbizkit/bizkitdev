@@ -1,0 +1,216 @@
+/* Global Theme Styles */
+
+/* Light theme component styles */
+[data-theme="light"] .text-gray-300 {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .text-gray-400 {
+  color: #94a3b8 !important;
+}
+
+[data-theme="light"] .text-white {
+  color: #1e293b !important;
+}
+
+[data-theme="light"] .text-gray-600 {
+  color: #475569 !important;
+}
+
+/* Light theme backgrounds */
+[data-theme="light"] .bg-gray-900\/50 {
+  background: rgba(255, 255, 255, 0.7) !important;
+}
+
+[data-theme="light"] .bg-black\/80 {
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Light theme borders */
+[data-theme="light"] .border-gray-800 {
+  border-color: rgba(159, 64, 255, 0.2) !important;
+}
+
+[data-theme="light"] .border-white\/10 {
+  border-color: rgba(159, 64, 255, 0.2) !important;
+}
+
+[data-theme="light"] .border-gray-600 {
+  border-color: #9f40ff !important;
+}
+
+/* Light theme cards and hover effects */
+[data-theme="light"] .hover\:border-cyan-400\/50:hover {
+  border-color: rgba(159, 64, 255, 0.5) !important;
+}
+
+[data-theme="light"] .hover\:border-purple-400\/50:hover {
+  border-color: rgba(0, 255, 255, 0.5) !important;
+}
+
+[data-theme="light"] .hover\:border-cyan-400:hover {
+  border-color: var(--accent-purple) !important;
+}
+
+/* Light theme shadows */
+[data-theme="light"] .hover\:shadow-cyan-500\/10:hover {
+  box-shadow: 0 10px 15px -3px rgba(159, 64, 255, 0.2), 0 4px 6px -2px rgba(159, 64, 255, 0.1) !important;
+}
+
+[data-theme="light"] .hover\:shadow-purple-500\/10:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 255, 255, 0.2), 0 4px 6px -2px rgba(0, 255, 255, 0.1) !important;
+}
+
+/* Light theme gradients for backgrounds */
+[data-theme="light"] .bg-gradient-to-br.from-blue-500\/20.to-purple-500\/20 {
+  background: linear-gradient(to bottom right, rgba(159, 64, 255, 0.1), rgba(0, 255, 255, 0.1)) !important;
+}
+
+[data-theme="light"] .bg-gradient-to-br.from-green-500\/20.to-blue-500\/20 {
+  background: linear-gradient(to bottom right, rgba(0, 255, 255, 0.1), rgba(159, 64, 255, 0.1)) !important;
+}
+
+[data-theme="light"] .bg-gradient-to-br.from-purple-500\/20.to-pink-500\/20 {
+  background: linear-gradient(to bottom right, rgba(159, 64, 255, 0.1), rgba(255, 0, 255, 0.1)) !important;
+}
+
+/* Light theme animated background elements */
+[data-theme="light"] .bg-cyan-500\/10 {
+  background-color: rgba(159, 64, 255, 0.05) !important;
+}
+
+[data-theme="light"] .bg-purple-500\/10 {
+  background-color: rgba(0, 255, 255, 0.05) !important;
+}
+
+/* Light theme button styles */
+[data-theme="light"] .bg-gradient-to-r.from-cyan-500.to-purple-600 {
+  background: linear-gradient(to right, var(--accent-purple), var(--accent-cyan)) !important;
+}
+
+[data-theme="light"] .hover\:from-cyan-400.hover\:to-purple-500:hover {
+  background: linear-gradient(to right, #7c3aed, #06b6d4) !important;
+}
+
+[data-theme="light"] .hover\:shadow-cyan-500\/25:hover {
+  box-shadow: 0 25px 50px -12px rgba(159, 64, 255, 0.25) !important;
+}
+
+/* Light theme tech stack badges */
+[data-theme="light"] .bg-cyan-500\/20 {
+  background-color: rgba(159, 64, 255, 0.15) !important;
+}
+
+[data-theme="light"] .text-cyan-400 {
+  color: var(--accent-purple) !important;
+}
+
+[data-theme="light"] .bg-purple-500\/20 {
+  background-color: rgba(0, 255, 255, 0.15) !important;
+}
+
+[data-theme="light"] .text-purple-400 {
+  color: #0891b2 !important;
+}
+
+[data-theme="light"] .bg-pink-500\/20 {
+  background-color: rgba(255, 0, 255, 0.15) !important;
+}
+
+[data-theme="light"] .text-pink-400 {
+  color: #db2777 !important;
+}
+
+[data-theme="light"] .bg-green-500\/20 {
+  background-color: rgba(34, 197, 94, 0.15) !important;
+}
+
+[data-theme="light"] .text-green-400 {
+  color: #16a34a !important;
+}
+
+[data-theme="light"] .bg-blue-500\/20 {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+[data-theme="light"] .text-blue-400 {
+  color: #2563eb !important;
+}
+
+/* Light theme hover states */
+[data-theme="light"] .hover\:text-cyan-300:hover {
+  color: #7c3aed !important;
+}
+
+[data-theme="light"] .hover\:text-cyan-400:hover {
+  color: var(--accent-purple) !important;
+}
+
+/* Smooth transitions for all theme switches */
+* {
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Enhanced responsive design */
+@media (max-width: 768px) {
+  [data-theme="light"] .grid.grid-cols-2.md\\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  [data-theme="light"] .flex.flex-col.md\\:flex-row {
+    gap: 1rem !important;
+  }
+}
+
+/* Smooth scroll enhancement */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  .project-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .project-card:hover {
+    transform: translateY(-8px);
+  }
+}
+
+/* Enhanced focus states for accessibility */
+.filter-btn:focus-visible,
+#project-search:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+/* Light theme focus states */
+[data-theme="light"] .filter-btn:focus-visible,
+[data-theme="light"] #project-search:focus-visible {
+  outline-color: var(--accent-purple);
+}
+
+/* Enhanced button hover animations */
+@media (hover: hover) {
+  .filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 255, 255, 0.3);
+  }
+  
+  [data-theme="light"] .filter-btn:hover {
+    box-shadow: 0 4px 12px rgba(159, 64, 255, 0.3);
+  }
+}
+
+/* Improved mobile typography */
+@media (max-width: 640px) {
+  .text-4xl.md\\:text-5xl {
+    font-size: 2.5rem !important;
+    line-height: 1.1 !important;
+  }
+  
+  .text-xl.md\\:text-2xl {
+    font-size: 1.25rem !important;
+  }
+}
