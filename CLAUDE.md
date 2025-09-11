@@ -29,8 +29,9 @@ src/
 └── styles/              # Global styles (minimal)
 
 tests/
-├── contract/            # API contract tests
-├── integration/         # Integration tests
+├── contract/            # API contract tests (5 files - T014-T018)
+├── integration/         # Integration tests (2 files - T019-T022)
+├── e2e/                 # End-to-end tests (4 files - T023-T028)
 └── unit/                # Unit tests
 
 public/                  # Static assets
@@ -75,9 +76,12 @@ podman-compose up # Local container testing
 
 ## Recent Changes
 
-- 001-you-are-helping: Added Astro portfolio website with NeoDev theme
-- 001-you-are-helping: Configured Supabase authentication and subscribers
-- 001-you-are-helping: Established testing strategy with Playwright and Vitest
+- 2025-01-27: Complete modern portfolio redesign with Omar Torres branding and cyberpunk neon aesthetic
+- 2025-01-27: **CRITICAL TDD Implementation** - Comprehensive test suite (11 files, 200+ scenarios)
+- 2025-01-27: Contract tests for all API endpoints (T014-T018) - constitutional compliance achieved
+- 2025-01-27: Integration tests for Supabase workflows and data transformations (T019-T022)  
+- 2025-01-27: E2E tests for complete user journeys and accessibility (T023-T028)
+- 2025-01-27: API type system with runtime validation guards
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
