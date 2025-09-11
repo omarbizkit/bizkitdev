@@ -29,7 +29,7 @@ export const supabaseAdmin = supabaseServiceRoleKey
     })
   : null
 
-// Database types (will be updated once we create the schema)
+// Database types for Supabase schema
 export interface Database {
   public: {
     Tables: {
@@ -37,23 +37,79 @@ export interface Database {
         Row: {
           id: string
           email: string
-          subscribed_at: string
           confirmed: boolean
-          active: boolean
+          confirmation_token: string | null
+          unsubscribe_token: string | null
+          created_at: string
+          confirmed_at: string | null
+          unsubscribed_at: string | null
+          email_sent: boolean
         }
         Insert: {
           id?: string
           email: string
-          subscribed_at?: string
           confirmed?: boolean
-          active?: boolean
+          confirmation_token?: string | null
+          unsubscribe_token?: string | null
+          created_at?: string
+          confirmed_at?: string | null
+          unsubscribed_at?: string | null
+          email_sent?: boolean
         }
         Update: {
           id?: string
           email?: string
-          subscribed_at?: string
           confirmed?: boolean
-          active?: boolean
+          confirmation_token?: string | null
+          unsubscribe_token?: string | null
+          created_at?: string
+          confirmed_at?: string | null
+          unsubscribed_at?: string | null
+          email_sent?: boolean
+        }
+      }
+      projects: {
+        Row: {
+          id: string
+          name: string
+          description_short: string
+          description_long: string
+          status: 'idea' | 'development' | 'live' | 'archived'
+          tech_stack: string[]
+          subdomain_url: string
+          github_url: string
+          screenshot_url: string | null
+          created_date: string
+          featured: boolean
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          name: string
+          description_short: string
+          description_long: string
+          status: 'idea' | 'development' | 'live' | 'archived'
+          tech_stack: string[]
+          subdomain_url: string
+          github_url: string
+          screenshot_url?: string | null
+          created_date: string
+          featured?: boolean
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description_short?: string
+          description_long?: string
+          status?: 'idea' | 'development' | 'live' | 'archived'
+          tech_stack?: string[]
+          subdomain_url?: string
+          github_url?: string
+          screenshot_url?: string | null
+          created_date?: string
+          featured?: boolean
+          updated_at?: string
         }
       }
     }
