@@ -95,8 +95,9 @@
 /* ======================== */
 
 [data-theme="light"] body {
-  /* Pure clean white background */
-  background: var(--bg-primary);
+  /* Pure clean white background - override global.css diagonal */
+  background: var(--bg-primary) !important;
+  background-image: none !important;
   color: var(--text-primary);
   min-height: 100vh;
 }
@@ -112,6 +113,16 @@
     radial-gradient(ellipse 800px 600px at 0% 0%, rgba(99, 102, 241, 0.02) 0%, transparent 60%),
     radial-gradient(ellipse 600px 800px at 100% 100%, rgba(14, 165, 233, 0.02) 0%, transparent 60%);
   opacity: 0.3;
+}
+
+/* CRITICAL: Hide the dark background divs from CleanLayout.astro in light theme */
+[data-theme="light"] .fixed.inset-0.z-0 {
+  display: none !important;
+}
+
+[data-theme="light"] .absolute.inset-0.bg-gradient-to-br,
+[data-theme="light"] .absolute.inset-0.bg-\[radial-gradient {
+  display: none !important;
 }
 
 /* ======================== */
