@@ -15,9 +15,9 @@ export const siteConfig: SiteConfig = {
     },
     {
       platform: 'LinkedIn',
-      url: 'https://linkedin.com/in/omar-bizkitdev',
+      url: 'https://www.linkedin.com/in/msqldba/',
       icon: 'linkedin',
-      username: 'omar-bizkitdev'
+      username: 'msqldba'
     },
     {
       platform: 'Twitter',

@@ -12,10 +12,10 @@
   --bg-secondary: #fefefe;
   --bg-tertiary: #f9f9fb;
   --bg-accent: #f8f9ff;
-  --text-primary: #0a0b0d;
-  --text-secondary: #1a1c21;
-  --text-tertiary: #495057;
-  --text-quaternary: #6c757d;
+  --text-primary: #0f1419;
+  --text-secondary: #2d3748;
+  --text-tertiary: #4a5568;
+  --text-quaternary: #718096;
   --border-primary: rgba(99, 102, 241, 0.15);
   --border-secondary: rgba(99, 102, 241, 0.08);
   --card-bg: #ffffff;
@@ -154,8 +154,42 @@
 
 /* Enhanced tagline and subtitle visibility */
 [data-theme="light"] .text-xl.text-gray-300 {
+  color: var(--text-secondary) !important;
+  font-weight: 600;
+}
+
+/* Section headers - make them highly visible */
+[data-theme="light"] .text-white.text-3xl,
+[data-theme="light"] .text-white.text-2xl,
+[data-theme="light"] .text-white.text-4xl {
+  color: var(--text-primary) !important;
+  font-weight: 800;
+}
+
+/* Main tagline text - needs high contrast */
+[data-theme="light"] .text-gray-300.text-xl {
+  color: var(--text-secondary) !important;
+  font-weight: 600;
+}
+
+/* Body paragraphs - lighter but still readable */
+[data-theme="light"] .text-gray-400.text-lg {
   color: var(--text-tertiary) !important;
   font-weight: 500;
+}
+
+/* Additional text visibility fixes */
+[data-theme="light"] .text-gray-300,
+[data-theme="light"] .text-gray-400 {
+  color: var(--text-tertiary) !important;
+  font-weight: 500;
+}
+
+/* Stats and labels */
+[data-theme="light"] .text-gray-400.text-sm,
+[data-theme="light"] .text-gray-300.text-sm {
+  color: var(--text-quaternary) !important;
+  font-weight: 600;
 }
 
 /* ======================== */
