@@ -152,10 +152,25 @@
   line-height: 1.7;
 }
 
-/* Enhanced tagline and subtitle visibility */
-[data-theme="light"] .text-xl.text-gray-300 {
-  color: var(--text-secondary) !important;
-  font-weight: 600;
+/* CORRECTED: Data & AI Enthusiast tagline - match stats color */
+[data-theme="light"] .text-xl.text-gray-300,
+[data-theme="light"] .text-gray-300.text-xl {
+  color: var(--text-quaternary) !important;
+  font-weight: 600 !important;
+}
+
+/* CORRECTED: Main description paragraphs - match stats color */
+[data-theme="light"] .text-gray-400.text-lg,
+[data-theme="light"] .text-lg.text-gray-400 {
+  color: var(--text-quaternary) !important;
+  font-weight: 500 !important;
+}
+
+/* CORRECTED: About Me paragraph text - match stats color */
+[data-theme="light"] .text-gray-300 p,
+[data-theme="light"] .text-gray-400 p {
+  color: var(--text-quaternary) !important;
+  font-weight: 500 !important;
 }
 
 /* Section headers - make them highly visible */
@@ -166,23 +181,11 @@
   font-weight: 800;
 }
 
-/* Main tagline text - needs high contrast */
-[data-theme="light"] .text-gray-300.text-xl {
-  color: var(--text-secondary) !important;
-  font-weight: 600;
-}
-
-/* Body paragraphs - lighter but still readable */
-[data-theme="light"] .text-gray-400.text-lg {
-  color: var(--text-tertiary) !important;
-  font-weight: 500;
-}
-
-/* Additional text visibility fixes */
+/* CORRECTED: All gray text classes - match stats color */
 [data-theme="light"] .text-gray-300,
 [data-theme="light"] .text-gray-400 {
-  color: var(--text-tertiary) !important;
-  font-weight: 500;
+  color: var(--text-quaternary) !important;
+  font-weight: 500 !important;
 }
 
 /* Stats and labels */
@@ -190,6 +193,71 @@
 [data-theme="light"] .text-gray-300.text-sm {
   color: var(--text-quaternary) !important;
   font-weight: 600;
+}
+
+/* Force all headers to be visible - comprehensive approach */
+[data-theme="light"] h1,
+[data-theme="light"] h2, 
+[data-theme="light"] h3,
+[data-theme="light"] .text-3xl,
+[data-theme="light"] .text-2xl,
+[data-theme="light"] .text-4xl,
+[data-theme="light"] .text-5xl {
+  color: var(--text-primary) !important;
+  font-weight: 800 !important;
+}
+
+/* Ensure all white text becomes dark in light theme - CRITICAL FIX */
+[data-theme="light"] .text-white,
+[data-theme="light"] h1.text-white,
+[data-theme="light"] h2.text-white,
+[data-theme="light"] h3.text-white,
+[data-theme="light"] .text-white.text-4xl,
+[data-theme="light"] .text-white.text-3xl,
+[data-theme="light"] .text-white.text-2xl,
+[data-theme="light"] .text-white.text-5xl,
+[data-theme="light"] .text-white.text-6xl {
+  color: var(--text-primary) !important;
+  font-weight: 800 !important;
+}
+
+/* Preserve gradient text for main title - this was working fine */
+[data-theme="light"] .bg-gradient-to-r.from-cyan-400.to-purple-500.bg-clip-text.text-transparent {
+  background: linear-gradient(to right, var(--accent-cyan), var(--accent-purple)) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+/* NUCLEAR OPTION - Force ALL text elements to be dark in light theme */
+[data-theme="light"] * {
+  color: inherit;
+}
+
+[data-theme="light"] body {
+  color: var(--text-primary) !important;
+}
+
+/* Override any potentially invisible text BUT preserve gradient titles */
+[data-theme="light"] h1:not(.bg-gradient-to-r), 
+[data-theme="light"] h2:not(.bg-gradient-to-r), 
+[data-theme="light"] h3:not(.bg-gradient-to-r), 
+[data-theme="light"] h4:not(.bg-gradient-to-r), 
+[data-theme="light"] h5:not(.bg-gradient-to-r), 
+[data-theme="light"] h6:not(.bg-gradient-to-r) {
+  color: var(--text-primary) !important;
+  font-weight: 800 !important;
+}
+
+[data-theme="light"] p {
+  color: var(--text-secondary) !important;
+}
+
+/* Exception: Preserve gradient text elements */
+[data-theme="light"] .bg-gradient-to-r.bg-clip-text.text-transparent {
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
 }
 
 /* ======================== */
