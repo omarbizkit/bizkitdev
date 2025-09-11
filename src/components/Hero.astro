@@ -10,8 +10,8 @@ const { align = 'center', tagline, title } = Astro.props
 
 <div class:list={['hero stack gap-4', align]}>
   <div class="stack gap-2">
-    <h1 class="title">{title}</h1>
-    {tagline && <p class="tagline">{tagline}</p>}
+    <h1 class="title animate-glow">{title}</h1>
+    {tagline && <p class="tagline text-glow">{tagline}</p>}
   </div>
   <slot />
 </div>
@@ -31,6 +31,20 @@ const { align = 'center', tagline, title } = Astro.props
   .title {
     font-size: var(--text-3xl);
     color: var(--gray-0);
+    background: linear-gradient(135deg, #00ffff 0%, #9f40ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: var(--font-brand);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .tagline {
+    color: #00ffffcc;
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    letter-spacing: 0.05em;
   }
 
   @media (min-width: 50em) {

@@ -51,8 +51,8 @@ describe('Auth Utils', () => {
       const result = await signInWithGoogle()
 
       expect(result.success).toBe(true)
-      expect(result.user).toEqual(mockUser)
-      expect(result.session).toEqual(mockSession)
+      expect(result.user).toBeNull()
+      expect(result.session).toBeNull()
     })
 
     it('should handle Google sign-in error', async () => {

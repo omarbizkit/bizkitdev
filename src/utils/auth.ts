@@ -13,7 +13,7 @@ export interface AuthResult {
  */
 export async function signInWithGoogle(): Promise<AuthResult> {
   try {
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
@@ -26,8 +26,12 @@ export async function signInWithGoogle(): Promise<AuthResult> {
 
     if (error) throw error
 
+    // OAuth sign-in returns redirect data, not user/session
+    // User will be available after redirect callback
     return {
-      success: true
+      success: true,
+      user: null,
+      session: null
     }
   } catch (error) {
     console.error('Google sign-in error:', error)

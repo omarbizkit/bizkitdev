@@ -1,0 +1,87 @@
+---
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+}
+
+const { 
+  title = "The Mind Behind The Code", 
+  subtitle = "Data & AI Enthusiast", 
+  description = "Transforming complex data into intelligent solutions that drive real-world impact." 
+} = Astro.props;
+---
+
+<section class="min-h-screen flex items-center justify-center relative overflow-hidden">
+  <!-- Animated background elements -->
+  <div class="absolute inset-0 z-0">
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+  </div>
+  
+  <div class="relative z-10 max-w-6xl mx-auto px-6 text-center">
+    <!-- Main heading with gradient effect -->
+    <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+      <span class="bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+        {title}
+      </span>
+    </h1>
+    
+    <!-- Subtitle -->
+    <p class="text-xl md:text-2xl text-gray-300 mb-8 font-mono">
+      {subtitle}
+    </p>
+    
+    <!-- Description -->
+    <p class="text-lg text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
+      {description}
+    </p>
+    
+    <!-- CTA Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <a href="#work" class="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-lg font-semibold text-white hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25">
+        View My Work
+        <span class="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+      </a>
+      
+      <a href="#contact" class="group relative px-8 py-4 border-2 border-gray-600 rounded-lg font-semibold text-gray-300 hover:border-cyan-400 hover:text-cyan-400 transition-all duration-300">
+        Get In Touch
+        <span class="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+      </a>
+    </div>
+    
+    <!-- Stats section -->
+    <div class="grid grid-cols-3 gap-8 mt-16 max-w-md mx-auto">
+      <div class="text-center">
+        <div class="text-3xl font-bold text-cyan-400">15+</div>
+        <div class="text-sm text-gray-400">Years Experience</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-purple-400">20+</div>
+        <div class="text-sm text-gray-400">Projects</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-pink-400">∞</div>
+        <div class="text-sm text-gray-400">Lines of Code</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+    <div class="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center">
+      <div class="w-1 h-3 bg-gray-400 rounded-full mt-2"></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+</style>
