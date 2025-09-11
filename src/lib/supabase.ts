@@ -7,12 +7,15 @@ const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY
 const supabaseServiceRoleKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY
 
 // Use mock Supabase in test environment
-const nodeEnv = import.meta.env.NODE_ENV
+const nodeEnv = import.meta.env.NODE_ENV || process.env.NODE_ENV
 const isTestEnvironment = nodeEnv === 'test' || 
                          supabaseUrl?.includes('mock.supabase.co') ||
                          supabaseAnonKey === 'mock-anon-key'
 
-// Use mock Supabase in test environment (silent in production)
+// Use mock Supabase in test environment
+if (isTestEnvironment) {
+  console.log('Using mock Supabase in test environment');
+}
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables')

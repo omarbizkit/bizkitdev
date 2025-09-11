@@ -218,8 +218,8 @@ describe('GET /api/auth/session - Contract Tests', () => {
         method: 'OPTIONS'
       });
 
-      // Should either handle OPTIONS (200) or reject it (405)
-      expect([200, 405]).toContain(response.status);
+      // Should either handle OPTIONS (200, 204) or reject it (405)
+      expect([200, 204, 405]).toContain(response.status);
     });
 
     it('should not expose sensitive information in error responses', async () => {

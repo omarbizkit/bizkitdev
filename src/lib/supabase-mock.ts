@@ -180,13 +180,11 @@ function createMockTable<T extends Record<string, any>>(
           single: async () => ({
             data: newItems[0],
             error: null
-          }),
-          then: async (resolve: any) => {
-            resolve({
-              data: newItems,
-              error: null
-            })
-          }
+          })
+        }),
+        single: async () => ({
+          data: newItems[0],
+          error: null
         })
       }
     },

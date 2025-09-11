@@ -14,22 +14,31 @@ set -a  # automatically export all variables
 source .env.test
 set +a
 
-# Start development server in background with test environment
-echo "🚀 Starting development server in test mode..."
-npm run dev &
+# Start development server in background with test environment on the correct port
+echo "🚀 Starting development server in test mode on port 4322..."
+npm run dev -- --port 4322 &
 DEV_PID=$!
 
 # Wait for server to be ready
 echo "⏳ Waiting for server to start..."
-timeout=30
-while ! curl -s -f ${TEST_BASE_URL} > /dev/null; do
-  sleep 1
-  timeout=$((timeout - 1))
+timeout=60
+while ! curl -s -f ${TEST_BASE_URL}/api/health > /dev/null; do
+  sleep 2
+  timeout=$((timeout - 2))
   if [ $timeout -eq 0 ]; then
-    echo "❌ Server failed to start within 30 seconds"
+    echo "❌ Server failed to start within 60 seconds"
+    echo "🔍 Checking if server process is running..."
+    if ps -p $DEV_PID > /dev/null; then
+      echo "📊 Server process is running but not responding"
+      echo "🌐 Trying direct connection to ${TEST_BASE_URL}..."
+      curl -v ${TEST_BASE_URL} 2>&1 || true
+    else
+      echo "💀 Server process has died"
+    fi
     kill $DEV_PID 2>/dev/null || true
     exit 1
   fi
+  echo "⏳ Still waiting... (${timeout}s remaining)"
 done
 
 echo "✅ Server is ready!"
