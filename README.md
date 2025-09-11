@@ -205,8 +205,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Live Site**: [bizkit.dev](https://bizkit.dev) (coming soon)
 - **GitHub**: [github.com/omarbizkit/bizkitdev](https://github.com/omarbizkit/bizkitdev)
-- **Contact**: omar@bizkit.dev
+- **Contact**: omarbizkit@hotmail.com
 
 ---
 
-Built with ❤️ by [Omar Bizkitdev](https://github.com/omarbizkit)
+Built with ❤️ by [Omar@Bizkit.dev](https://github.com/omarbizkit)
