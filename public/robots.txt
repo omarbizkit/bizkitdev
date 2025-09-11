@@ -1,0 +1,33 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://bizkit.dev/sitemap.xml
+
+# Optimize crawl budget
+Crawl-delay: 1
+
+# Block unnecessary paths
+Disallow: /api/
+Disallow: /_astro/
+Disallow: /dist/
+Disallow: /.well-known/
+
+# Allow important pages
+Allow: /
+Allow: /about/
+Allow: /work/
+Allow: /contact/
+
+# SEO optimizations
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /

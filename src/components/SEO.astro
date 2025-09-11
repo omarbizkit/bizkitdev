@@ -82,10 +82,17 @@ const imageURL = new URL(image, Astro.site);
   "image": imageURL,
   "description": description,
   "jobTitle": "Data & AI Enthusiast",
+  "knowsAbout": ["Data Science", "Machine Learning", "Artificial Intelligence", "Data Visualization", "Python", "TensorFlow", "PyTorch"],
+  "alumniOf": {
+    "@type": "Organization",
+    "name": "Data Science Education"
+  },
   "worksFor": {
     "@type": "Organization",
-    "name": "bizkit.dev"
+    "name": "bizkit.dev",
+    "url": "https://bizkit.dev"
   },
+  "mainEntityOfPage": canonicalURL,
   "sameAs": [
     "https://github.com/omarbizkit",
     "https://www.linkedin.com/in/msqldba/"

@@ -1,6 +1,7 @@
 ---
 import MainHead from '../components/MainHead.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
+import PerformanceOptimizations from '../components/PerformanceOptimizations.astro';
 import '../styles/theme.css';
 
 interface Props {
@@ -15,6 +16,7 @@ const { title = 'Omar Torres | Data & AI Enthusiast', description = 'The Mind Be
 <html lang="en" class="scroll-smooth">
   <head>
     <MainHead title={title} description={description} />
+    <PerformanceOptimizations />
   </head>
   <body class="bg-black text-white font-sans overflow-x-hidden">
     <div class="fixed inset-0 z-0">

@@ -1,0 +1,118 @@
+---
+// Performance optimization component for Core Web Vitals and loading speed
+---
+
+<!-- Critical resource hints -->
+<link rel="dns-prefetch" href="//fonts.googleapis.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<!-- Preload critical assets -->
+<link rel="preload" href="/favicon.svg" as="image" type="image/svg+xml" />
+
+<!-- Optimize font loading -->
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" as="style" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+
+<!-- Performance hints for modern browsers -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- Core Web Vitals optimization -->
+<script>
+  // Preload critical resources on interaction
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      // Preload theme toggle functionality
+      const themeToggle = document.querySelector('[data-theme-toggle]');
+      if (themeToggle) {
+        themeToggle.addEventListener('mouseenter', () => {
+          // Warm up theme switching
+          document.documentElement.getAttribute('data-theme');
+        }, { once: true, passive: true });
+      }
+    });
+  }
+
+  // Performance observer for Core Web Vitals
+  if ('PerformanceObserver' in window) {
+    try {
+      const observer = new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        entries.forEach((entry) => {
+          // Log Core Web Vitals for monitoring
+          if (entry.entryType === 'largest-contentful-paint') {
+            console.log('LCP:', entry.startTime);
+          }
+          if (entry.entryType === 'first-input') {
+            console.log('FID:', entry.processingStart - entry.startTime);
+          }
+          if (entry.entryType === 'layout-shift') {
+            if (!entry.hadRecentInput) {
+              console.log('CLS:', entry.value);
+            }
+          }
+        });
+      });
+
+      observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input', 'layout-shift'] });
+    } catch (e) {
+      // Silently fail for older browsers
+    }
+  }
+
+  // Optimize images with intersection observer for lazy loading
+  if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          if (img.dataset.src) {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+            imageObserver.unobserve(img);
+          }
+        }
+      });
+    }, {
+      rootMargin: '50px 0px',
+      threshold: 0.01
+    });
+
+    // Observe all images with data-src attribute
+    document.addEventListener('DOMContentLoaded', () => {
+      const lazyImages = document.querySelectorAll('img[data-src]');
+      lazyImages.forEach(img => imageObserver.observe(img));
+    });
+  }
+</script>
+
+<!-- Critical CSS inlining hint -->
+<style>
+  /* Critical above-the-fold styles */
+  .hero-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Prevent layout shift */
+  img[data-src] {
+    background-color: #f0f0f0;
+    background-image: linear-gradient(45deg, transparent 35%, rgba(255,255,255,0.5) 50%, transparent 65%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+  
+  @keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  
+  [data-theme="dark"] img[data-src] {
+    background-color: #2a2a2a;
+    background-image: linear-gradient(45deg, transparent 35%, rgba(255,255,255,0.1) 50%, transparent 65%);
+  }
+</style>
