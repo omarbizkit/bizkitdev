@@ -8,13 +8,28 @@ services:
       args:
         PUBLIC_SUPABASE_URL: ${PUBLIC_SUPABASE_URL}
         PUBLIC_SUPABASE_ANON_KEY: ${PUBLIC_SUPABASE_ANON_KEY}
+        PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-https://bizkit.dev}
     ports:
-      - "4321:4321"
+      - "3000:3000"
     environment:
       - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
       - PUBLIC_SUPABASE_URL=${PUBLIC_SUPABASE_URL}
       - PUBLIC_SUPABASE_ANON_KEY=${PUBLIC_SUPABASE_ANON_KEY}
+      - PUBLIC_SITE_URL=${PUBLIC_SITE_URL:-https://bizkit.dev}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - CSRF_SECRET=${CSRF_SECRET}
+    volumes:
+      - app_logs:/app/logs
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     
   # Optional: PostgreSQL for local development
   postgres:
@@ -54,5 +69,6 @@ services:
       - supabase-dev
 
 volumes:
+  app_logs:
   postgres_data:
   supabase_db_data:

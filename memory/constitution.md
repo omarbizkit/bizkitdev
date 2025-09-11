@@ -166,8 +166,81 @@
 - Commit frequently with atomic changes
 - Push to remote at least once per development session
 
+### AI Development Safety Protocol
+
+**CRITICAL**: To prevent system corruption during AI-assisted development sessions:
+
+#### Pre-Session Safeguards
+- **Backup configurations** before any AI debugging session:
+  ```bash
+  git config --list > ~/git-config-backup.txt
+  env | grep -E "PAGER|LESS|EDITOR" > ~/env-backup.txt
+  alias > ~/alias-backup.txt
+  ```
+- **Document current terminal state**: Note any running processes with `ps aux | grep -E "pager|less|editor"`
+
+#### During AI Sessions
+- **NEVER allow global configuration changes** without explicit understanding:
+  - `git config --global` commands must be explained and approved
+  - Changes to `~/.bashrc`, `~/.zshrc`, `~/.profile` must be documented
+  - Environment variable exports must be temporary or explicitly documented
+  - Pager/editor configurations require immediate verification
+- **Demand explanation** for any system-level commands before execution
+- **Monitor for stuck processes**: Check for background processes after each complex command
+- **Verify command cleanup**: Ensure AI models properly clean up temporary configurations
+
+#### Post-Session Verification
+- **Check for configuration drift**:
+  ```bash
+  git config --list | diff ~/git-config-backup.txt -
+  env | grep -E "PAGER|LESS|EDITOR" | diff ~/env-backup.txt -
+  ps aux | grep -E "pager|less|editor" | grep -v grep
+  ```
+- **Validate git pager settings**: Ensure `git config --get core.pager` returns `cat` or empty
+- **Test terminal functionality**: Run `git log --oneline -3` to verify no pager interference
+- **Clean up artifacts**: Remove any accidentally created files from command fragments
+
+#### Prohibited AI Actions
+- **NEVER allow AI to**:
+  - Set global git pager to `less` or any interactive pager
+  - Modify shell initialization files without explicit approval
+  - Create system-level persistent background processes (daemons, system services)
+  - Change system-wide environment variables
+  - Modify terminal emulator configurations
+
+#### Approval Required Actions
+- **REQUIRE explicit approval before AI can**:
+  - Create background processes that persist beyond the current terminal session
+  - Start services that intercept or redirect system output (stdout/stderr)
+  - Modify process management or terminal state
+  - Install or configure system-level services
+  - Create processes that run with elevated privileges
+
+#### Permitted Development Processes
+- **AI can freely start these legitimate development processes**:
+  - Development servers (`npm run dev`, `vite dev`, `astro dev`)
+  - Test watchers (`npm run test:watch`, `vitest --watch`)
+  - Build processes (`npm run build`, Docker builds)
+  - Local development databases (Docker containers, local Supabase)
+  - IDE language servers and development tools
+
+#### Recovery Protocol
+If system corruption occurs:
+1. **Kill rogue processes**: `pkill -f "/usr/bin/pager"; pkill -f "less"`
+2. **Reset git pager**: `git config --global core.pager "cat"`
+3. **Disable specific pagers**: `git config --global pager.log false`
+4. **Restore configurations** from backup files
+5. **Verify functionality** with test commands
+
+#### Model-Specific Cautions
+- **All AI models**: Require explanation of system-level changes
+- **Aggressive models**: Extra scrutiny for global configuration changes
+- **Unknown models**: Implement full backup protocol before any terminal operations
+
+**Violation of this protocol is considered a critical system safety breach**
+
 ## Governance
 
 This constitution supersedes all other practices and must be followed for all specs, plans, and tasks related to the bizkit.dev portfolio project. All development work must verify compliance with these constraints. Any amendments require documentation and approval.
 
-**Version**: 1.3.0 | **Ratified**: 2025-01-27 | **Last Amended**: 2025-01-27
+**Version**: 1.4.0 | **Ratified**: 2025-01-27 | **Last Amended**: 2025-09-11 | **Amendment**: Added AI Development Safety Protocol

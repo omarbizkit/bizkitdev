@@ -1,23 +1,34 @@
 import { createClient } from '@supabase/supabase-js'
+import { mockSupabase } from './supabase-mock'
 
 // Supabase configuration from environment variables
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY
 const supabaseServiceRoleKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY
 
+// Use mock Supabase in test environment
+const nodeEnv = import.meta.env.NODE_ENV
+const isTestEnvironment = nodeEnv === 'test' || 
+                         supabaseUrl?.includes('mock.supabase.co') ||
+                         supabaseAnonKey === 'mock-anon-key'
+
+// Use mock Supabase in test environment (silent in production)
+
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables')
 }
 
 // Client for browser/public operations
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true,
-    storage: typeof window !== 'undefined' ? window.localStorage : undefined
-  }
-})
+export const supabase = isTestEnvironment 
+  ? mockSupabase as any
+  : createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true,
+        storage: typeof window !== 'undefined' ? window.localStorage : undefined
+      }
+    })
 
 // Admin client for server-side operations (if service role key is provided)
 export const supabaseAdmin = supabaseServiceRoleKey

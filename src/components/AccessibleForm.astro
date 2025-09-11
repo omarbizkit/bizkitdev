@@ -1,0 +1,352 @@
+---
+interface Props {
+  id?: string;
+  title?: string;
+  description?: string;
+  submitLabel?: string;
+  action?: string;
+  method?: string;
+  class?: string;
+}
+
+const {
+  id = 'accessible-form',
+  title = 'Contact Form',
+  description = 'Send us a message and we\'ll get back to you.',
+  submitLabel = 'Send Message',
+  action = '/api/contact',
+  method = 'POST',
+  class: className = ''
+} = Astro.props;
+
+const formId = `form-${id}`;
+const titleId = `${formId}-title`;
+const descId = `${formId}-description`;
+---
+
+<section class={`accessible-form-section ${className}`} role="region" aria-labelledby={titleId}>
+  <div class="form-container">
+    <header class="form-header">
+      <h2 id={titleId} class="form-title">{title}</h2>
+      <p id={descId} class="form-description">{description}</p>
+    </header>
+
+    <form 
+      id={formId}
+      action={action}
+      method={method}
+      class="accessible-form"
+      aria-labelledby={titleId}
+      aria-describedby={descId}
+      novalidate
+    >
+      <div class="form-group">
+        <label for={`${formId}-name`} class="form-label required">
+          Full Name
+          <span aria-hidden="true">*</span>
+        </label>
+        <input
+          type="text"
+          id={`${formId}-name`}
+          name="name"
+          class="form-input"
+          required
+          aria-required="true"
+          aria-describedby={`${formId}-name-error`}
+          autocomplete="name"
+        />
+        <div id={`${formId}-name-error`} class="error-message" role="alert" aria-live="polite"></div>
+      </div>
+
+      <div class="form-group">
+        <label for={`${formId}-email`} class="form-label required">
+          Email Address
+          <span aria-hidden="true">*</span>
+        </label>
+        <input
+          type="email"
+          id={`${formId}-email`}
+          name="email"
+          class="form-input"
+          required
+          aria-required="true"
+          aria-describedby={`${formId}-email-error ${formId}-email-help`}
+          autocomplete="email"
+        />
+        <div id={`${formId}-email-help`} class="help-text">We'll never share your email address.</div>
+        <div id={`${formId}-email-error`} class="error-message" role="alert" aria-live="polite"></div>
+      </div>
+
+      <div class="form-group">
+        <label for={`${formId}-subject`} class="form-label">
+          Subject
+        </label>
+        <select
+          id={`${formId}-subject`}
+          name="subject"
+          class="form-select"
+          aria-describedby={`${formId}-subject-help`}
+        >
+          <option value="">Choose a topic...</option>
+          <option value="general">General Inquiry</option>
+          <option value="project">Project Collaboration</option>
+          <option value="consulting">Consulting Services</option>
+          <option value="other">Other</option>
+        </select>
+        <div id={`${formId}-subject-help`} class="help-text">Select the topic that best describes your message.</div>
+      </div>
+
+      <div class="form-group">
+        <label for={`${formId}-message`} class="form-label required">
+          Message
+          <span aria-hidden="true">*</span>
+        </label>
+        <textarea
+          id={`${formId}-message`}
+          name="message"
+          class="form-textarea"
+          rows="5"
+          required
+          aria-required="true"
+          aria-describedby={`${formId}-message-error ${formId}-message-help`}
+          placeholder="Tell us about your project or inquiry..."
+        ></textarea>
+        <div id={`${formId}-message-help`} class="help-text">Minimum 10 characters required.</div>
+        <div id={`${formId}-message-error`} class="error-message" role="alert" aria-live="polite"></div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="submit-button" aria-describedby={`${formId}-submit-status`}>
+          <span class="button-text">{submitLabel}</span>
+          <span class="loading-spinner" aria-hidden="true"></span>
+        </button>
+        <div id={`${formId}-submit-status`} class="submit-status" role="status" aria-live="polite"></div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<style>
+  .accessible-form-section {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .form-container {
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 12px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+  }
+  
+  .form-header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .form-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #00ffff;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  }
+  
+  .form-description {
+    color: #94a3b8;
+    font-size: 1.125rem;
+  }
+  
+  .accessible-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .form-label {
+    font-weight: 600;
+    color: #e2e8f0;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .form-label.required::after {
+    content: " (required)";
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: normal;
+    text-transform: none;
+  }
+  
+  .form-input,
+  .form-select,
+  .form-textarea {
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 8px;
+    color: #f8fafc;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+  }
+  
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: #00ffff;
+    box-shadow: 0 0 0 2px rgba(0, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.7);
+  }
+  
+  .form-input:invalid:not(:focus):not(:placeholder-shown),
+  .form-textarea:invalid:not(:focus):not(:placeholder-shown) {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+  }
+  
+  .form-textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  
+  .help-text {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    margin-top: 0.25rem;
+  }
+  
+  .error-message {
+    font-size: 0.875rem;
+    color: #ef4444;
+    font-weight: 500;
+    min-height: 1.25rem;
+  }
+  
+  .form-actions {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .submit-button {
+    position: relative;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #00ffff, #0080ff);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 20px rgba(0, 255, 255, 0.3);
+  }
+  
+  .submit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0, 255, 255, 0.4);
+  }
+  
+  .submit-button:focus {
+    outline: 2px solid #00ffff;
+    outline-offset: 2px;
+  }
+  
+  .submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .loading-spinner {
+    display: none;
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  .submit-button[aria-busy="true"] .loading-spinner {
+    display: block;
+  }
+  
+  .submit-button[aria-busy="true"] .button-text {
+    opacity: 0.7;
+  }
+  
+  .submit-status {
+    text-align: center;
+    font-weight: 500;
+    min-height: 1.5rem;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: translateY(-50%) rotate(360deg);
+    }
+  }
+  
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    .form-input,
+    .form-select,
+    .form-textarea {
+      border-width: 2px;
+    }
+    
+    .submit-button {
+      border: 2px solid #00ffff;
+    }
+  }
+  
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .submit-button,
+    .form-input,
+    .form-select,
+    .form-textarea {
+      transition: none;
+    }
+    
+    .loading-spinner {
+      animation: none;
+      border: 2px solid currentColor;
+    }
+    
+    .submit-button:hover {
+      transform: none;
+    }
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 640px) {
+    .accessible-form-section {
+      padding: 1rem;
+    }
+    
+    .form-container {
+      padding: 1.5rem;
+    }
+    
+    .form-title {
+      font-size: 1.5rem;
+    }
+  }
+</style>

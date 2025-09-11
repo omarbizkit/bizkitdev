@@ -20,6 +20,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "astro check",
+    "type-check": "astro check",
     "docker:build": "docker build -t bizkitdev-portfolio .",
     "docker:run": "docker run -p 4321:4321 bizkitdev-portfolio",
     "docker:dev": "docker-compose --profile dev up -d",
@@ -27,6 +28,7 @@
     "docker:stop": "docker-compose down"
   },
   "dependencies": {
+    "@astrojs/node": "^9.4.3",
     "@supabase/supabase-js": "^2.57.4",
     "astro": "^5.13.7"
   },

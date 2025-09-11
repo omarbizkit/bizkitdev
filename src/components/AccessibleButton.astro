@@ -1,0 +1,133 @@
+---
+interface Props {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
+  class?: string;
+  id?: string;
+  onClick?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  disabled = false,
+  ariaLabel,
+  ariaDescribedBy,
+  class: className = '',
+  id,
+  onClick
+} = Astro.props;
+
+const baseClasses = [
+  'inline-flex items-center justify-center',
+  'font-medium transition-all duration-200',
+  'focus:outline-none focus:ring-2 focus:ring-offset-2',
+  'disabled:opacity-50 disabled:cursor-not-allowed',
+  'relative overflow-hidden'
+];
+
+const variantClasses = {
+  primary: [
+    'bg-gradient-to-r from-cyan-500 to-blue-500',
+    'text-white border border-cyan-400',
+    'hover:from-cyan-400 hover:to-blue-400',
+    'focus:ring-cyan-500',
+    'shadow-[0_0_20px_rgba(6,182,212,0.3)]',
+    'hover:shadow-[0_0_30px_rgba(6,182,212,0.5)]'
+  ],
+  secondary: [
+    'bg-gradient-to-r from-purple-500 to-pink-500',
+    'text-white border border-purple-400',
+    'hover:from-purple-400 hover:to-pink-400',
+    'focus:ring-purple-500',
+    'shadow-[0_0_20px_rgba(168,85,247,0.3)]',
+    'hover:shadow-[0_0_30px_rgba(168,85,247,0.5)]'
+  ],
+  outline: [
+    'bg-transparent text-cyan-400',
+    'border border-cyan-400/50',
+    'hover:bg-cyan-400/10 hover:border-cyan-400',
+    'focus:ring-cyan-500',
+    'shadow-[inset_0_0_20px_rgba(6,182,212,0.1)]',
+    'hover:shadow-[inset_0_0_30px_rgba(6,182,212,0.2)]'
+  ],
+  ghost: [
+    'bg-transparent text-gray-300',
+    'border border-transparent',
+    'hover:bg-white/5 hover:text-white',
+    'focus:ring-gray-500'
+  ]
+};
+
+const sizeClasses = {
+  sm: 'px-3 py-1.5 text-sm rounded',
+  md: 'px-4 py-2 text-base rounded-lg',
+  lg: 'px-6 py-3 text-lg rounded-xl'
+};
+
+const classes = [
+  ...baseClasses,
+  ...variantClasses[variant],
+  sizeClasses[size],
+  className
+].join(' ');
+
+const Component = href ? 'a' : 'button';
+const componentProps = href 
+  ? { href, role: 'button', tabindex: '0' }
+  : { type, disabled };
+---
+
+<Component
+  class={classes}
+  id={id}
+  aria-label={ariaLabel}
+  aria-describedby={ariaDescribedBy}
+  onclick={onClick}
+  {...componentProps}
+>
+  <slot />
+  
+  <!-- Glow effect for primary/secondary variants -->
+  {(variant === 'primary' || variant === 'secondary') && (
+    <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent 
+                 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 
+                 skew-x-12 pointer-events-none" aria-hidden="true">
+    </span>
+  )}
+</Component>
+
+<style>
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .outline {
+      border-width: 2px;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    button, a[role="button"] {
+      transition: none !important;
+      animation: none !important;
+    }
+    
+    .absolute span {
+      display: none;
+    }
+  }
+  
+  /* Focus visible for better keyboard navigation */
+  button:focus-visible,
+  a[role="button"]:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+</style>

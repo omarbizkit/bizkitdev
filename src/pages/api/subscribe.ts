@@ -211,8 +211,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // TODO: Send confirmation email
-    // For now, we'll simulate email sending
-    console.log(`Would send confirmation email to ${email} with token ${confirmationToken}`);
+    // Email sending will be implemented when email service is configured
 
     // Update email_sent status
     await supabase

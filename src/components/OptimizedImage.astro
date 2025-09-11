@@ -1,0 +1,135 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  loading?: 'lazy' | 'eager';
+  class?: string;
+  style?: string;
+  quality?: number;
+  format?: 'webp' | 'avif' | 'jpg' | 'png';
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  loading = 'lazy',
+  class: className = '',
+  style = '',
+  quality = 80,
+  format = 'webp'
+} = Astro.props;
+
+// Generate optimized image URLs for different formats and sizes
+const generateOptimizedUrl = (originalSrc: string, w?: number, h?: number, fmt?: string, q?: number) => {
+  // For external images (Unsplash, etc), use their optimization params
+  if (originalSrc.includes('unsplash.com')) {
+    let optimizedUrl = originalSrc;
+    if (w && h) {
+      // Update or add width/height params
+      optimizedUrl = optimizedUrl.replace(/w=\d+/, `w=${w}`).replace(/h=\d+/, `h=${h}`);
+      if (!optimizedUrl.includes('w=')) optimizedUrl += `&w=${w}`;
+      if (!optimizedUrl.includes('h=')) optimizedUrl += `&h=${h}`;
+    }
+    if (fmt && fmt !== 'jpg') {
+      optimizedUrl += `&fm=${fmt}`;
+    }
+    if (q && q !== 80) {
+      optimizedUrl += `&q=${q}`;
+    }
+    optimizedUrl += '&auto=format';
+    return optimizedUrl;
+  }
+  
+  // For local images, return as-is (would need build-time optimization)
+  return originalSrc;
+};
+
+// Generate different sizes for responsive images
+const sizes = [
+  { size: 400, media: '(max-width: 640px)' },
+  { size: 800, media: '(max-width: 1024px)' },
+  { size: 1200, media: '(min-width: 1025px)' }
+];
+
+const webpSources = sizes.map(({ size, media }) => ({
+  srcset: generateOptimizedUrl(src, size, height ? Math.round((height * size) / (width || size)) : undefined, 'webp', quality),
+  media,
+  type: 'image/webp'
+}));
+
+const avifSources = sizes.map(({ size, media }) => ({
+  srcset: generateOptimizedUrl(src, size, height ? Math.round((height * size) / (width || size)) : undefined, 'avif', quality),
+  media,
+  type: 'image/avif'
+}));
+
+const fallbackSrc = generateOptimizedUrl(src, width, height, 'jpg', quality);
+---
+
+<picture class={className} style={style}>
+  <!-- AVIF format (best compression) -->
+  {avifSources.map(source => (
+    <source
+      srcset={source.srcset}
+      media={source.media}
+      type={source.type}
+    />
+  ))}
+  
+  <!-- WebP format (good compression, wide support) -->
+  {webpSources.map(source => (
+    <source
+      srcset={source.srcset}
+      media={source.media}
+      type={source.type}
+    />
+  ))}
+  
+  <!-- Fallback image -->
+  <img
+    src={fallbackSrc}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={loading}
+    decoding="async"
+    style={style}
+    class={className}
+  />
+</picture>
+
+<style>
+  picture {
+    display: block;
+  }
+  
+  img {
+    max-width: 100%;
+    height: auto;
+    transition: opacity 0.3s ease;
+  }
+  
+  /* Lazy loading animation */
+  img[loading="lazy"] {
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
+  }
+  
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /* Responsive image optimizations */
+  @media (max-width: 640px) {
+    img {
+      width: 100%;
+      object-fit: cover;
+    }
+  }
+</style>
