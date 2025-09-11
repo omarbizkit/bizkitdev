@@ -108,16 +108,27 @@ import ModernHero from '../components/ModernHero.astro';
               <div class="text-sm text-gray-400">Years Experience</div>
             </div>
             <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-lg p-4">
-              <div class="text-2xl font-bold text-purple-400 mb-1">20+</div>
-              <div class="text-sm text-gray-400">Projects Completed</div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-green-400">〈/〉</span>
+                <span id="lines-counter" class="text-2xl font-bold text-green-400">0</span>
+              </div>
+              <div class="text-sm text-gray-400">Lines of Code Today</div>
             </div>
             <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-lg p-4">
               <div class="text-2xl font-bold text-pink-400 mb-1">100%</div>
               <div class="text-sm text-gray-400">Client Satisfaction</div>
             </div>
             <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-lg p-4">
-              <div class="text-2xl font-bold text-green-400 mb-1">∞</div>
-              <div class="text-sm text-gray-400">Coffee Consumed</div>
+              <div class="flex items-center gap-2 mb-2">
+                <img src="/assets/icons/chemex.png" alt="Chemex" class="w-5 h-5" />
+                <span id="coffee-amount" class="text-xl font-bold text-amber-400">0.0g</span>
+              </div>
+              <div class="mb-2">
+                <div class="w-full bg-gray-700 rounded-full h-2">
+                  <div id="coffee-progress" class="bg-gradient-to-r from-amber-500 to-orange-500 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                </div>
+              </div>
+              <div class="text-xs text-gray-400">Coffee Consumed Today</div>
             </div>
           </div>
           
@@ -187,3 +198,196 @@ import ModernHero from '../components/ModernHero.astro';
     animation: fadeInUp 0.8s ease-out;
   }
 </style>
+
+<script>
+  function updateCoffeeConsumption() {
+    // Get current time in MST (UTC-7)
+    const now = new Date();
+    const mstOffset = -7 * 60; // MST is UTC-7
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const mstTime = new Date(utc + (mstOffset * 60000));
+    
+    const hours = mstTime.getHours();
+    const minutes = mstTime.getMinutes();
+    const currentTimeInMinutes = hours * 60 + minutes;
+    
+    // Coffee consumption schedule: 5 AM (300 min) to 12 PM (720 min)
+    const startTime = 5 * 60; // 5 AM in minutes
+    const endTime = 12 * 60;   // 12 PM in minutes
+    const maxCoffee = 35.22;   // grams
+    
+    let consumedGrams = 0;
+    let progressPercentage = 0;
+    
+    if (currentTimeInMinutes < startTime) {
+      // Before 5 AM - no coffee consumed yet
+      consumedGrams = 0;
+      progressPercentage = 0;
+    } else if (currentTimeInMinutes >= endTime) {
+      // After 12 PM - full coffee consumption
+      consumedGrams = maxCoffee;
+      progressPercentage = 100;
+    } else {
+      // Between 5 AM and 12 PM - gradual consumption
+      const elapsedMinutes = currentTimeInMinutes - startTime;
+      const totalMinutes = endTime - startTime; // 7 hours = 420 minutes
+      
+      progressPercentage = (elapsedMinutes / totalMinutes) * 100;
+      consumedGrams = (progressPercentage / 100) * maxCoffee;
+    }
+    
+    // Update the display
+    const amountElement = document.getElementById('coffee-amount');
+    const progressElement = document.getElementById('coffee-progress');
+    
+    if (amountElement && progressElement) {
+      amountElement.textContent = `${consumedGrams.toFixed(1)}g`;
+      progressElement.style.width = `${progressPercentage}%`;
+      
+      // Add visual effects based on consumption level
+      if (progressPercentage >= 75) {
+        progressElement.className = 'bg-gradient-to-r from-orange-500 to-red-500 h-2 rounded-full transition-all duration-1000';
+        amountElement.className = 'text-xl font-bold text-orange-400';
+      } else if (progressPercentage >= 50) {
+        progressElement.className = 'bg-gradient-to-r from-yellow-500 to-orange-500 h-2 rounded-full transition-all duration-1000';
+        amountElement.className = 'text-xl font-bold text-yellow-400';
+      } else {
+        progressElement.className = 'bg-gradient-to-r from-amber-500 to-orange-500 h-2 rounded-full transition-all duration-1000';
+        amountElement.className = 'text-xl font-bold text-amber-400';
+      }
+    }
+  }
+  
+  // Update immediately and then every minute
+  updateCoffeeConsumption();
+  setInterval(updateCoffeeConsumption, 60000); // Update every minute
+
+  // Lines of Code Counter with Glitch Effect
+  let currentLinesCount = 0;
+  let targetLinesCount = 0;
+  let isGlitching = false;
+  
+  function calculateCurrentLines() {
+    // Get current time in MST (UTC-7)
+    const now = new Date();
+    const mstOffset = -7 * 60; // MST is UTC-7
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const mstTime = new Date(utc + (mstOffset * 60000));
+    
+    const hours = mstTime.getHours();
+    const minutes = mstTime.getMinutes();
+    const currentTimeInMinutes = hours * 60 + minutes;
+    
+    // Coding schedule: 8 AM (480 min) to 5 PM (1020 min)
+    const startTime = 8 * 60; // 8 AM in minutes
+    const endTime = 17 * 60;  // 5 PM in minutes
+    const maxLines = 800;     // lines per day
+    
+    if (currentTimeInMinutes < startTime) {
+      // Before 8 AM - no lines written yet
+      return 0;
+    } else if (currentTimeInMinutes >= endTime) {
+      // After 5 PM - full lines written
+      return maxLines;
+    } else {
+      // Between 8 AM and 5 PM - gradual increase
+      const elapsedMinutes = currentTimeInMinutes - startTime;
+      const totalMinutes = endTime - startTime; // 9 hours = 540 minutes
+      
+      const progress = elapsedMinutes / totalMinutes;
+      return Math.floor(progress * maxLines);
+    }
+  }
+  
+  function startContinuousGlitch() {
+    if (isGlitching) return;
+    
+    isGlitching = true;
+    
+    function glitchStep() {
+      if (!isGlitching) return;
+      
+      targetLinesCount = calculateCurrentLines();
+      
+      // Random glitch behavior
+      const glitchType = Math.random();
+      
+      if (glitchType < 0.15) {
+        // Fast burst towards target (15% chance)
+        if (currentLinesCount < targetLinesCount) {
+          const remaining = targetLinesCount - currentLinesCount;
+          const burstSize = Math.min(Math.floor(Math.random() * 15) + 5, remaining);
+          currentLinesCount += burstSize;
+        }
+        updateDisplay();
+        setTimeout(glitchStep, 50 + Math.random() * 100);
+        
+      } else if (glitchType < 0.35) {
+        // Pause/stutter (20% chance)
+        setTimeout(glitchStep, 300 + Math.random() * 1000);
+        
+      } else if (glitchType < 0.60) {
+        // Normal increment towards target (25% chance)
+        if (currentLinesCount < targetLinesCount) {
+          currentLinesCount += Math.floor(Math.random() * 3) + 1;
+          currentLinesCount = Math.min(currentLinesCount, targetLinesCount);
+        }
+        updateDisplay();
+        setTimeout(glitchStep, 150 + Math.random() * 300);
+        
+      } else if (glitchType < 0.80) {
+        // Glitch flash with fake numbers (20% chance)
+        const originalValue = currentLinesCount;
+        const glitchValue = Math.floor(Math.random() * 9999);
+        
+        // Flash glitch number
+        document.getElementById('lines-counter').textContent = glitchValue.toLocaleString();
+        document.getElementById('lines-counter').style.color = '#ff0080'; // Pink glitch
+        
+        setTimeout(() => {
+          // Sometimes increment, sometimes just display original
+          if (currentLinesCount < targetLinesCount && Math.random() < 0.7) {
+            currentLinesCount = Math.min(originalValue + (Math.floor(Math.random() * 3) + 1), targetLinesCount);
+          } else {
+            currentLinesCount = originalValue;
+          }
+          updateDisplay();
+          document.getElementById('lines-counter').style.color = '#10b981'; // Back to green
+          setTimeout(glitchStep, 200 + Math.random() * 400);
+        }, 100 + Math.random() * 150);
+        
+      } else {
+        // Micro adjustments and display updates (20% chance)
+        if (currentLinesCount < targetLinesCount && Math.random() < 0.3) {
+          currentLinesCount += 1;
+        }
+        updateDisplay();
+        setTimeout(glitchStep, 200 + Math.random() * 500);
+      }
+    }
+    
+    glitchStep();
+  }
+  
+  function updateDisplay() {
+    const linesElement = document.getElementById('lines-counter');
+    if (linesElement) {
+      linesElement.textContent = currentLinesCount.toLocaleString();
+    }
+  }
+  
+  // Initialize lines counter with current time-based value
+  currentLinesCount = Math.max(0, calculateCurrentLines() - Math.floor(Math.random() * 50)); // Start slightly behind
+  targetLinesCount = calculateCurrentLines();
+  updateDisplay();
+  
+  // Start continuous glitch animation
+  setTimeout(() => {
+    startContinuousGlitch();
+  }, 1000 + Math.random() * 2000); // Start after 1-3 seconds
+  
+  // Update target periodically
+  setInterval(() => {
+    targetLinesCount = calculateCurrentLines();
+  }, 30000); // Check every 30 seconds
+</script>
