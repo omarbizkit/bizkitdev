@@ -1,7 +1,7 @@
 # Quickstart Guide: Bizkit.dev Portfolio Website
 
 **Date**: 2025-01-27  
-**Feature**: 001-you-are-helping  
+**Feature**: 001-you-are-helping
 
 ## User Story Validation Scenarios
 
@@ -12,6 +12,7 @@ This guide provides step-by-step validation scenarios for each user story define
 **User Story**: As a visitor, I want to quickly scan a grid of projects so I can discover interesting apps and demos, see their status, and choose which ones to explore further.
 
 ### Validation Steps
+
 1. **Navigate to landing page**
    - Visit `https://bizkit.dev`
    - Verify page loads within 3 seconds
@@ -34,6 +35,7 @@ This guide provides step-by-step validation scenarios for each user story define
    - Verify results update dynamically
 
 ### Success Criteria
+
 - ✅ All project cards load and display correctly
 - ✅ Status badges are visible and color-coded
 - ✅ Tech stack icons render properly
@@ -47,6 +49,7 @@ This guide provides step-by-step validation scenarios for each user story define
 **User Story**: As a visitor, I want to click into a project card to view comprehensive details, screenshots, and direct links to launch the live application or view the source code.
 
 ### Validation Steps
+
 1. **Navigate from project card**
    - Click on any project card from the grid
    - Verify navigation to `/projects/{project-id}` URL
@@ -70,6 +73,7 @@ This guide provides step-by-step validation scenarios for each user story define
    - OpenGraph tags present for social sharing
 
 ### Success Criteria
+
 - ✅ Project details load correctly
 - ✅ Images display properly (or fallback gracefully)
 - ✅ Action buttons work and respect project status
@@ -83,6 +87,7 @@ This guide provides step-by-step validation scenarios for each user story define
 **User Story**: As a potential client, I want to read Omar's professional summary, see his technical skills through project tech stacks, and easily contact him via his direct email address.
 
 ### Validation Steps
+
 1. **Locate About Me section**
    - Scroll to About Me section on landing page
    - Verify tagline "Data and AI Enthusiast" is displayed
@@ -105,6 +110,7 @@ This guide provides step-by-step validation scenarios for each user story define
    - Consistent branding and professional appearance
 
 ### Success Criteria
+
 - ✅ Professional summary is clear and prominent
 - ✅ Technical skills are evident through project tech stacks
 - ✅ Contact email is easily findable and functional
@@ -117,6 +123,7 @@ This guide provides step-by-step validation scenarios for each user story define
 **User Story**: As an interested visitor, I want to subscribe with my email to receive updates when new projects are added to the portfolio.
 
 ### Validation Steps
+
 1. **Locate subscription form**
    - Find Subscribe section on landing page
    - Verify form has email input and submit button
@@ -145,6 +152,7 @@ This guide provides step-by-step validation scenarios for each user story define
    - Confirm email is removed from active subscribers
 
 ### Success Criteria
+
 - ✅ Subscription form is functional and accessible
 - ✅ Email validation works properly
 - ✅ Confirmation email system operational
@@ -158,6 +166,7 @@ This guide provides step-by-step validation scenarios for each user story define
 **User Story**: As a visitor on mobile, I want the site to load quickly and look good on my device, so I can browse easily.
 
 ### Validation Steps
+
 1. **Test mobile performance**
    - Load site on mobile device/emulator
    - Verify page loads within 3 seconds
@@ -181,6 +190,7 @@ This guide provides step-by-step validation scenarios for each user story define
    - Mobile-optimized images load
 
 ### Success Criteria
+
 - ✅ Fast loading on mobile networks
 - ✅ Readable and usable without zooming
 - ✅ Touch targets are appropriately sized
@@ -193,6 +203,7 @@ This guide provides step-by-step validation scenarios for each user story define
 **User Story**: As a visitor, I want to optionally authenticate without it blocking my access to the site.
 
 ### Validation Steps
+
 1. **Test unauthenticated access**
    - Browse entire site without logging in
    - Verify all content is accessible
@@ -215,6 +226,7 @@ This guide provides step-by-step validation scenarios for each user story define
    - Verify session is maintained
 
 ### Success Criteria
+
 - ✅ Site fully functional without authentication
 - ✅ Optional login enhances but doesn't block experience
 - ✅ Authentication options work properly
@@ -225,18 +237,21 @@ This guide provides step-by-step validation scenarios for each user story define
 ## Performance Validation
 
 ### Lighthouse Score Targets
+
 - **Performance**: 90+ (mobile and desktop)
 - **Accessibility**: 90+
 - **Best Practices**: 90+
 - **SEO**: 90+
 
 ### Key Metrics
+
 - **First Contentful Paint**: < 2 seconds
 - **Time to Interactive**: < 3 seconds
 - **Total Bundle Size**: < 1MB initial load
 - **Image Optimization**: WebP format with fallbacks
 
 ### Accessibility Checklist
+
 - ✅ Keyboard navigation works for all interactive elements
 - ✅ Color contrast meets WCAG AA standards
 - ✅ All images have descriptive alt text
@@ -249,6 +264,7 @@ This guide provides step-by-step validation scenarios for each user story define
 ## SEO Validation
 
 ### Technical SEO
+
 - ✅ Unique title tags for each page
 - ✅ Meta descriptions under 160 characters
 - ✅ OpenGraph tags for social sharing
@@ -257,6 +273,7 @@ This guide provides step-by-step validation scenarios for each user story define
 - ✅ Robots.txt configured properly
 
 ### Content SEO
+
 - ✅ Semantic HTML structure
 - ✅ Proper use of headings (h1-h6)
 - ✅ Internal linking between pages
@@ -268,10 +285,12 @@ This guide provides step-by-step validation scenarios for each user story define
 ## Browser Compatibility Testing
 
 ### Target Browsers
+
 - **Desktop**: Chrome (latest), Firefox (latest), Safari (latest), Edge (latest)
 - **Mobile**: Safari iOS (latest), Chrome Android (latest)
 
 ### Feature Testing
+
 - ✅ CSS Grid and Flexbox layouts
 - ✅ Modern JavaScript features (ES2020+)
 - ✅ Web fonts loading

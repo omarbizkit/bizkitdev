@@ -6,6 +6,7 @@
 **Input**: User description: "You are helping me build the web application for my portfolio site bizkit.dev using Spec Kit. This project should follow the spec-driven development workflow and align with the constraints defined in constitution.md."
 
 ## Execution Flow (main)
+
 ```
 1. Parse user description from Input
    → Portfolio website for Omar's projects with neon sci-fi theme
@@ -30,23 +31,27 @@
 ---
 
 ## ⚡ Quick Guidelines
+
 - ✅ Focus on WHAT users need and WHY
 - ❌ Avoid HOW to implement (no tech stack, APIs, code structure)
 - 👥 Written for business stakeholders, not developers
 
 ### Section Requirements
+
 - **Mandatory sections**: Must be completed for every feature
 - **Optional sections**: Include only when relevant to the feature
 - When a section doesn't apply, remove it entirely (don't leave as "N/A")
 
 ### For AI Generation
+
 When creating this spec from a user prompt:
+
 1. **Mark all ambiguities**: Use [NEEDS CLARIFICATION: specific question] for any assumption you'd need to make
 2. **Don't guess**: If the prompt doesn't specify something (e.g., "login system" without auth method), mark it
 3. **Think like a tester**: Every vague requirement should fail the "testable and unambiguous" checklist item
 4. **Common underspecified areas**:
    - User types and permissions
-   - Data retention/deletion policies  
+   - Data retention/deletion policies
    - Performance targets and scale
    - Error handling behaviors
    - Integration requirements
@@ -54,7 +59,7 @@ When creating this spec from a user prompt:
 
 ---
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### Primary User Stories
 
@@ -86,11 +91,12 @@ As an interested visitor, I want to subscribe with my email to receive updates w
 - What occurs if someone tries to launch an "Idea" status project? (disable launch button, show status-appropriate messaging)
 - How does the site behave with very long project descriptions? (proper text truncation and "read more" functionality)
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
 **Landing Page Requirements**
+
 - **FR-001**: System MUST display a hero section with site title "bizkit.dev" and tagline "Data and AI Enthusiast"
 - **FR-002**: System MUST show a projects grid with cards containing project name, short description, status badge, and tech stack icons
 - **FR-003**: System MUST include an About Me section displaying "Data and AI Enthusiast"
@@ -99,29 +105,34 @@ As an interested visitor, I want to subscribe with my email to receive updates w
 - **FR-006**: System MUST display a footer with branding, GitHub link, contact email, and subscribe link
 
 **Project Detail Pages**
+
 - **FR-007**: System MUST generate static detail pages for each project from JSON data
 - **FR-008**: Each project detail page MUST display project name, banner/screenshot, full description, status badge, and tech stack icons
 - **FR-009**: Each project detail page MUST provide "Launch App" link to subdomain and "View Code" link to GitHub repository
 - **FR-010**: Project detail pages MUST be accessible via navigation from project cards on landing page
 
 **Data Management**
+
 - **FR-011**: System MUST consume all project data from a centralized JSON file
 - **FR-012**: Project JSON MUST include: id, name, description_short, description_long, status, tech_stack, subdomain_url, github_url, screenshot_url
 - **FR-013**: System MUST support project status values: "idea", "development", "live"
 - **FR-014**: System MUST map tech stack strings to appropriate visual icons
 
 **User Engagement**
+
 - **FR-015**: System MUST store subscriber emails in a persistent database
 - **FR-016**: System MUST provide confirmation feedback when email subscription succeeds
 - **FR-017**: System MUST prevent duplicate email subscriptions
 
 **Design & Experience**
+
 - **FR-018**: System MUST implement a dark, neon sci-fi theme with purple/blue/pink highlights
 - **FR-019**: System MUST be fully responsive across desktop, tablet, and mobile viewports
 - **FR-020**: System MUST ensure minimum 44x44px touch target sizes for mobile accessibility
 - **FR-021**: System MUST implement smooth transitions and animations using CSS
 
 **SEO & Accessibility**
+
 - **FR-022**: Each page MUST have unique meta titles and descriptions
 - **FR-023**: System MUST generate OpenGraph and Twitter card metadata for social sharing
 - **FR-024**: System MUST auto-generate sitemap.xml and robots.txt files
@@ -131,23 +142,26 @@ As an interested visitor, I want to subscribe with my email to receive updates w
 - **FR-028**: System MUST meet WCAG AA color contrast standards
 
 **Consistency & Branding**
+
 - **FR-029**: System MUST maintain identical header with logo and navigation across all pages
 - **FR-030**: System MUST maintain identical footer across all pages and subdomain applications
 - **FR-031**: Subdomain applications MUST include a link back to the main bizkit.dev site
 
 **Authentication (Optional)**
+
 - **FR-032**: System MUST provide optional authentication without blocking anonymous access
 - **FR-033**: System MUST support Google OAuth and email/password authentication methods
 - **FR-034**: System MUST share authentication sessions across subdomains when logged in
 
 **Performance & Security**
+
 - **FR-035**: System MUST achieve Lighthouse scores of 90+ for Performance, Accessibility, Best Practices, and SEO
 - **FR-036**: System MUST implement lazy loading for images below the fold
 - **FR-037**: Total initial page load MUST not exceed 1MB
 - **FR-038**: System MUST implement Content Security Policy headers
 - **FR-039**: System MUST use HTTPS for all resources and communications
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Project**: Represents a portfolio item with metadata including identification, descriptions, development status, technology stack, and associated URLs for live demo and source code
 - **Subscriber**: Represents an email address that has opted in to receive updates about new projects and portfolio changes
@@ -156,17 +170,20 @@ As an interested visitor, I want to subscribe with my email to receive updates w
 ---
 
 ## Review & Acceptance Checklist
-*GATE: Automated checks run during main() execution*
+
+_GATE: Automated checks run during main() execution_
 
 ### Content Quality
+
 - [x] No implementation details (languages, frameworks, APIs)
 - [x] Focused on user value and business needs
 - [x] Written for non-technical stakeholders
 - [x] All mandatory sections completed
 
 ### Requirement Completeness
+
 - [x] No [NEEDS CLARIFICATION] markers remain
-- [x] Requirements are testable and unambiguous  
+- [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Scope is clearly bounded
 - [x] Dependencies and assumptions identified
@@ -174,7 +191,8 @@ As an interested visitor, I want to subscribe with my email to receive updates w
 ---
 
 ## Execution Status
-*Updated by main() during processing*
+
+_Updated by main() during processing_
 
 - [x] User description parsed
 - [x] Key concepts extracted

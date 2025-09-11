@@ -6,58 +6,58 @@ module.exports = {
     extend: {
       colors: {
         // Dark neon sci-fi theme colors
-        'neon': {
-          'cyan': '#00ffff',
-          'purple': '#9f40ff',
-          'pink': '#ff00ff',
-          'green': '#00ff41',
-          'blue': '#0080ff',
+        neon: {
+          cyan: '#00ffff',
+          purple: '#9f40ff',
+          pink: '#ff00ff',
+          green: '#00ff41',
+          blue: '#0080ff'
         },
-        'cyber': {
-          'dark': '#0a0a0a',
-          'darker': '#050505',
-          'gray': '#1a1a1a',
-          'light': '#2a2a2a',
+        cyber: {
+          dark: '#0a0a0a',
+          darker: '#050505',
+          gray: '#1a1a1a',
+          light: '#2a2a2a'
         }
       },
       fontFamily: {
-        'mono': ['JetBrains Mono', 'Consolas', 'Monaco', 'monospace'],
-        'sans': ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Consolas', 'Monaco', 'monospace'],
+        sans: ['Inter', 'system-ui', 'sans-serif']
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'glow': 'glow 2s ease-in-out infinite alternate',
-        'flicker': 'flicker 1.5s infinite alternate',
+        glow: 'glow 2s ease-in-out infinite alternate',
+        flicker: 'flicker 1.5s infinite alternate'
       },
       keyframes: {
         glow: {
-          'from': {
-            'text-shadow': '0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff',
+          from: {
+            'text-shadow': '0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff'
           },
-          'to': {
-            'text-shadow': '0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff',
-          },
+          to: {
+            'text-shadow': '0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff'
+          }
         },
         flicker: {
           '0%, 18%, 22%, 25%, 53%, 57%, 100%': {
-            'text-shadow': '0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff, 0 0 20px #00ffff',
+            'text-shadow': '0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff, 0 0 20px #00ffff'
           },
           '20%, 24%, 55%': {
-            'text-shadow': 'none',
-          },
-        },
+            'text-shadow': 'none'
+          }
+        }
       },
       boxShadow: {
-        'neon': '0 0 5px theme(colors.neon.cyan), 0 0 20px theme(colors.neon.cyan), 0 0 35px theme(colors.neon.cyan)',
-        'neon-purple': '0 0 5px theme(colors.neon.purple), 0 0 20px theme(colors.neon.purple), 0 0 35px theme(colors.neon.purple)',
-        'neon-pink': '0 0 5px theme(colors.neon.pink), 0 0 20px theme(colors.neon.pink), 0 0 35px theme(colors.neon.pink)',
+        neon: '0 0 5px theme(colors.neon.cyan), 0 0 20px theme(colors.neon.cyan), 0 0 35px theme(colors.neon.cyan)',
+        'neon-purple':
+          '0 0 5px theme(colors.neon.purple), 0 0 20px theme(colors.neon.purple), 0 0 35px theme(colors.neon.purple)',
+        'neon-pink':
+          '0 0 5px theme(colors.neon.pink), 0 0 20px theme(colors.neon.pink), 0 0 35px theme(colors.neon.pink)'
       },
       backdropBlur: {
-        'xs': '2px',
+        xs: '2px'
       }
-    },
+    }
   },
-  plugins: [
-    require('@tailwindcss/typography'),
-  ],
+  plugins: [require('@tailwindcss/typography')]
 }

@@ -1,14 +1,16 @@
 # Data Model: Bizkit.dev Portfolio Website
 
 **Date**: 2025-01-27  
-**Feature**: 001-you-are-helping  
+**Feature**: 001-you-are-helping
 
 ## Entity Definitions
 
 ### Project
+
 Represents a portfolio project with all metadata needed for display and navigation.
 
 **Fields**:
+
 - `id: string` - Unique identifier (kebab-case, used in URLs)
 - `name: string` - Display name of the project
 - `description_short: string` - Brief description for project cards (max 150 chars)
@@ -22,6 +24,7 @@ Represents a portfolio project with all metadata needed for display and navigati
 - `featured: boolean` - Whether to highlight on landing page
 
 **Validation Rules**:
+
 - `id` must be unique across all projects
 - `id` must match pattern: `/^[a-z0-9-]+$/`
 - `description_short` length ≤ 150 characters
@@ -32,6 +35,7 @@ Represents a portfolio project with all metadata needed for display and navigati
 - `screenshot_url` if present, must be valid image URL
 
 **State Transitions**:
+
 ```
 idea → development → live
      ↙              ↙
@@ -39,9 +43,11 @@ idea → development → live
 ```
 
 ### Subscriber
+
 Represents an email subscriber for project updates.
 
 **Fields**:
+
 - `id: uuid` - Auto-generated unique identifier
 - `email: string` - Email address (unique)
 - `subscribed_at: timestamp` - When subscription occurred
@@ -49,6 +55,7 @@ Represents an email subscriber for project updates.
 - `active: boolean` - Whether subscription is active
 
 **Validation Rules**:
+
 - `email` must be valid email format
 - `email` must be unique in system
 - `subscribed_at` defaults to current timestamp
@@ -56,6 +63,7 @@ Represents an email subscriber for project updates.
 - `active` defaults to true
 
 **State Transitions**:
+
 ```
 unconfirmed → confirmed
      ↓           ↓
@@ -63,9 +71,11 @@ unsubscribed ← unsubscribed
 ```
 
 ### User (Optional Authentication)
+
 Represents an authenticated user (minimal data collection).
 
 **Fields**:
+
 - `id: uuid` - Auto-generated unique identifier
 - `email: string` - Email address (from OAuth or signup)
 - `provider: AuthProvider` - Authentication method used
@@ -74,6 +84,7 @@ Represents an authenticated user (minimal data collection).
 - `last_seen: timestamp` - Last activity timestamp
 
 **Validation Rules**:
+
 - `email` must be valid email format
 - `provider` must be one of: "google", "email"
 - `provider_id` required for OAuth providers
@@ -81,6 +92,7 @@ Represents an authenticated user (minimal data collection).
 - `last_seen` updated on each session
 
 **Relationships**:
+
 - One User may have one Subscriber record (linked by email)
 - Authentication is always optional
 
@@ -88,8 +100,8 @@ Represents an authenticated user (minimal data collection).
 
 ```typescript
 // Core types
-type ProjectStatus = "idea" | "development" | "live" | "archived"
-type AuthProvider = "google" | "email"
+type ProjectStatus = 'idea' | 'development' | 'live' | 'archived'
+type AuthProvider = 'google' | 'email'
 
 // Project interface
 interface Project {
@@ -152,6 +164,7 @@ interface TechIcon {
 ## Data Storage Strategy
 
 ### Static Data (Build Time)
+
 **Location**: `/src/content/projects.json`  
 **Access**: Loaded at build time via Astro content collections  
 **Updates**: Manual editing, version controlled
@@ -177,11 +190,13 @@ interface TechIcon {
 ```
 
 ### Dynamic Data (Runtime)
+
 **Storage**: Supabase PostgreSQL  
 **Tables**: `subscribers`, `auth.users` (managed by Supabase Auth)  
 **Access**: Supabase client library
 
 #### Subscribers Table Schema
+
 ```sql
 CREATE TABLE subscribers (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -199,18 +214,21 @@ CREATE INDEX idx_subscribers_active ON subscribers(active) WHERE active = true;
 ## Data Access Patterns
 
 ### Project Data
+
 - **Static Generation**: Load all projects at build time
 - **Filtering**: Client-side filtering by status, tech stack
 - **Sorting**: By featured flag, then by created_date (desc)
 - **Detail Pages**: Generated statically for each project
 
 ### Subscriber Management
+
 - **Create**: Insert new subscriber with confirmation email
 - **Confirm**: Update confirmed status via email link
 - **Unsubscribe**: Set active to false (soft delete)
 - **Admin**: Read-only analytics dashboard
 
 ### Authentication (Optional)
+
 - **Login**: Supabase Auth handles OAuth and email flows
 - **Session**: Stored in httpOnly cookies for `.bizkit.dev`
 - **Profile**: Minimal user data, linked to subscriber if email matches
@@ -218,16 +236,19 @@ CREATE INDEX idx_subscribers_active ON subscribers(active) WHERE active = true;
 ## Error Handling
 
 ### Data Validation
+
 - **Client-side**: TypeScript interfaces ensure type safety
 - **Server-side**: Supabase schema constraints prevent invalid data
 - **User input**: Form validation with clear error messages
 
 ### Fallback Strategies
+
 - **Missing screenshots**: Use placeholder images
 - **Failed API calls**: Show error boundaries with retry options
 - **Offline state**: Cache static content, graceful degradation
 
 ### Data Consistency
+
 - **Project updates**: Require rebuild and deployment
 - **Subscriber sync**: Real-time updates via Supabase
 - **Cache invalidation**: Automatic on deployment

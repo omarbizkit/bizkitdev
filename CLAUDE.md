@@ -3,6 +3,7 @@
 Auto-generated from all feature plans. Last updated: 2025-01-27
 
 ## Active Technologies
+
 - Astro framework with TypeScript (001-you-are-helping)
 - NeoDev template for dark neon sci-fi theme (001-you-are-helping)
 - Tailwind CSS for styling (001-you-are-helping)
@@ -10,6 +11,7 @@ Auto-generated from all feature plans. Last updated: 2025-01-27
 - Playwright for E2E testing, Vitest for unit tests (001-you-are-helping)
 
 ## Project Structure
+
 ```
 src/
 ├── components/           # Reusable UI components
@@ -28,21 +30,27 @@ specs/                   # Feature specifications and plans
 ```
 
 ## Commands
+
 # Development
-npm run dev           # Start development server
-npm run build         # Production build
-npm run preview       # Preview production build
+
+npm run dev # Start development server
+npm run build # Production build
+npm run preview # Preview production build
 
 # Testing
-npm run test          # Run unit tests
-npm run test:e2e      # Run E2E tests
+
+npm run test # Run unit tests
+npm run test:e2e # Run E2E tests
 npm run test:contract # Run contract tests
 
 # Deployment
-podman-compose up     # Local container testing
+
+podman-compose up # Local container testing
+
 # Production deployed to Zeabur
 
 ## Code Style
+
 - TypeScript: Follow strict mode, use interfaces for data models
 - Components: Astro components with minimal JavaScript
 - Styling: Tailwind utility classes, responsive design patterns
@@ -50,6 +58,7 @@ podman-compose up     # Local container testing
 - Data: JSON-driven static generation, Supabase for dynamic data
 
 ## Constitutional Requirements
+
 - Test-driven development: RED-GREEN-Refactor cycle enforced
 - Performance: 90+ Lighthouse scores, <1MB initial load
 - Accessibility: WCAG AA compliance, keyboard navigation
@@ -57,6 +66,7 @@ podman-compose up     # Local container testing
 - Security: HTTPS everywhere, CSP headers, input sanitization
 
 ## Recent Changes
+
 - 001-you-are-helping: Added Astro portfolio website with NeoDev theme
 - 001-you-are-helping: Configured Supabase authentication and subscribers
 - 001-you-are-helping: Established testing strategy with Playwright and Vitest

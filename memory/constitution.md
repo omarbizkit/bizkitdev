@@ -3,6 +3,7 @@
 ## Core Principles
 
 ### I. Technology & Frameworks
+
 - Use Astro with the NeoDev template as the base framework
 - Use Tailwind CSS for all styling and responsive design
 - Use Supabase for authentication (Google OAuth and email/password) and the subscribers table
@@ -12,6 +13,7 @@
 - Use Astro's Image component for automatic image optimization
 
 ### II. Design & UI
+
 - Maintain a dark, neon sci-fi theme with purple/blue/pink highlights
 - Ensure responsive design for desktop, tablet, and mobile viewports
 - Include consistent header/footer branding across landing page, detail pages, and subdomains
@@ -21,6 +23,7 @@
 - Implement dark mode as the default and only theme
 
 ### III. Content & Pages
+
 - Every project must have a static detail page generated from JSON, with links to its subdomain and GitHub repo
 - Include an About Me section with the blurb: "Data and AI enthusiast"
 - Include a Contact Me section that displays only the email: omarbizkit@hotmail.com
@@ -35,6 +38,7 @@
 - Header must include navigation: Home, Projects, About, Contact
 
 ### IV. SEO & Accessibility
+
 - Every page must have unique title, meta description, OpenGraph tags, and semantic HTML structure
 - Ensure all images have descriptive alt text
 - Generate sitemap.xml and robots.txt automatically
@@ -47,6 +51,7 @@
 - Add lang attribute to HTML element
 
 ### V. Security & Privacy
+
 - Authentication is always optional; the site must remain usable without logging in
 - Never commit secrets (Supabase keys, API tokens, etc.) to the repository
 - The file `Bizkit.devProjectSpecification.md` must remain private and ignored by Git
@@ -62,6 +67,7 @@
 ## Development Standards
 
 ### Code Quality
+
 - Write clean, modular code with clear separation of concerns
 - Prefer static site generation over client-side fetching for project data
 - Keep performance in mind: optimize assets and pass Lighthouse performance and SEO checks
@@ -71,6 +77,7 @@
 - Implement proper error handling and logging
 
 ### Project Structure
+
 - All project data must be stored in JSON files for static consumption
 - Maintain clear separation between content, components, and utilities
 - Use TypeScript for type safety where applicable
@@ -89,6 +96,7 @@
   - `vite.config.js` - Local development configuration
 
 ### Performance Requirements
+
 - Achieve Lighthouse scores of 90+ for Performance, Accessibility, Best Practices, and SEO
 - Implement lazy loading for images below the fold
 - Minimize JavaScript bundle size (prefer Astro's zero-JS approach)
@@ -97,6 +105,7 @@
 - Total page weight should not exceed 1MB for initial load
 
 ### Deployment & Infrastructure
+
 - **Quick Testing**: Use Vite for rapid local development with hot module replacement (HMR)
 - **Robust Testing**: Use Podman for containerized testing to validate production-like environment locally
 - **Production**: Deploy to Zeabur for production hosting
@@ -113,6 +122,7 @@
 - Include zeabur.json configuration file if needed for custom settings
 
 ### Testing & Maintenance
+
 - **Testing Workflow**:
   1. Quick iterations: Use Vite dev server for immediate feedback during development
   2. Pre-deployment validation: Use Podman to test full containerized build locally
@@ -128,6 +138,7 @@
 - Verify environment variables work correctly in each environment (Vite, Podman, Zeabur)
 
 ### Build & Deployment Configuration
+
 - Use Node.js LTS version for consistency across all environments
 - **Development Scripts**:
   - `npm run dev` or `pnpm dev` - Quick testing with Vite
@@ -144,6 +155,7 @@
 - Include README with clear instructions for all three testing/deployment tiers
 
 ### Git Workflow (Solo Development)
+
 - Use feature branches for new features and major changes
 - Direct commits to main branch allowed for minor fixes and updates
 - Self-review and merge own pull requests without external approval

@@ -296,7 +296,7 @@ components:
           example: true
         message:
           type: string
-          example: "Please check your email to confirm your subscription"
+          example: 'Please check your email to confirm your subscription'
         subscriber_id:
           type: string
           format: uuid
@@ -350,4 +350,4 @@ components:
       description: Supabase session cookie
 
 security:
-  - {}  # Most endpoints are public
+  - {} # Most endpoints are public
