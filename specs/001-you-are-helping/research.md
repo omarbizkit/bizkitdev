@@ -7,14 +7,16 @@
 
 ### Framework Choice: Astro
 
-**Decision**: Use Astro framework with NeoDev template as the base  
+**Decision**: Use Astro framework with custom NeoDev-inspired styling  
 **Rationale**:
 
 - SSG-first approach aligns with performance requirements (90+ Lighthouse scores)
 - Built-in component islands for interactive elements (subscription form)
 - Excellent TypeScript support and developer experience
-- NeoDev template provides the exact dark neon sci-fi aesthetic required
+- Custom implementation of NeoDev's dark neon sci-fi aesthetic without premium template costs
+- Full control over cyberpunk design elements (neon-cyan/purple color scheme, cyber-grid layouts)
 - Zero-JS by default with opt-in hydration for optimal performance
+- Superior accessibility and customization compared to premium templates
 
 **Alternatives Considered**:
 
@@ -31,7 +33,7 @@
 - Built-in responsive design classes
 - Excellent dark mode support
 - Integrates seamlessly with Astro
-- Consistent with NeoDev template
+- Consistent with NeoDev-inspired custom design system
 
 **Alternatives Considered**:
 

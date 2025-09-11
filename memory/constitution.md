@@ -4,7 +4,7 @@
 
 ### I. Technology & Frameworks
 
-- Use Astro with the NeoDev template as the base framework
+- Use Astro with custom NeoDev-inspired design system (cyberpunk neon aesthetic)
 - Use Tailwind CSS for all styling and responsive design
 - Use Supabase for authentication (Google OAuth and email/password) and the subscribers table
 - All project metadata must be stored in a JSON file and consumed statically (SSG)

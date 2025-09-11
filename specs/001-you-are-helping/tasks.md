@@ -7,14 +7,14 @@
 
 ```
 1. Load plan.md from feature directory ✅
-   → Tech stack: Astro + TypeScript, NeoDev template, Tailwind CSS, Supabase
+   → Tech stack: Astro + TypeScript, custom NeoDev-inspired styling, Tailwind CSS, Supabase
    → Structure: Astro SSG with components, pages, content
 2. Load design documents: ✅
    → data-model.md: Project, Subscriber, User entities → model tasks
    → contracts/api-schema.yaml: API endpoints → contract test tasks
    → research.md: Technology decisions → setup tasks
 3. Generate tasks by category: ✅
-   → Setup: Astro project, NeoDev template, dependencies
+   → Setup: Astro project, NeoDev-inspired custom styling, dependencies
    → Tests: contract tests, integration tests, E2E tests
    → Core: components, pages, data models
    → Integration: Supabase, API endpoints, SEO
@@ -52,7 +52,7 @@ Using Astro SSG structure as defined in plan.md:
 
 ## Phase 3.1: Project Setup
 
-- [ ] T001 Initialize Astro project with TypeScript and NeoDev template
+- [ ] T001 Initialize Astro project with TypeScript and NeoDev-inspired styling
 - [ ] T002 [P] Configure Tailwind CSS and design system
 - [ ] T003 [P] Set up Supabase project and environment variables
 - [ ] T004 [P] Configure Playwright for E2E testing

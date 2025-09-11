@@ -5,10 +5,18 @@ Auto-generated from all feature plans. Last updated: 2025-01-27
 ## Active Technologies
 
 - Astro framework with TypeScript (001-you-are-helping)
-- NeoDev template for dark neon sci-fi theme (001-you-are-helping)
+- Custom NeoDev-inspired design system with cyberpunk neon aesthetic (001-you-are-helping)
 - Tailwind CSS for styling (001-you-are-helping)
 - Supabase for authentication and data storage (001-you-are-helping)
 - Playwright for E2E testing, Vitest for unit tests (001-you-are-helping)
+
+## Project Owner & Branding
+
+- **Name**: Omar Torres
+- **Professional Identity**: Data and AI Enthusiast  
+- **Tagline**: "The Mind Behind The Code"
+- **Contact**: omarbizkit@hotmail.com
+- **Domain**: bizkit.dev
 
 ## Project Structure
 

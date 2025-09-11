@@ -32,12 +32,12 @@
 
 ## Summary
 
-Build a modern portfolio website for bizkit.dev showcasing Omar's projects with a dark neon sci-fi theme. The site will feature a landing page with project grid, static project detail pages generated from JSON, optional Supabase authentication, email subscription capability, and consistent branding across subdomains. Built using Astro with the NeoDev template, optimized for SEO and performance with 90+ Lighthouse scores.
+Build a modern portfolio website for bizkit.dev showcasing Omar Torres's projects with a dark neon sci-fi theme. The site will feature a landing page with project grid, static project detail pages generated from JSON, optional Supabase authentication, email subscription capability, and consistent branding across subdomains. Built using Astro with custom NeoDev-inspired design system, optimized for SEO and performance with 90+ Lighthouse scores.
 
 ## Technical Context
 
 **Language/Version**: JavaScript/TypeScript with Node.js LTS  
-**Primary Dependencies**: Astro framework, NeoDev template, Tailwind CSS, Supabase  
+**Primary Dependencies**: Astro framework, custom NeoDev-inspired design system, Tailwind CSS, Supabase  
 **Storage**: Supabase (PostgreSQL) for authentication and subscribers, JSON files for project metadata  
 **Testing**: Playwright for E2E, Vitest for unit tests, Lighthouse CI for performance  
 **Target Platform**: Web (SSG deployment to Zeabur)
@@ -220,7 +220,7 @@ _This section describes what the /tasks command will do - DO NOT execute during 
 
 **Estimated Task Categories**:
 
-1. **Setup & Configuration** (5 tasks): Astro setup, NeoDev template, Supabase config
+1. **Setup & Configuration** (5 tasks): Astro setup, NeoDev-inspired styling, Supabase config
 2. **Data & Contracts** (8 tasks): TypeScript interfaces, API contracts, JSON schema
 3. **Component Development** (12 tasks): Core components, layouts, interactive elements
 4. **Page Implementation** (6 tasks): Landing page, project details, error handling
