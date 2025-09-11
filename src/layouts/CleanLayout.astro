@@ -70,57 +70,7 @@ const { title = 'Omar Torres | Data & AI Enthusiast', description = 'The Mind Be
     color-scheme: dark;
   }
   
-  /* Light theme styles */
-  [data-theme="light"] {
-    color-scheme: light;
-  }
-  
-  [data-theme="light"] body {
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
-    color: #1e293b;
-  }
-  
-  [data-theme="light"] body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    background: 
-      radial-gradient(circle at 25% 25%, rgba(159, 64, 255, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 75% 75%, rgba(0, 255, 255, 0.1) 0%, transparent 50%);
-  }
-  
-  /* Light theme navigation */
-  [data-theme="light"] nav {
-    background: rgba(255, 255, 255, 0.8);
-    border-bottom: 1px solid rgba(159, 64, 255, 0.2);
-  }
-  
-  [data-theme="light"] nav a {
-    color: #475569;
-  }
-  
-  [data-theme="light"] nav a:hover {
-    color: var(--accent-purple);
-  }
-  
-  [data-theme="light"] .font-semibold {
-    color: #1e293b;
-  }
-  
-  /* Light theme footer */
-  [data-theme="light"] footer {
-    border-top: 1px solid rgba(159, 64, 255, 0.2);
-  }
-  
-  [data-theme="light"] footer p {
-    color: #64748b;
-  }
-  
-  /* Light theme gradients */
-  [data-theme="light"] .bg-gradient-to-r.from-cyan-400.to-purple-500 {
-    background: linear-gradient(to right, var(--accent-purple), var(--accent-cyan));
-  }
+  /* Light theme handled by comprehensive theme.css */
   
   /* Smooth transitions between themes */
   body, nav, footer {
