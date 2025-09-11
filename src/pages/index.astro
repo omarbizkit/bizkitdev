@@ -264,10 +264,8 @@ import ModernHero from '../components/ModernHero.astro';
   updateCoffeeConsumption();
   setInterval(updateCoffeeConsumption, 60000); // Update every minute
 
-  // Lines of Code Counter with Glitch Effect
+  // Lines of Code Counter
   let currentLinesCount = 0;
-  let targetLinesCount = 0;
-  let isGlitching = false;
   
   function calculateCurrentLines() {
     // Get current time in MST (UTC-7)
@@ -301,76 +299,6 @@ import ModernHero from '../components/ModernHero.astro';
     }
   }
   
-  function startContinuousGlitch() {
-    if (isGlitching) return;
-    
-    isGlitching = true;
-    
-    function glitchStep() {
-      if (!isGlitching) return;
-      
-      targetLinesCount = calculateCurrentLines();
-      
-      // Random glitch behavior
-      const glitchType = Math.random();
-      
-      if (glitchType < 0.15) {
-        // Fast burst towards target (15% chance)
-        if (currentLinesCount < targetLinesCount) {
-          const remaining = targetLinesCount - currentLinesCount;
-          const burstSize = Math.min(Math.floor(Math.random() * 15) + 5, remaining);
-          currentLinesCount += burstSize;
-        }
-        updateDisplay();
-        setTimeout(glitchStep, 50 + Math.random() * 100);
-        
-      } else if (glitchType < 0.35) {
-        // Pause/stutter (20% chance)
-        setTimeout(glitchStep, 300 + Math.random() * 1000);
-        
-      } else if (glitchType < 0.60) {
-        // Normal increment towards target (25% chance)
-        if (currentLinesCount < targetLinesCount) {
-          currentLinesCount += Math.floor(Math.random() * 3) + 1;
-          currentLinesCount = Math.min(currentLinesCount, targetLinesCount);
-        }
-        updateDisplay();
-        setTimeout(glitchStep, 150 + Math.random() * 300);
-        
-      } else if (glitchType < 0.80) {
-        // Glitch flash with fake numbers (20% chance)
-        const originalValue = currentLinesCount;
-        const glitchValue = Math.floor(Math.random() * 9999);
-        
-        // Flash glitch number
-        document.getElementById('lines-counter').textContent = glitchValue.toLocaleString();
-        document.getElementById('lines-counter').style.color = '#ff0080'; // Pink glitch
-        
-        setTimeout(() => {
-          // Sometimes increment, sometimes just display original
-          if (currentLinesCount < targetLinesCount && Math.random() < 0.7) {
-            currentLinesCount = Math.min(originalValue + (Math.floor(Math.random() * 3) + 1), targetLinesCount);
-          } else {
-            currentLinesCount = originalValue;
-          }
-          updateDisplay();
-          document.getElementById('lines-counter').style.color = '#10b981'; // Back to green
-          setTimeout(glitchStep, 200 + Math.random() * 400);
-        }, 100 + Math.random() * 150);
-        
-      } else {
-        // Micro adjustments and display updates (20% chance)
-        if (currentLinesCount < targetLinesCount && Math.random() < 0.3) {
-          currentLinesCount += 1;
-        }
-        updateDisplay();
-        setTimeout(glitchStep, 200 + Math.random() * 500);
-      }
-    }
-    
-    glitchStep();
-  }
-  
   function updateDisplay() {
     const linesElement = document.getElementById('lines-counter');
     if (linesElement) {
@@ -379,17 +307,12 @@ import ModernHero from '../components/ModernHero.astro';
   }
   
   // Initialize lines counter with current time-based value
-  currentLinesCount = Math.max(0, calculateCurrentLines() - Math.floor(Math.random() * 50)); // Start slightly behind
-  targetLinesCount = calculateCurrentLines();
+  currentLinesCount = calculateCurrentLines();
   updateDisplay();
   
-  // Start continuous glitch animation
-  setTimeout(() => {
-    startContinuousGlitch();
-  }, 1000 + Math.random() * 2000); // Start after 1-3 seconds
-  
-  // Update target periodically
+  // Update counter periodically
   setInterval(() => {
-    targetLinesCount = calculateCurrentLines();
+    currentLinesCount = calculateCurrentLines();
+    updateDisplay();
   }, 30000); // Check every 30 seconds
 </script>
