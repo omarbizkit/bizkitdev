@@ -41,17 +41,30 @@ jobs:
 
       - name: Start development server
         run: |
-          npm run dev &
-          sleep 10
-          curl --retry 10 --retry-delay 3 --retry-connrefused http://localhost:4321
+          npm run dev -- --port 4322 &
+          DEV_PID=$!
+          sleep 5
+          timeout=60
+          while ! curl -s -f http://localhost:4322/api/health > /dev/null; do
+            sleep 2
+            timeout=$((timeout - 2))
+            if [ $timeout -eq 0 ]; then
+              echo "❌ Server failed to start within 60 seconds"
+              kill $DEV_PID 2>/dev/null || true
+              exit 1
+            fi
+            echo "⏳ Still waiting... (${timeout}s remaining)"
+          done
+          echo "✅ Server is ready on port 4322"
         env:
           PUBLIC_SUPABASE_URL: https://mock.supabase.co
           PUBLIC_SUPABASE_ANON_KEY: mock-anon-key-safe-for-ci
+          TEST_BASE_URL: http://localhost:4322
 
       - name: Run contract tests
         run: npm run test:contract
         env:
-          TEST_BASE_URL: http://localhost:4321
+          TEST_BASE_URL: http://localhost:4322
           PUBLIC_SUPABASE_URL: https://mock.supabase.co
           PUBLIC_SUPABASE_ANON_KEY: mock-anon-key-safe-for-ci
 
