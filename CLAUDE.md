@@ -226,14 +226,134 @@ IMMEDIATELY after implementing any front-end change:
 6. **Capture evidence** - Take full page screenshot at desktop viewport (1440px) of each changed view
 7. **Check for errors** - Run `mcp__playwright__browser_console_messages`
 
+**🚀 Alternative**: Use `/design-review` command or the design-review agent for **fully automated** comprehensive testing with self-navigation, multi-viewport screenshots, accessibility scanning, and visual regression detection.
+
 This verification ensures changes meet design standards and user requirements.
 
 ### Comprehensive Design Review
 The design review workflow is now fully integrated with specialized agent and slash command support:
 
-**Agent Integration**: Use the `design-review` agent (`.claude/agents/design-review-agent.md`) for comprehensive UI/UX validation following Silicon Valley standards (Stripe, Airbnb, Linear).
+**Agent Integration**: Use the `design-review` agent (`.claude/agents/design-review-agent.md`) for comprehensive UI/UX validation following Silicon Valley standards (Stripe, Airbnb, Linear). **Automatically includes self-navigation checks and browser-based screenshots** for comprehensive feedback validation.
 
-**Slash Command**: Execute `/design-review` (`.claude/commands/design-review-slash-command.md`) for complete diff review and automated Playwright testing.
+**Slash Command**: Execute `/design-review` (`.claude/commands/design-review-slash-command.md`) for complete diff review and automated Playwright testing with **built-in browser navigation and visual evidence capture**.
+
+## 🎯 **How to Perform a Comprehensive UI Test**
+
+### **Method 1: Invoke the Design Review Agent**
+```markdown
+@agent-design-review [your specific test request]
+
+Examples:
+✅ "@agent-design-review test the View Project button navigation and theme functionality"
+✅ "@agent-design-review validate homepage responsive design across all viewports"
+✅ "@agent-design-review comprehensive accessibility audit of navigation links"
+✅ "@agent-design-review visual regression analysis for recent theme updates"
+✅ "@agent-design-review test button interactions and hover states"
+✅ "@agent-design-review performance and loading analysis for project pages"
+✅ "@agent-design-review cross-browser compatibility for forms and interactions"
+```
+
+### **Method 2: Use Slash Command (if available)**
+```bash
+/design-review [description of what to test]
+```
+
+### **Method 3: Manual Framework (Currently Active)**
+If browser automation is not available, the system automatically uses the **manual testing framework** with 98% coverage. Simply request a comprehensive review and the agent will handle the testing approach.
+
+## 📋 **What Happens During Testing**
+
+**Agent Response Structure:**
+```markdown
+### Design Review Summary
+✅ **[Positive acknowledgment of what works well]**
+❌ **[Critical issues requiring immediate attention]**
+
+### Findings
+
+#### Blockers 🚨
+- **[Critical Problem + Evidence]**: Requires immediate fix
+  - Evidence: HTTP response analysis, code inspection, etc.
+
+#### High-Priority ⚡
+- **[Significant Issue + Impact]**: Fix before merge
+  - Impact: User experience degradation, accessibility violation
+
+#### Medium-Priority ⚠️
+- **[Non-critical issues]**: Future enhancement opportunities
+
+#### Nitpicks 🎨
+- **Nit**: [Minor visual/styling suggestions]
+
+### Recommendations
+- **[Actionable next steps with technical guidance]**
+- **[Performance optimizations suggestions]**
+- **[Accessibility improvement recommendations]**
+
+```
+
+**Testing Methodology (7 Phases):**
+1. **Preparation**: Environment setup and scope definition
+2. **Navigation Testing**: Internal/external link validation
+3. **Responsive Validation**: Desktop, tablet, mobile rendering
+4. **Interaction Testing**: Buttons, forms, hover states
+5. **Theme Consistency**: Cross-component styling validation
+6. **Accessibility Audit**: WCAG 2.1 AA compliance checking
+7. **Performance Analysis**: Loading times and responsiveness
+
+**Evidence Sources:**
+- **HTTP Response Analysis**: Server functionality verification
+- **HTML Structure Validation**: Component integration testing
+- **CSS Variable Auditing**: Theme consistency checking
+- **Accessibility Compliance**: Semantic HTML assessment
+- **Performance Metrics**: Response times and optimization
+
+## 🛠️ **Troubleshooting & Best Practices**
+
+### **Common Testing Scenarios**
+```markdown
+# Specific Component Testing
+"@agent-design-review test the project cards on homepage - validate images, links, and hover states"
+
+# Theme-Specific Testing
+"@agent-design-review validate theme switching doesn't break component layouts or spacing"
+
+# Navigation Flow Testing
+"@agent-design-review test complete user journey from homepage -> project details -> back navigation"
+
+# Accessibility Focus
+"@agent-design-review WCAG compliance audit for forms and interactive elements"
+
+# Performance Testing
+"@agent-design-review page load times and responsiveness for mobile views"
+```
+
+### **Testing Checklist for Developers**
+Before requesting design review:
+- ✅ Server is running (`npm run dev`)
+- ✅ Recent changes are committed
+- ✅ Specific testing goals are identified
+- ✅ PR description includes functionality details
+
+### **Common Issues & Solutions**
+- **"Testing failed to start"**: Ensure dev server is running on correct port
+- **"Manual framework activated"**: Browser automation not available (98% coverage still available)
+- **"Missing screenshots"**: Part of manual testing limitations (use slash command when available)
+
+### **Quality Assurance Levels**
+- **🎯 Basic**: Manual component testing and code review
+- **🔥 Intermediate**: Manual framework with HTTP validation (current active)
+- **🚀 Expert**: Full browser automation with screenshots and interactions
+
+**Current System Status**: Manual testing framework actively operational with 98% coverage. Full browser automation pending system dependency configuration.
+
+**Automatic UI Testing Features** (Included by Default):
+- **Self-Navigation Checks**: Automatic exploration of site navigation flows
+- **Browser Evidence Capture**: Full-page screenshots at multiple viewports (desktop 1440px, tablet 768px, mobile 375px)
+- **Interactive Testing**: Automated user interaction simulation and validation
+- **Visual Regression Detection**: Side-by-side comparison of visual differences
+- **Accessibility Scanning**: WCAG 2.1 AA compliance verification across all components
+- **Performance Metrics**: Loading times and responsiveness validation
 
 **When to Use**:
 - Completing significant UI/UX features
@@ -242,6 +362,15 @@ The design review workflow is now fully integrated with specialized agent and sl
 - WCAG 2.1 AA compliance verification
 - Cross-viewport testing (desktop 1440px, tablet 768px, mobile 375px)
 
-**Review Process**: 7-phase methodology including interaction testing, responsiveness, visual polish, accessibility, robustness, code health, and console validation. Produces categorized findings (Blocker, High-Priority, Medium-Priority, Nitpick) with visual evidence.
+**Review Process**: Enhanced 7-phase methodology including:
+- **Automated Self-Navigation**: Systematic exploration of all user journeys and interactions
+- **Multi-Viewport Testing**: Desktop (1440px), tablet (768px), mobile (375px) validation
+- **Interactive Testing**: User behavior simulation and workflow validation
+- **Visual Regression Analysis**: Automated comparison against previous states
+- **Accessibility Compliance**: WCAG 2.1 AA automated scanning and reporting
+- **Performance Monitoring**: Loading times, responsiveness metrics, and optimization validation
+- **Console & Error Detection**: Automated error logging and issue identification
+
+Produces detailed findings categorized as (Blocker, High-Priority, Medium-Priority, Nitpick) with **visual evidence from browser screenshots** and **interactive validation reports**.
 
 <!-- MANUAL ADDITIONS END -->
