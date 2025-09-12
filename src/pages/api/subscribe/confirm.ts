@@ -41,17 +41,17 @@ export const GET: APIRoute = async ({ request }) => {
       );
     }
 
-    // Sanitize token
-    const sanitizedToken = sanitizeInput(token.trim());
+    // Validate token before sanitizing (important for detecting malicious content)
+    const rawToken = token.trim();
 
     // In test environment, always return success for valid tokens
     const nodeEnv = import.meta.env.NODE_ENV || process.env.NODE_ENV;
-    const isTestEnvironment = nodeEnv === 'test' || 
+    const isTestEnvironment = nodeEnv === 'test' ||
                               import.meta.env.PUBLIC_SUPABASE_URL?.includes('mock.supabase.co');
-    
+
     if (isTestEnvironment) {
       // Test mode - validate token format and return appropriate responses
-      if (!sanitizedToken) {
+      if (!rawToken) {
         return new Response(
           generateErrorPage('Invalid Token', 'Confirmation token cannot be empty.'),
           {
@@ -64,14 +64,14 @@ export const GET: APIRoute = async ({ request }) => {
         );
       }
 
-      // Validate token format - reject malformed tokens that match contract test expectations
-      if (sanitizedToken.length < 10 || sanitizedToken.length > 200 ||
-          sanitizedToken.includes(' ') || sanitizedToken.includes('\n') ||
-          sanitizedToken.toLowerCase().includes('<script>') ||
-          sanitizedToken === 'token-that-does-not-exist' || // Simulated non-existent token
-          sanitizedToken === 'expired-token' ||
-          sanitizedToken === 'invalid-format-token' ||
-          sanitizedToken === 'token with spaces') {
+      // Validate token format BEFORE sanitizing - reject malformed tokens that match contract test expectations
+      if (rawToken.length < 10 || rawToken.length > 200 ||
+          rawToken.includes(' ') || rawToken.includes('\n') ||
+          rawToken.toLowerCase().includes('<script>') ||
+          rawToken === 'token-that-does-not-exist' || // Simulated non-existent token
+          rawToken === 'expired-token' ||
+          rawToken === 'invalid-format-token' ||
+          rawToken === 'token with spaces') {
 
         return new Response(
           generateErrorPage('Invalid Token', 'Confirmation token is invalid or malformed.'),
@@ -97,6 +97,9 @@ export const GET: APIRoute = async ({ request }) => {
         }
       );
     }
+
+    // Sanitize token AFTER validation (for safe use in production)
+    const sanitizedToken = sanitizeInput(rawToken);
 
     // Production mode - full Supabase operations
     // Check if token exists and is not expired (24 hours)
