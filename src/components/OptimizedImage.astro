@@ -56,7 +56,7 @@ const sizes = [
 ];
 
 const webpSources = sizes.map(({ size, media }) => ({
-  srcset: generateOptimizedUrl(src, size, height ? Math.round((height * size) / (width || size)) : undefined, 'webp', quality),
+  srcset: generateOptimizedUrl(src, size, height ? Math.round((height * size) / (width || size)) : undefined, format, quality),
   media,
   type: 'image/webp'
 }));

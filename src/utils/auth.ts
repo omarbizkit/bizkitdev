@@ -216,7 +216,7 @@ export async function updatePassword(newPassword: string): Promise<AuthResult> {
  * Listen for auth state changes
  */
 export function onAuthStateChange(callback: (event: string, session: Session | null) => void) {
-  return supabase.auth.onAuthStateChange((event, session) => {
+  return supabase.auth.onAuthStateChange((event: string, session: Session | null) => {
     callback(event, session)
   })
 }

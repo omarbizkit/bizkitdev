@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
-import type { ProjectsResponse, ProjectStatus, ProjectsQueryParams } from '../../types/api';
-import projectsData from '../../content/projects.json';
+import type { ProjectsResponse, ProjectStatus, ProjectsQueryParams, Project } from '../../types/api';
+import projectsDataJson from '../../content/projects.json';
 
 // Enable server-side rendering for API routes
 export const prerender = false;
@@ -24,6 +24,7 @@ export const GET: APIRoute = async ({ request }) => {
     };
 
     // Start with all projects
+    const projectsData = projectsDataJson as { projects: Project[] };
     let filteredProjects = [...projectsData.projects];
 
     // Apply status filter

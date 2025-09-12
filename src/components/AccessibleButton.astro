@@ -85,17 +85,34 @@ const componentProps = href
   : { type, disabled };
 ---
 
-<Component
-  class={classes}
-  id={id}
-  aria-label={ariaLabel}
-  aria-describedby={ariaDescribedBy}
-  onclick={onClick}
-  {...componentProps}
->
-  <slot />
+{Component === 'a' ? (
+  <a
+    href={href}
+    role="button"
+    tabindex="0"
+    class={classes}
+    id={id}
+    aria-label={ariaLabel}
+    aria-describedby={ariaDescribedBy}
+    onclick={onClick}
+  >
+    <slot />
+  </a>
+) : (
+  <button
+    type={type}
+    disabled={disabled}
+    class={classes}
+    id={id}
+    aria-label={ariaLabel}
+    aria-describedby={ariaDescribedBy}
+    onclick={onClick}
+  >
+    <slot />
+  </button>
+)}
   
-  <!-- Glow effect for primary/secondary variants -->
+<!-- Glow effect for primary/secondary variants -->
   {(variant === 'primary' || variant === 'secondary') && (
     <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent 
                  translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 

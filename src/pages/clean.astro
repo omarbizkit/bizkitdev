@@ -365,7 +365,7 @@ import ModernHero from '../components/ModernHero.astro';
       commits += Math.floor(totalProgress * maxCommits * 0.4);
       
       // Add some realistic variation
-      const dayOfYear = Math.floor((mstTime - new Date(mstTime.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+      const dayOfYear = Math.floor((mstTime.getTime() - new Date(mstTime.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
       const variation = Math.sin(dayOfYear * 0.1) * 2;
       commits = Math.max(0, Math.min(maxCommits, commits + Math.floor(variation)));
     }

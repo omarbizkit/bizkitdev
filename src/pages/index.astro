@@ -423,7 +423,7 @@ import ModernHero from '../components/ModernHero.astro';
       commits += Math.floor(totalProgress * maxCommits * 0.4);
       
       // Add some realistic variation
-      const dayOfYear = Math.floor((mstTime - new Date(mstTime.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+      const dayOfYear = Math.floor((mstTime.getTime() - new Date(mstTime.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
       const variation = Math.sin(dayOfYear * 0.1) * 2;
       commits = Math.max(0, Math.min(maxCommits, commits + Math.floor(variation)));
     }
@@ -470,16 +470,16 @@ import ModernHero from '../components/ModernHero.astro';
   let currentSearch = '';
   
   function initProjectFiltering() {
-    const searchInput = document.getElementById('project-search');
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const projectCards = document.querySelectorAll('.project-card');
-    const resultsCounter = document.getElementById('results-counter');
+    const searchInput = document.getElementById('project-search') as HTMLInputElement;
+    const filterButtons = document.querySelectorAll('.filter-btn') as NodeListOf<HTMLButtonElement>;
+    const projectCards = document.querySelectorAll('.project-card') as NodeListOf<HTMLElement>;
+    const resultsCounter = document.getElementById('results-counter') as HTMLElement;
     
     if (!searchInput || !filterButtons.length || !projectCards.length) return;
     
     // Search functionality
     searchInput.addEventListener('input', (e) => {
-      currentSearch = e.target.value.toLowerCase().trim();
+      currentSearch = (e.target as HTMLInputElement).value.toLowerCase().trim();
       filterProjects();
     });
     
@@ -494,7 +494,7 @@ import ModernHero from '../components/ModernHero.astro';
         button.classList.add('active', 'bg-cyan-500', 'text-white');
         button.classList.remove('bg-gray-700', 'text-gray-300');
         
-        currentFilter = button.dataset.filter;
+        currentFilter = (button as HTMLElement).dataset.filter;
         filterProjects();
       });
     });
@@ -503,10 +503,10 @@ import ModernHero from '../components/ModernHero.astro';
       let visibleCount = 0;
       
       projectCards.forEach(card => {
-        const title = card.dataset.title?.toLowerCase() || '';
-        const description = card.dataset.description?.toLowerCase() || '';
-        const tags = card.dataset.tags?.toLowerCase() || '';
-        const status = card.dataset.status?.toLowerCase() || '';
+        const title = (card as HTMLElement).dataset.title?.toLowerCase() || '';
+        const description = (card as HTMLElement).dataset.description?.toLowerCase() || '';
+        const tags = (card as HTMLElement).dataset.tags?.toLowerCase() || '';
+        const status = (card as HTMLElement).dataset.status?.toLowerCase() || '';
         
         // Check search match
         const searchMatch = currentSearch === '' || 
@@ -527,27 +527,28 @@ import ModernHero from '../components/ModernHero.astro';
         }
         
         // Show/hide card with smooth animation
+        const cardElement = card as HTMLElement;
         if (searchMatch && filterMatch) {
-          card.style.display = 'block';
-          card.style.opacity = '0';
-          card.style.transform = 'translateY(20px)';
+          cardElement.style.display = 'block';
+          cardElement.style.opacity = '0';
+          cardElement.style.transform = 'translateY(20px)';
           
           // Animate in
           requestAnimationFrame(() => {
-            card.style.transition = 'all 0.3s ease';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
+            cardElement.style.transition = 'all 0.3s ease';
+            cardElement.style.opacity = '1';
+            cardElement.style.transform = 'translateY(0)';
           });
           
           visibleCount++;
         } else {
-          card.style.transition = 'all 0.3s ease';
-          card.style.opacity = '0';
-          card.style.transform = 'translateY(-20px)';
+          cardElement.style.transition = 'all 0.3s ease';
+          cardElement.style.opacity = '0';
+          cardElement.style.transform = 'translateY(-20px)';
           
           setTimeout(() => {
-            if (card.style.opacity === '0') {
-              card.style.display = 'none';
+            if (cardElement.style.opacity === '0') {
+              cardElement.style.display = 'none';
             }
           }, 300);
         }
@@ -570,8 +571,8 @@ import ModernHero from '../components/ModernHero.astro';
       }
     }
     
-    function getFilterName(filter) {
-      const filterNames = {
+    function getFilterName(filter: string) {
+      const filterNames: { [key: string]: string } = {
         'live': 'Live',
         'development': 'In Development',
         'ai': 'AI/ML',
