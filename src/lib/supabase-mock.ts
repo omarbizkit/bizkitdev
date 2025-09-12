@@ -1,4 +1,4 @@
-import type { Database } from './supabase'
+// Mock Supabase implementation - no real database connection required
 
 /**
  * Mock Supabase client for testing
@@ -91,7 +91,7 @@ function createMockTable<T extends Record<string, any>>(
   data: T[],
   uniqueField?: string
 ) {
-  let query: Partial<T> = {}
+  let query: Record<string, any> = {}
   let selectFields: string[] = []
   let orderByField: string | null = null
   let orderAsc = true
@@ -176,7 +176,7 @@ function createMockTable<T extends Record<string, any>>(
       data.push(...newItems)
 
       return {
-        select: (fields = '*') => ({
+        select: (_fields = '*') => ({
           single: async () => ({
             data: newItems[0],
             error: null
@@ -232,7 +232,7 @@ function createMockTable<T extends Record<string, any>>(
   }
 
   function createMockChain(filteredData?: T[]) {
-    const chain = createMockTable(filteredData || data, uniqueField)
+    const chain = createMockTable(filteredData || data, uniqueField) as any
     // Preserve query state
     chain.query = query
     chain.selectFields = selectFields
@@ -251,8 +251,8 @@ function createMockTable<T extends Record<string, any>>(
 
     if (orderByField) {
       result = result.sort((a, b) => {
-        const aVal = a[orderByField]
-        const bVal = b[orderByField]
+        const aVal = a[orderByField as keyof T]
+        const bVal = b[orderByField as keyof T]
         if (orderAsc) {
           return aVal < bVal ? -1 : aVal > bVal ? 1 : 0
         } else {

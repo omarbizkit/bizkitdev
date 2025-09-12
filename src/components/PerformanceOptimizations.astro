@@ -46,11 +46,11 @@
             console.log('LCP:', entry.startTime);
           }
           if (entry.entryType === 'first-input') {
-            console.log('FID:', entry.processingStart - entry.startTime);
+            console.log('FID:', (entry as any).processingStart - entry.startTime);
           }
           if (entry.entryType === 'layout-shift') {
-            if (!entry.hadRecentInput) {
-              console.log('CLS:', entry.value);
+            if (!(entry as any).hadRecentInput) {
+              console.log('CLS:', (entry as any).value);
             }
           }
         });
@@ -67,7 +67,7 @@
     const imageObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          const img = entry.target;
+          const img = entry.target as HTMLImageElement;
           if (img.dataset.src) {
             img.src = img.dataset.src;
             img.removeAttribute('data-src');
