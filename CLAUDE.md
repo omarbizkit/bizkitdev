@@ -121,4 +121,32 @@ npm run docker:prod # Start production environment
 - **Working Endpoints**: `/api/projects` ✅, `/api/auth/session` ✅, test infrastructure ✅
 - **Next Steps**: Fix subscription 500 errors, implement confirmation endpoint, add project detail test data
 
+### Quick Visual Check
+IMMEDIATELY after implementing any front-end change:
+1. **Identify what changed** - Review the modified components/pages
+2. **Navigate to affected pages** - Use `mcp__playwright__browser_navigate` to visit each changed view
+3. **Verify design compliance** - Compare against `/specs/001-you-are-helping/spec.md`
+4. **Validate feature implementation** - Ensure the change fulfills the user's specific request
+5. **Check acceptance criteria** - Review any provided context files or requirements
+6. **Capture evidence** - Take full page screenshot at desktop viewport (1440px) of each changed view
+7. **Check for errors** - Run `mcp__playwright__browser_console_messages`
+
+This verification ensures changes meet design standards and user requirements.
+
+### Comprehensive Design Review
+The design review workflow is now fully integrated with specialized agent and slash command support:
+
+**Agent Integration**: Use the `design-review` agent (`.claude/agents/design-review-agent.md`) for comprehensive UI/UX validation following Silicon Valley standards (Stripe, Airbnb, Linear).
+
+**Slash Command**: Execute `/design-review` (`.claude/commands/design-review-slash-command.md`) for complete diff review and automated Playwright testing.
+
+**When to Use**:
+- Completing significant UI/UX features
+- Before finalizing PRs with visual changes  
+- Needing comprehensive accessibility and responsiveness testing
+- WCAG 2.1 AA compliance verification
+- Cross-viewport testing (desktop 1440px, tablet 768px, mobile 375px)
+
+**Review Process**: 7-phase methodology including interaction testing, responsiveness, visual polish, accessibility, robustness, code health, and console validation. Produces categorized findings (Blocker, High-Priority, Medium-Priority, Nitpick) with visual evidence.
+
 <!-- MANUAL ADDITIONS END -->
