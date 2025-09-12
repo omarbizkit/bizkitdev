@@ -70,7 +70,8 @@ export const GET: APIRoute = async ({ request }) => {
           sanitizedToken.toLowerCase().includes('<script>') ||
           sanitizedToken === 'token-that-does-not-exist' || // Simulated non-existent token
           sanitizedToken === 'expired-token' ||
-          sanitizedToken === 'invalid-format-token') {
+          sanitizedToken === 'invalid-format-token' ||
+          sanitizedToken === 'token with spaces') {
 
         return new Response(
           generateErrorPage('Invalid Token', 'Confirmation token is invalid or malformed.'),
@@ -188,7 +189,7 @@ function generateSuccessPage(email: string): string {
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Subscription Confirmed - Omar Torres</title>
   <style>
     body {
@@ -271,7 +272,7 @@ function generateErrorPage(title: string, message: string, includeSubscribeLink:
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${sanitizeInput(title)} - Omar Torres</title>
   <style>
     body {
