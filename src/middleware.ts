@@ -37,19 +37,22 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
 
   // Rate limiting headers (basic implementation) - only for non-prerendered routes
   let clientIP: string | undefined;
+  let userAgent = '';
   try {
     clientIP = context.clientAddress;
+    userAgent = context.request.headers.get('user-agent') || '';
   } catch {
-    // clientAddress is not available for prerendered routes
+    // clientAddress and request headers are not available for prerendered routes
     clientIP = undefined;
+    userAgent = '';
   }
   
-  const userAgent = context.request.headers.get('user-agent') || '';
-  
-  // Simple bot detection
-  const isBot = /bot|crawler|spider|crawling/i.test(userAgent);
-  if (isBot) {
-    response.headers.set('X-Robots-Tag', 'index, follow');
+  // Simple bot detection (only if userAgent is available)
+  if (userAgent) {
+    const isBot = /bot|crawler|spider|crawling/i.test(userAgent);
+    if (isBot) {
+      response.headers.set('X-Robots-Tag', 'index, follow');
+    }
   }
 
   // CORS headers for API routes
