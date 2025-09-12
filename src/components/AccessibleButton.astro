@@ -80,9 +80,6 @@ const classes = [
 ].join(' ');
 
 const Component = href ? 'a' : 'button';
-const componentProps = href 
-  ? { href, role: 'button', tabindex: '0' }
-  : { type, disabled };
 ---
 
 {Component === 'a' ? (

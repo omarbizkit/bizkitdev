@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import type { ProjectsResponse, Project, ErrorResponse, ProjectStatus } from '../../src/types/api';
+import type { ProjectsResponse, ProjectStatus } from '../../src/types/api';
 
 /**
  * Contract tests for GET /api/projects endpoint

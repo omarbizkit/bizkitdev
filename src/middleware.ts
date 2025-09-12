@@ -36,14 +36,14 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   }
 
   // Rate limiting headers (basic implementation) - only for non-prerendered routes
-  let clientIP: string | undefined;
+  // let clientIP: string | undefined; // Currently unused
   let userAgent = '';
   try {
-    clientIP = context.clientAddress;
+    // clientIP = context.clientAddress; // Currently unused
     userAgent = context.request.headers.get('user-agent') || '';
   } catch {
     // clientAddress and request headers are not available for prerendered routes
-    clientIP = undefined;
+    // clientIP = undefined; // Currently unused
     userAgent = '';
   }
   

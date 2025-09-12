@@ -172,7 +172,7 @@ export const POST: APIRoute = async ({ request }) => {
     const confirmationToken = generateSecureToken();
     const unsubscribeToken = generateSecureToken();
 
-    const { data: newSubscriber, error: insertError } = await supabase
+    const { error: insertError } = await supabase
       .from('subscribers')
       .insert({
         id: subscriberId,

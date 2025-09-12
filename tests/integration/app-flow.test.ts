@@ -1,24 +1,10 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import type { Browser, Page } from 'playwright';
-import { chromium } from 'playwright';
+import { test, expect } from '@playwright/test';
 
-describe('Application Flow Integration Tests', () => {
-  let browser: Browser;
-  let page: Page;
-  const baseURL = 'http://localhost:4321';
+const baseURL = 'http://localhost:4321';
 
-  beforeAll(async () => {
-    browser = await chromium.launch();
-    page = await browser.newPage();
-  });
-
-  afterAll(async () => {
-    await browser.close();
-  });
-
-  describe('Homepage Integration', () => {
-    it('should load homepage successfully with all core elements', async () => {
-      await page.goto(baseURL);
+test.describe('Homepage Integration', () => {
+  test('should load homepage successfully with all core elements', async ({ page }) => {
+    await page.goto(baseURL);
       
       // Check that the page loads
       await expect(page).toHaveTitle(/Omar Torres/);
@@ -36,8 +22,8 @@ describe('Application Flow Integration Tests', () => {
       await expect(footer).toBeVisible();
     });
 
-    it('should have accessible navigation structure', async () => {
-      await page.goto(baseURL);
+  test('should have accessible navigation structure', async ({ page }) => {
+    await page.goto(baseURL);
       
       // Check skip link
       const skipLink = page.locator('a[href="#main-content"]').first();
@@ -52,8 +38,8 @@ describe('Application Flow Integration Tests', () => {
       await expect(nav).toBeAttached();
     });
 
-    it('should have proper ARIA labels and accessibility attributes', async () => {
-      await page.goto(baseURL);
+  test('should have proper ARIA labels and accessibility attributes', async ({ page }) => {
+    await page.goto(baseURL);
       
       // Check navigation has proper aria-label
       const nav = page.locator('nav[aria-label="Main navigation"]');
@@ -65,9 +51,9 @@ describe('Application Flow Integration Tests', () => {
     });
   });
 
-  describe('Navigation Integration', () => {
-    it('should navigate between pages successfully', async () => {
-      await page.goto(baseURL);
+test.describe('Navigation Integration', () => {
+  test('should navigate between pages successfully', async ({ page }) => {
+    await page.goto(baseURL);
       
       // Navigate to Work page
       await page.click('a[href="/work/"]');
@@ -84,8 +70,8 @@ describe('Application Flow Integration Tests', () => {
       await page.waitForURL(baseURL);
     });
 
-    it('should highlight current page in navigation', async () => {
-      await page.goto(`${baseURL}/about/`);
+  test('should highlight current page in navigation', async ({ page }) => {
+    await page.goto(`${baseURL}/about/`);
       
       // Check that the about link has aria-current="page"
       const currentLink = page.locator('a[aria-current="page"]');
@@ -93,10 +79,10 @@ describe('Application Flow Integration Tests', () => {
       await expect(currentLink).toHaveText('About');
     });
 
-    it('should handle mobile menu interaction', async () => {
-      // Test mobile viewport
-      await page.setViewportSize({ width: 375, height: 667 });
-      await page.goto(baseURL);
+  test('should handle mobile menu interaction', async ({ page }) => {
+    // Test mobile viewport
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto(baseURL);
       
       // Check if menu button is visible on mobile
       const menuButton = page.locator('button[aria-label="Toggle navigation menu"]');
@@ -121,10 +107,10 @@ describe('Application Flow Integration Tests', () => {
     });
   });
 
-  describe('API Integration', () => {
-    it('should load projects data successfully', async () => {
-      // Test the projects API endpoint directly
-      const response = await page.request.get(`${baseURL}/api/projects`);
+test.describe('API Integration', () => {
+  test('should load projects data successfully', async ({ page }) => {
+    // Test the projects API endpoint directly
+    const response = await page.request.get(`${baseURL}/api/projects`);
       expect(response.status()).toBe(200);
       
       const projects = await response.json();
@@ -139,9 +125,9 @@ describe('Application Flow Integration Tests', () => {
       expect(firstProject).toHaveProperty('status');
     });
 
-    it('should handle API error scenarios gracefully', async () => {
-      // Test invalid project status filter
-      const response = await page.request.get(`${baseURL}/api/projects?status=invalid`);
+  test('should handle API error scenarios gracefully', async ({ page }) => {
+    // Test invalid project status filter
+    const response = await page.request.get(`${baseURL}/api/projects?status=invalid`);
       expect(response.status()).toBe(400);
       
       const error = await response.json();
@@ -149,8 +135,8 @@ describe('Application Flow Integration Tests', () => {
       expect(error.error).toBe('INVALID_STATUS');
     });
 
-    it('should return proper CORS headers', async () => {
-      const response = await page.request.get(`${baseURL}/api/projects`);
+  test('should return proper CORS headers', async ({ page }) => {
+    const response = await page.request.get(`${baseURL}/api/projects`);
       expect(response.status()).toBe(200);
       
       const headers = response.headers();
@@ -159,10 +145,10 @@ describe('Application Flow Integration Tests', () => {
     });
   });
 
-  describe('Performance Integration', () => {
-    it('should load pages within acceptable time', async () => {
-      const startTime = Date.now();
-      await page.goto(baseURL);
+test.describe('Performance Integration', () => {
+  test('should load pages within acceptable time', async ({ page }) => {
+    const startTime = Date.now();
+    await page.goto(baseURL);
       await page.waitForLoadState('networkidle');
       const loadTime = Date.now() - startTime;
       
@@ -170,8 +156,8 @@ describe('Application Flow Integration Tests', () => {
       expect(loadTime).toBeLessThan(3000);
     });
 
-    it('should lazy load images properly', async () => {
-      await page.goto(baseURL);
+  test('should lazy load images properly', async ({ page }) => {
+    await page.goto(baseURL);
       
       // Check for lazy loading attributes
       const images = page.locator('img[loading="lazy"]');
@@ -183,8 +169,8 @@ describe('Application Flow Integration Tests', () => {
       }
     });
 
-    it('should have optimized images with proper formats', async () => {
-      await page.goto(baseURL);
+  test('should have optimized images with proper formats', async ({ page }) => {
+    await page.goto(baseURL);
       
       // Check for picture elements with multiple sources
       const pictures = page.locator('picture');
@@ -201,9 +187,9 @@ describe('Application Flow Integration Tests', () => {
     });
   });
 
-  describe('Security Integration', () => {
-    it('should include proper security headers', async () => {
-      const response = await page.request.get(baseURL);
+test.describe('Security Integration', () => {
+  test('should include proper security headers', async ({ page }) => {
+    const response = await page.request.get(baseURL);
       const headers = response.headers();
       
       // Check for security headers
@@ -214,8 +200,8 @@ describe('Application Flow Integration Tests', () => {
       expect(headers['content-security-policy']).toBeDefined();
     });
 
-    it('should implement Content Security Policy', async () => {
-      const response = await page.request.get(baseURL);
+  test('should implement Content Security Policy', async ({ page }) => {
+    const response = await page.request.get(baseURL);
       const headers = response.headers();
       
       const csp = headers['content-security-policy'];
@@ -224,9 +210,9 @@ describe('Application Flow Integration Tests', () => {
       expect(csp).toContain('upgrade-insecure-requests');
     });
 
-    it('should handle XSS attempts safely', async () => {
-      // Test XSS in URL parameters
-      await page.goto(`${baseURL}?test=<script>alert('xss')</script>`);
+  test('should handle XSS attempts safely', async ({ page }) => {
+    // Test XSS in URL parameters
+    await page.goto(`${baseURL}?test=<script>alert('xss')</script>`);
       
       // Page should still load normally without executing the script
       await expect(page).toHaveTitle(/Omar Torres/);
@@ -243,9 +229,9 @@ describe('Application Flow Integration Tests', () => {
     });
   });
 
-  describe('SEO Integration', () => {
-    it('should have proper meta tags', async () => {
-      await page.goto(baseURL);
+test.describe('SEO Integration', () => {
+  test('should have proper meta tags', async ({ page }) => {
+    await page.goto(baseURL);
       
       // Check essential meta tags
       const title = await page.title();
@@ -261,8 +247,8 @@ describe('Application Flow Integration Tests', () => {
       await expect(charset).toBeAttached();
     });
 
-    it('should have Open Graph tags', async () => {
-      await page.goto(baseURL);
+  test('should have Open Graph tags', async ({ page }) => {
+    await page.goto(baseURL);
       
       const ogTitle = page.locator('meta[property="og:title"]');
       await expect(ogTitle).toBeAttached();
@@ -274,8 +260,8 @@ describe('Application Flow Integration Tests', () => {
       await expect(ogImage).toBeAttached();
     });
 
-    it('should have structured data', async () => {
-      await page.goto(baseURL);
+  test('should have structured data', async ({ page }) => {
+    await page.goto(baseURL);
       
       const structuredData = page.locator('script[type="application/ld+json"]');
       await expect(structuredData).toBeAttached();
@@ -290,9 +276,9 @@ describe('Application Flow Integration Tests', () => {
     });
   });
 
-  describe('Accessibility Integration', () => {
-    it('should pass basic accessibility checks', async () => {
-      await page.goto(baseURL);
+test.describe('Accessibility Integration', () => {
+  test('should pass basic accessibility checks', async ({ page }) => {
+    await page.goto(baseURL);
       
       // Check that all images have alt attributes
       const images = page.locator('img');
@@ -305,8 +291,8 @@ describe('Application Flow Integration Tests', () => {
       }
     });
 
-    it('should support keyboard navigation', async () => {
-      await page.goto(baseURL);
+  test('should support keyboard navigation', async ({ page }) => {
+    await page.goto(baseURL);
       
       // Test tab navigation
       await page.keyboard.press('Tab');
@@ -317,8 +303,8 @@ describe('Application Flow Integration Tests', () => {
       expect(href).toBe('#main-content');
     });
 
-    it('should handle focus management properly', async () => {
-      await page.goto(baseURL);
+  test('should handle focus management properly', async ({ page }) => {
+    await page.goto(baseURL);
       
       // Test skip link functionality
       const skipLink = page.locator('a[href="#main-content"]').first();
@@ -330,10 +316,10 @@ describe('Application Flow Integration Tests', () => {
       expect(tagName).toBe('main');
     });
 
-    it('should respect reduced motion preferences', async () => {
-      // Set reduced motion preference
-      await page.emulateMedia({ reducedMotion: 'reduce' });
-      await page.goto(baseURL);
+  test('should respect reduced motion preferences', async ({ page }) => {
+    // Set reduced motion preference
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(baseURL);
       
       // Check that animations are disabled or reduced
       const elements = page.locator('*');
@@ -349,25 +335,24 @@ describe('Application Flow Integration Tests', () => {
     });
   });
 
-  describe('Error Handling Integration', () => {
-    it('should handle 404 pages gracefully', async () => {
-      const response = await page.request.get(`${baseURL}/non-existent-page`);
-      expect(response.status()).toBe(404);
-    });
+test.describe('Error Handling Integration', () => {
+  test('should handle 404 pages gracefully', async ({ page }) => {
+    const response = await page.request.get(`${baseURL}/non-existent-page`);
+    expect(response.status()).toBe(404);
+  });
 
-    it('should handle network errors gracefully', async () => {
-      // Test with offline network
-      await page.context().setOffline(true);
-      
-      try {
-        await page.goto(baseURL, { timeout: 5000 });
-      } catch (error) {
-        // Should handle offline state gracefully
-        expect(error).toBeDefined();
-      }
-      
-      // Reset network
-      await page.context().setOffline(false);
-    });
+  test('should handle network errors gracefully', async ({ page }) => {
+    // Test with offline network
+    await page.context().setOffline(true);
+    
+    try {
+      await page.goto(baseURL, { timeout: 5000 });
+    } catch (error) {
+      // Should handle offline state gracefully
+      expect(error).toBeDefined();
+    }
+    
+    // Reset network
+    await page.context().setOffline(false);
   });
 });

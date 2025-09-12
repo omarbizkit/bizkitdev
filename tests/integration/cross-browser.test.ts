@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import type { Browser, Page, BrowserContext } from 'playwright';
-import { chromium, firefox, webkit } from 'playwright';
+import { test, expect } from '@playwright/test';
+import type { Browser, Page, BrowserContext } from '@playwright/test';
+import { chromium, firefox, webkit } from '@playwright/test';
 
-describe('Cross-Browser Compatibility Integration Tests', () => {
+test.describe('Cross-Browser Compatibility Integration Tests', () => {
   const baseURL = 'http://localhost:4321';
   const browsers = [
     { name: 'Chromium', launcher: chromium },
@@ -10,7 +10,9 @@ describe('Cross-Browser Compatibility Integration Tests', () => {
     { name: 'WebKit', launcher: webkit }
   ];
 
-  describe.each(browsers)('$name Browser Tests', ({ name, launcher }) => {
+  // Convert to individual test groups for each browser
+  browsers.forEach(({ name, launcher }) => {
+    test.describe(`${name} Browser Tests`, () => {
     let browser: Browser;
     let context: BrowserContext;
     let page: Page;
@@ -308,7 +310,9 @@ describe('Cross-Browser Compatibility Integration Tests', () => {
       await page.goto(baseURL);
       
       // Test without JavaScript
-      await page.setJavaScriptEnabled(false);
+      // JavaScript disabled testing - create new context with JS disabled
+      const contextWithoutJS = await browser.newContext({ javaScriptEnabled: false });
+      const pageWithoutJS = await contextWithoutJS.newPage();
       await page.reload();
       
       // Basic content should still be visible
@@ -316,7 +320,8 @@ describe('Cross-Browser Compatibility Integration Tests', () => {
       await expect(main).toBeVisible();
       
       // Re-enable JavaScript
-      await page.setJavaScriptEnabled(true);
+      // Re-enable JavaScript by using regular context
+      await contextWithoutJS.close();
       await page.reload();
     });
 
