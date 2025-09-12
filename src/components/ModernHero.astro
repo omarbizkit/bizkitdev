@@ -37,13 +37,43 @@ const {
       {description}
     </p>
     
+    <!-- Newsletter Subscription -->
+    <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 mt-12 max-w-md mx-auto">
+      <div class="text-center mb-6">
+        <h3 class="text-xl font-semibold text-white mb-2">Stay Updated</h3>
+        <p class="text-gray-400 text-sm">Get the latest on my projects and insights delivered to your inbox.</p>
+      </div>
+
+      <form data-testid="subscribe-form" method="POST" action="/api/subscribe" class="flex flex-col gap-4">
+        <div>
+          <input
+            type="email"
+            name="email"
+            placeholder="Enter your email address"
+            required
+            class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-colors"
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-lg font-semibold text-white hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25"
+        >
+          Join My Newsletter
+        </button>
+      </form>
+
+      <p class="text-center text-xs text-gray-500 mt-4">
+        No spam, unsubscribe anytime.
+      </p>
+    </div>
+
     <!-- CTA Buttons -->
-    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
       <a href="#work" class="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-lg font-semibold text-white hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25">
         View My Work
         <span class="ml-2 group-hover:translate-x-1 transition-transform">→</span>
       </a>
-      
+
       <a href="#contact" class="group relative px-8 py-4 border-2 border-gray-600 rounded-lg font-semibold text-gray-300 hover:border-cyan-400 hover:text-cyan-400 transition-all duration-300">
         Get In Touch
         <span class="ml-2 group-hover:translate-x-1 transition-transform">→</span>
