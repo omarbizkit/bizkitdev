@@ -1,7 +1,14 @@
 import { chromium } from 'playwright';
 
 (async () => {
-  const browser = await chromium.launch();
+  // Support headed mode via environment variable or command line arg
+  const headedMode = process.env.HEADED_MODE === 'true' || process.argv.includes('--headed');
+  console.log(`🔍 Browser mode: ${headedMode ? 'HEADED (visible)' : 'HEADLESS'}`);
+  
+  const browser = await chromium.launch({ 
+    headless: !headedMode,
+    slowMo: headedMode ? 500 : 0 // Add delay in headed mode for visibility
+  });
   const context = await browser.newContext({
     viewport: { width: 1440, height: 900 }
   });
