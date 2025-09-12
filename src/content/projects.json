@@ -74,7 +74,7 @@
       "tech_stack": ["Arduino", "Raspberry Pi", "MQTT", "InfluxDB", "Node.js", "React", "AWS IoT", "TensorFlow Lite"],
       "subdomain_url": "https://iot-sensors.bizkit.dev",
       "github_url": "https://github.com/omarbizkit/iot-sensor-network",
-      "screenshot_url": "https://images.unsplash.com/photo-1518309835519-11f032d1da9a?w=800&h=600&fit=crop",
+      "screenshot_url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop",
       "created_date": "2023-09-12",
       "featured": false
     },

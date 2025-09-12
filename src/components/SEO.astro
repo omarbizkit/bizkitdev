@@ -4,6 +4,7 @@ interface Props {
   description?: string;
   image?: string;
   url?: string;
+  canonical?: string;
   type?: 'website' | 'article' | 'profile';
   author?: string;
   publishedTime?: string;
@@ -13,6 +14,7 @@ interface Props {
 const {
   title = 'Omar Torres | Data & AI Enthusiast',
   description = 'The Mind Behind The Code - Portfolio showcasing innovative data science, machine learning, and AI projects.',
+  canonical,
   image = '/og-image.jpg',
   url = Astro.url.href,
   type = 'website',
@@ -21,7 +23,7 @@ const {
   keywords = ['Omar Torres', 'Data Science', 'AI', 'Machine Learning', 'Portfolio', 'bizkit.dev']
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const canonicalURL = canonical ? new URL(canonical) : new URL(Astro.url.pathname, Astro.site);
 const imageURL = new URL(image, Astro.site);
 ---
 
