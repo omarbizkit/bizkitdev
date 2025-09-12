@@ -167,7 +167,7 @@ function generateSuccessPage(email: string): string {
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Subscription Confirmed - Omar Torres</title>
   <style>
     body {
@@ -250,7 +250,7 @@ function generateErrorPage(title: string, message: string, includeSubscribeLink:
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>${sanitizeInput(title)} - Omar Torres</title>
   <style>
     body {

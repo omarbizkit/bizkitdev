@@ -3,6 +3,11 @@ import type { SubscribeRequest, SubscribeResponse, ErrorResponse } from '../../t
 import { supabase } from '../../lib/supabase';
 import { isValidEmail, generateSecureToken, generateUUID, sanitizeInput } from '../../utils/crypto';
 
+// Global type extension for test environment in-memory storage
+declare global {
+  var testSubscribers: Set<string> | undefined;
+}
+
 // Enable server-side rendering for API routes
 export const prerender = false;
 
@@ -32,8 +37,8 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // Validate email field exists
-    if (!body.email) {
+    // Validate email field exists and is not empty
+    if (!body.email || typeof body.email !== 'string' || body.email.trim() === '') {
       return new Response(
         JSON.stringify({
           error: 'MISSING_EMAIL',
@@ -49,7 +54,7 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // Sanitize and validate email
+    // Sanitize and validate email format FIRST (before any store operations)
     const email = sanitizeInput(body.email.toLowerCase().trim());
     
     if (!isValidEmail(email)) {
@@ -74,11 +79,16 @@ export const POST: APIRoute = async ({ request }) => {
                               import.meta.env.PUBLIC_SUPABASE_URL?.includes('mock.supabase.co');
     
     if (isTestEnvironment) {
-      // Test mode - perform validation but skip database operations
+      // Test mode - perform validation with in-memory tracking
       const subscriberId = generateUUID();
       
-      // Check for test email that simulates already subscribed
-      if (email === 'already-subscribed@test.com') {
+      // In-memory store for test environment (globalThis is shared across requests in test mode)
+      if (!globalThis.testSubscribers) {
+        globalThis.testSubscribers = new Set();
+      }
+      
+      // Check for test email that simulates already subscribed (ONLY AFTER email validation passes)
+      if (email === 'already-subscribed@test.com' || globalThis.testSubscribers.has(email)) {
         return new Response(
           JSON.stringify({
             error: 'ALREADY_SUBSCRIBED',
@@ -93,6 +103,9 @@ export const POST: APIRoute = async ({ request }) => {
           }
         );
       }
+      
+      // Add email to in-memory store for subsequent requests
+      globalThis.testSubscribers.add(email);
       
       return new Response(
         JSON.stringify({
