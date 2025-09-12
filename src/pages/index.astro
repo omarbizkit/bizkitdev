@@ -4,7 +4,6 @@ export const prerender = true;
 import CleanLayout from '../layouts/CleanLayout.astro';
 import ModernHero from '../components/ModernHero.astro';
 import ProjectGrid from '../components/ProjectGrid.astro';
-import AccessibleForm from '../components/AccessibleForm.astro';
 import projectsData from '../content/projects.json';
 import type { Project } from '../types/index.ts';
 
@@ -30,38 +29,6 @@ const projects = projectsData.projects as Project[];
       
       <!-- Projects Grid -->
       <ProjectGrid projects={projects} showFilters={true} featuredFirst={true} />
-    </div>
-  </section>
-
-  <!-- Newsletter Subscription Section -->
-  <section id="subscribe" class="py-20 relative bg-gray-900/50">
-    <div class="max-w-4xl mx-auto px-6 text-center">
-      <h2 class="text-4xl md:text-5xl font-bold mb-6">
-        <span class="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
-          Stay Updated
-        </span>
-      </h2>
-      <p class="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
-        Subscribe to get notified about new projects, AI insights, and technology updates.
-      </p>
-      
-      <div class="max-w-md mx-auto">
-        <AccessibleForm 
-          action="/api/subscribe"
-          method="POST"
-          submitLabel="Subscribe"
-          class="space-y-4"
-        >
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter your email address"
-            required
-            class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-colors"
-            aria-label="Email address for newsletter subscription"
-          />
-        </AccessibleForm>
-      </div>
     </div>
   </section>
 
