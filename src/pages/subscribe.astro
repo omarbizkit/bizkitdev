@@ -1,0 +1,105 @@
+---
+export const prerender = false;
+
+import CleanLayout from '../layouts/CleanLayout.astro';
+---
+
+<CleanLayout title="Subscribe - Omar Torres">
+  <div class="pt-24 pb-16">
+    <div class="max-w-4xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+          <span class="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+            Stay Connected
+          </span>
+        </h1>
+        <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+          Get notified about new projects, insights, and updates from the world of data and AI.
+        </p>
+      </div>
+
+      <!-- Subscription Form -->
+      <form
+        data-testid="subscribe-form"
+        action="/api/subscribe"
+        method="POST"
+        class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-lg p-8 max-w-md mx-auto"
+      >
+        <div class="text-center mb-6">
+          <h3 class="text-xl font-semibold mb-2 text-white">Join the Community</h3>
+          <p class="text-gray-400 text-sm">Get the latest updates delivered to your inbox</p>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
+              Email Address
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              placeholder="your.email@example.com"
+              class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              aria-label="Email address for subscription"
+            />
+            <div
+              data-testid="email-error"
+              class="text-red-400 text-sm mt-1 hidden"
+            >
+              Please enter a valid email address
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Subscribe to newsletter"
+          >
+            Subscribe
+          </button>
+
+          <div
+            data-testid="success-message"
+            class="text-green-400 text-sm text-center hidden"
+          >
+            Thank you! Please check your email to confirm your subscription.
+          </div>
+
+          <div
+            data-testid="error-message"
+            class="text-red-400 text-sm text-center hidden"
+          >
+            Something went wrong. Please try again.
+          </div>
+        </div>
+
+        <div class="mt-6 text-center text-xs text-gray-500">
+          We respect your privacy. Unsubscribe at any time.
+        </div>
+      </form>
+    </div>
+  </div>
+</CleanLayout>
+
+<style>
+  /* Form validation styles */
+  input:invalid:not(:placeholder-shown) {
+    border-color: #ef4444;
+  }
+
+  input:valid:not(:placeholder-shown) {
+    border-color: #10b981;
+  }
+
+  /* Show error message when input is invalid */
+  input:invalid:not(:placeholder-shown) ~ [data-testid="email-error"] {
+    display: block;
+  }
+
+  /* Hide error message when input becomes valid */
+  input:valid:not(:placeholder-shown) ~ [data-testid="email-error"] {
+    display: none;
+  }
+</style>

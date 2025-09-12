@@ -9,11 +9,11 @@ test.describe('Subscription Engagement Flow', () => {
   const testEmail = 'test@example.com';
   
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/subscribe');
   });
 
   test.describe('Email Subscription', () => {
-    test('should display subscription form on homepage', async ({ page }) => {
+    test('should display subscription form on subscribe page', async ({ page }) => {
       // Look for subscription form
       const subscribeForm = page.locator('[data-testid="subscribe-form"], form[action*="subscribe"]');
       await expect(subscribeForm).toBeVisible();
@@ -316,37 +316,68 @@ test.describe('Subscription Engagement Flow', () => {
 
   test.describe('Accessibility and UX', () => {
     test('should be keyboard accessible', async ({ page }) => {
-      const subscribeForm = page.locator('[data-testid="subscribe-form"], form[action*="subscribe"]');
-      await expect(subscribeForm).toBeVisible();
-      
-      // Should be able to navigate to email input via keyboard
+      // Start on homepage
+      await page.goto('/');
+
+      // Navigate to subscribe page via keyboard
       await page.keyboard.press('Tab');
-      const focusedElement = page.locator(':focus');
-      
-      // Keep tabbing until we reach the email input
+      let focusedElement = page.locator(':focus');
+
+      // Keep tabbing until we find the subscribe button/link
       let attempts = 0;
+      while (attempts < 15) {
+        const text = await focusedElement.textContent();
+        const href = await focusedElement.getAttribute('href');
+
+        if (text?.toLowerCase().includes('subscribe') || href?.includes('subscribe')) {
+          break;
+        }
+
+        await page.keyboard.press('Tab');
+        focusedElement = page.locator(':focus');
+        attempts++;
+      }
+
+      // Press Enter to navigate to subscribe page
+      await page.keyboard.press('Enter');
+      await expect(page).toHaveURL('/subscribe');
+
+      // Now on subscribe page, find the email input
+      const subscribeForm = page.locator('[data-testid="subscribe-form"]');
+      await expect(subscribeForm).toBeVisible();
+
+      const emailInput = subscribeForm.locator('input[type="email"]');
+      await expect(emailInput).toBeVisible();
+
+      // Tab to email input
+      await page.keyboard.press('Tab');
+      focusedElement = page.locator(':focus');
+
+      // Keep tabbing until we reach the email input
+      attempts = 0;
       while (attempts < 10) {
         const tagName = await focusedElement.evaluate(el => el.tagName);
         const type = await focusedElement.getAttribute('type');
-        
+
         if (tagName === 'INPUT' && type === 'email') {
           break;
         }
-        
+
         await page.keyboard.press('Tab');
+        focusedElement = page.locator(':focus');
         attempts++;
       }
-      
+
       // Should be focused on email input
       await expect(focusedElement).toHaveAttribute('type', 'email');
-      
+
       // Should be able to type
       await page.keyboard.type(testEmail);
       await expect(focusedElement).toHaveValue(testEmail);
-      
+
       // Should be able to submit via Enter key
       await page.keyboard.press('Enter');
-      
+
       // Form submission should be triggered (will fail without API, which is expected)
     });
 
