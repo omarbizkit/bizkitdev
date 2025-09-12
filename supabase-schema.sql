@@ -15,6 +15,17 @@ CREATE TABLE IF NOT EXISTS subscribers (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   
+  -- Email confirmation and unsubscribe tokens
+  confirmation_token TEXT UNIQUE,
+  unsubscribe_token TEXT UNIQUE,
+  
+  -- Timestamps for tracking subscription lifecycle
+  confirmed_at TIMESTAMPTZ,
+  unsubscribed_at TIMESTAMPTZ,
+  
+  -- Email delivery tracking
+  email_sent BOOLEAN DEFAULT FALSE,
+  
   -- Constraints
   CONSTRAINT valid_email CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
 );
@@ -23,6 +34,10 @@ CREATE TABLE IF NOT EXISTS subscribers (
 CREATE INDEX IF NOT EXISTS idx_subscribers_email ON subscribers(email);
 CREATE INDEX IF NOT EXISTS idx_subscribers_active ON subscribers(active) WHERE active = true;
 CREATE INDEX IF NOT EXISTS idx_subscribers_confirmed ON subscribers(confirmed) WHERE confirmed = true;
+
+-- Indexes for token-based operations
+CREATE INDEX IF NOT EXISTS idx_subscribers_confirmation_token ON subscribers(confirmation_token) WHERE confirmation_token IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_subscribers_unsubscribe_token ON subscribers(unsubscribe_token) WHERE unsubscribe_token IS NOT NULL;
 
 -- Enable Row Level Security
 ALTER TABLE subscribers ENABLE ROW LEVEL SECURITY;
