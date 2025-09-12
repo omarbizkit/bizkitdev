@@ -94,15 +94,17 @@ scripts/                # Deployment and automation scripts
 | `npm run format` | Format code with Prettier |
 | `npm run typecheck` | Run TypeScript type checking |
 
-### Docker Commands
+### Podman Commands
 
 | Command | Action |
 |---------|--------|
-| `npm run docker:build` | Build Docker image |
+| `npm run docker:build` | Build Podman image |
 | `npm run docker:run` | Run container locally |
 | `npm run docker:dev` | Start development environment |
 | `npm run docker:prod` | Start production environment |
 | `npm run docker:stop` | Stop all containers |
+
+**Note**: Script names use "docker:" for compatibility, but all commands use Podman internally.
 
 ### Deployment Commands
 
@@ -117,7 +119,7 @@ scripts/                # Deployment and automation scripts
 ### Prerequisites
 - Node.js 18+ 
 - npm 9+
-- Docker (optional)
+- Podman (preferred) or Docker (optional)
 
 ### ⚠️ AI Development Safety
 

@@ -1,48 +1,51 @@
-# Docker Setup Guide for bizkitdev Portfolio
+# Podman Setup Guide for bizkitdev Portfolio
 
 ## 🐳 Quick Start
 
-The project is now fully configured for Docker/Podman deployment with secure mock credentials for testing.
+The project is now fully configured for **Podman** deployment with secure mock credentials for testing.
 
 ### Prerequisites
-- Docker or Podman installed
+- **Podman** installed (preferred over Docker)
+- **podman-compose** installed
 - Git repository cloned locally
 
-### 🚀 One-Line Docker Test
+### 🚀 One-Line Podman Test
 ```bash
 npm run docker:test
 ```
 
 This command will:
-1. Build the Docker image with mock Supabase credentials
+1. Build the Podman image with mock Supabase credentials
 2. Start the container
 3. Test the health endpoint
 4. Clean up automatically
 
-## 📋 Available Docker Commands
+## 📋 Available Podman Commands
 
 ```bash
 # Build the image with mock credentials (safe for testing)
-npm run docker:build
+npm run docker:build  # Uses podman build internally
 
 # Run the container
-npm run docker:run
+npm run docker:run    # Uses podman run internally
 
-# Start with Docker Compose (production-like)
-npm run docker:prod
+# Start with Podman Compose (production-like)
+npm run docker:prod   # Uses podman-compose internally
 
 # Start with development profile (includes PostgreSQL)
-npm run docker:dev
+npm run docker:dev    # Uses podman-compose internally
 
 # Stop all services
-npm run docker:stop
+npm run docker:stop   # Uses podman-compose down
 
 # View logs
-npm run docker:logs
+npm run docker:logs   # Uses podman-compose logs
 
 # Quick test with automatic cleanup
-npm run docker:test
+npm run docker:test   # Uses podman-compose internally
 ```
+
+**Note**: The npm script names still use "docker:" for compatibility, but they all use Podman commands internally.
 
 ## 🔧 Environment Configuration
 
@@ -59,7 +62,7 @@ The project is configured with **safe mock credentials** that work out of the bo
 
 ## 🌐 Port Configuration
 - **Development**: `http://localhost:4321` (Astro dev server)
-- **Docker**: `http://localhost:3000` (Production build)
+- **Podman**: `http://localhost:3000` (Production build)
 - **Health Check**: `http://localhost:3000/`
 
 ## 🔐 Security Best Practices

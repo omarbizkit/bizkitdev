@@ -39,7 +39,7 @@ log_error() {
 check_dependencies() {
     log_info "Checking dependencies..."
     
-    for cmd in docker docker-compose node npm; do
+    for cmd in podman podman-compose node npm; do
         if ! command -v $cmd &> /dev/null; then
             log_error "$cmd is not installed or not in PATH"
             exit 1
@@ -111,36 +111,36 @@ build_application() {
     log_success "Application built successfully"
 }
 
-# Build Docker image
+# Build Podman image
 build_docker_image() {
-    log_info "Building Docker image..."
+    log_info "Building Podman image..."
     
-    docker build \
+    podman build \
         --build-arg PUBLIC_SUPABASE_URL="$PUBLIC_SUPABASE_URL" \
         --build-arg PUBLIC_SUPABASE_ANON_KEY="$PUBLIC_SUPABASE_ANON_KEY" \
         --build-arg PUBLIC_SITE_URL="$PUBLIC_SITE_URL" \
         -t "$DOCKER_IMAGE" \
         . || {
-        log_error "Docker build failed"
+        log_error "Podman build failed"
         exit 1
     }
     
-    log_success "Docker image built successfully"
+    log_success "Podman image built successfully"
 }
 
-# Deploy with Docker Compose
+# Deploy with Podman Compose
 deploy_application() {
     log_info "Deploying application..."
     
     # Stop existing containers
-    docker-compose down || true
+    podman-compose down || true
     
     # Remove old containers and images
-    docker container prune -f
-    docker image prune -f
+    podman container prune -f
+    podman image prune -f
     
     # Start the application
-    docker-compose up -d || {
+    podman-compose up -d || {
         log_error "Deployment failed"
         exit 1
     }
@@ -171,7 +171,7 @@ health_check() {
     
     # Show logs for debugging
     log_info "Application logs:"
-    docker-compose logs --tail=50 app
+    podman-compose logs --tail=50 app
     
     return 1
 }
@@ -180,8 +180,8 @@ health_check() {
 cleanup() {
     log_info "Cleaning up old resources..."
     
-    # Remove unused Docker resources
-    docker system prune -f
+    # Remove unused Podman resources
+    podman system prune -f
     
     log_success "Cleanup completed"
 }

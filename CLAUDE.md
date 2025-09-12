@@ -13,7 +13,7 @@ Auto-generated from all feature plans. Last updated: 2025-01-27
 - Tailwind CSS for styling with accessibility and performance optimization
 - Supabase for authentication and data storage with comprehensive API
 - Comprehensive testing: Vitest (unit), Playwright (E2E), contract & integration tests
-- Docker containerization with multi-stage builds and health monitoring
+- Podman containerization with multi-stage builds and health monitoring
 - GitHub Actions CI/CD pipeline with automated testing and deployment
 - WCAG AA accessibility compliance with keyboard navigation and screen readers
 - Security hardening with CSP headers, middleware, and input validation
@@ -68,7 +68,7 @@ npm run typecheck # TypeScript type checking
 npm run format # Format code with Prettier
 
 # Deployment
-npm run docker:build # Build Docker image
+npm run docker:build # Build Podman image
 npm run docker:prod # Start production environment
 ./scripts/deploy.sh # Full production deployment with validation
 
@@ -81,6 +81,41 @@ npm run docker:prod # Start production environment
 - Styling: Tailwind utility classes, responsive design patterns
 - Testing: TDD approach - tests before implementation
 - Data: JSON-driven static generation, Supabase for dynamic data
+
+## 🐳 Container Runtime: Podman
+
+**CRITICAL**: This project uses **Podman** as the preferred container runtime, not Docker.
+
+### Podman Commands:
+- `podman build` instead of `docker build`
+- `podman run` instead of `docker run`
+- `podman-compose` instead of `docker-compose`
+- `podman system prune` instead of `docker system prune`
+
+### Why Podman:
+- Rootless containers (more secure)
+- Better integration with systemd
+- Compatible with Docker commands but more secure
+- Preferred on RHEL/Fedora systems
+- No daemon required (daemonless)
+
+### Container Commands:
+```bash
+# Build image
+npm run docker:build  # Uses podman build internally
+
+# Run container
+npm run docker:run    # Uses podman run internally
+
+# Development environment
+npm run docker:dev    # Uses podman-compose internally
+
+# Production environment
+npm run docker:prod   # Uses podman-compose internally
+
+# Quick test
+npm run docker:test   # Uses podman-compose internally
+```
 
 ## Constitutional Requirements ✅ **ALL ACHIEVED**
 
@@ -121,9 +156,9 @@ npm run docker:prod # Start production environment
 
 <!-- MANUAL ADDITIONS START -->
 
-### 🚀 Docker/CI/CD Pipeline Validation Complete (2025-09-12)
+### 🚀 Podman/CI/CD Pipeline Validation Complete (2025-09-12)
 - **GitHub Actions Workflow Fixed**: Resolved 13 failed workflow runs with secure fallback environment variables
-- **Docker Configuration Complete**: Port fixes, environment variable handling, mock credential system
+- **Podman Configuration Complete**: Port fixes, environment variable handling, mock credential system
 - **Full CI/CD Pipeline Verification**: End-to-end testing confirms production readiness
 - **Test Success Rate**: **81% (57/70 tests passing)** - validated identical to GitHub Actions environment
 - **Production Deployment Ready**: All core infrastructure tested and operational
