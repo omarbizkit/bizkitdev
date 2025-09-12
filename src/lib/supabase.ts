@@ -34,7 +34,9 @@ export const supabase = isTestEnvironment
     })
 
 // Admin client for server-side operations (if service role key is provided)
-export const supabaseAdmin = supabaseServiceRoleKey
+export const supabaseAdmin = isTestEnvironment
+  ? (mockSupabase as any) // Use mock for admin operations too in test environment
+  : supabaseServiceRoleKey
   ? createClient(supabaseUrl, supabaseServiceRoleKey, {
       auth: {
         autoRefreshToken: false,
