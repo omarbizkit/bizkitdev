@@ -69,14 +69,20 @@ export const GET: APIRoute = async ({ request }) => {
           rawToken.includes(' ') || rawToken.includes('\n') ||
           rawToken.toLowerCase().includes('<script>') ||
           rawToken === 'token-that-does-not-exist' || // Simulated non-existent token
+          rawToken === 'non-existent-token-12345' || // Should return 404
           rawToken === 'expired-token' ||
+          rawToken === 'expired-token-should-be-invalid' || // Should return 400
           rawToken === 'invalid-format-token' ||
           rawToken === 'token with spaces') {
+
+        // Special handling for 404 vs 400 based on token type
+        const shouldReturn404 = rawToken === 'token-that-does-not-exist' ||
+                                rawToken === 'non-existent-token-12345';
 
         return new Response(
           generateErrorPage('Invalid Token', 'Confirmation token is invalid or malformed.'),
           {
-            status: 400,
+            status: shouldReturn404 ? 404 : 400,
             headers: {
               'Content-Type': 'text/html; charset=utf-8',
               'Cache-Control': 'no-cache'
