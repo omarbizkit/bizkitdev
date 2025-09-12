@@ -1,7 +1,7 @@
 ---
 export const prerender = true;
 
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import CleanLayout from '../../layouts/CleanLayout.astro';
 import StatusBadge from '../../components/StatusBadge.astro';
 import TechStack from '../../components/TechStack.astro';
 import OptimizedImage from '../../components/OptimizedImage.astro';
@@ -24,7 +24,7 @@ const pageTitle = `${project.name} - bizkit.dev`;
 const pageDescription = project.description_short;
 ---
 
-<BaseLayout>
+<CleanLayout title={pageTitle} description={pageDescription}>
   <SEO 
     slot="head"
     title={pageTitle}
@@ -34,7 +34,7 @@ const pageDescription = project.description_short;
     type="article"
   />
 
-  <main class="min-h-screen bg-gray-900 text-white">
+  <div class="min-h-screen pt-20">
     <!-- Project Hero Section -->
     <section class="py-20 relative overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-purple-500/10"></div>
@@ -236,5 +236,5 @@ const pageDescription = project.description_short;
         </div>
       </div>
     </section>
-  </main>
-</BaseLayout>
+  </div>
+</CleanLayout>
