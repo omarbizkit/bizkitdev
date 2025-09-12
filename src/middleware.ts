@@ -67,7 +67,15 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   if (context.url.pathname.endsWith('.js') || context.url.pathname.endsWith('.css')) {
     response.headers.set('Cache-Control', 'public, max-age=31536000, immutable'); // 1 year for static assets
   } else if (context.url.pathname.startsWith('/api/')) {
-    response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    // Allow API endpoints to set their own cache headers by checking if cache-control already exists
+    if (!response.headers.has('Cache-Control')) {
+      // Default cache control for API routes - only applied if endpoint doesn't set its own
+      response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    }
+    // If endpoint already set Cache-Control, leave it unchanged (except for projects API which should have better cache)
+    if (context.url.pathname === '/api/projects' && !context.url.search) {
+      response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=600');
+    }
   } else {
     response.headers.set('Cache-Control', 'public, max-age=3600, s-maxage=7200'); // 1 hour client, 2 hours CDN
   }

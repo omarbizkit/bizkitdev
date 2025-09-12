@@ -31,7 +31,14 @@ export function generateSecureToken(length: number = 32): string {
  * @returns true if valid email format
  */
 export function isValidEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // More restrictive email regex that matches RFC 5322 requirements and contract tests
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  // Additional validation to reject invalid patterns
+  if (email.includes('..')) return false; // Reject consecutive dots
+  if (email.startsWith('@')) return false; // Must have local part
+  if (email.endsWith('@')) return false; // Must have domain part
+
   return emailRegex.test(email) && email.length <= 254;
 }
 
