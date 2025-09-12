@@ -36,13 +36,6 @@ jobs:
       - name: Run unit tests
         run: npm run test
 
-      - name: Run contract tests
-        run: npm run test:contract
-        env:
-          TEST_BASE_URL: http://localhost:4321
-          PUBLIC_SUPABASE_URL: https://mock.supabase.co
-          PUBLIC_SUPABASE_ANON_KEY: mock-anon-key-safe-for-ci
-
       - name: Install Playwright dependencies
         run: npx playwright install --with-deps chromium
 
@@ -52,6 +45,13 @@ jobs:
           sleep 10
           curl --retry 10 --retry-delay 3 --retry-connrefused http://localhost:4321
         env:
+          PUBLIC_SUPABASE_URL: https://mock.supabase.co
+          PUBLIC_SUPABASE_ANON_KEY: mock-anon-key-safe-for-ci
+
+      - name: Run contract tests
+        run: npm run test:contract
+        env:
+          TEST_BASE_URL: http://localhost:4321
           PUBLIC_SUPABASE_URL: https://mock.supabase.co
           PUBLIC_SUPABASE_ANON_KEY: mock-anon-key-safe-for-ci
 
