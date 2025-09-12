@@ -1,0 +1,63 @@
+---
+export interface Props {
+  status: 'idea' | 'development' | 'live' | 'archived';
+}
+
+const { status } = Astro.props;
+
+const getStatusConfig = (status: string) => {
+  switch (status) {
+    case 'live':
+      return {
+        text: 'Live',
+        bgColor: 'bg-green-500/20',
+        textColor: 'text-green-400',
+        borderColor: 'border-green-500/30',
+        icon: '🟢'
+      };
+    case 'development':
+      return {
+        text: 'Development',
+        bgColor: 'bg-yellow-500/20',
+        textColor: 'text-yellow-400',
+        borderColor: 'border-yellow-500/30',
+        icon: '🟡'
+      };
+    case 'idea':
+      return {
+        text: 'Idea',
+        bgColor: 'bg-blue-500/20',
+        textColor: 'text-blue-400',
+        borderColor: 'border-blue-500/30',
+        icon: '💡'
+      };
+    case 'archived':
+      return {
+        text: 'Archived',
+        bgColor: 'bg-gray-500/20',
+        textColor: 'text-gray-400',
+        borderColor: 'border-gray-500/30',
+        icon: '📦'
+      };
+    default:
+      return {
+        text: 'Unknown',
+        bgColor: 'bg-gray-500/20',
+        textColor: 'text-gray-400',
+        borderColor: 'border-gray-500/30',
+        icon: '❓'
+      };
+  }
+};
+
+const config = getStatusConfig(status);
+---
+
+<span 
+  class={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border ${config.bgColor} ${config.textColor} ${config.borderColor} backdrop-blur-sm`}
+  role="status"
+  aria-label={`Project status: ${config.text}`}
+>
+  <span class="text-xs" aria-hidden="true">{config.icon}</span>
+  <span>{config.text}</span>
+</span>

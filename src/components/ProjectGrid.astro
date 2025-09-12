@@ -1,0 +1,258 @@
+---
+import ProjectCard from './ProjectCard.astro';
+import type { Project } from '../types/index.ts';
+
+export interface Props {
+  projects: Project[];
+  showFilters?: boolean;
+  featuredFirst?: boolean;
+}
+
+const { projects, showFilters = false, featuredFirst = true } = Astro.props;
+
+// Sort projects - featured first if enabled, then by date
+const sortedProjects = featuredFirst 
+  ? [...projects].sort((a, b) => {
+      if (a.featured && !b.featured) return -1;
+      if (!a.featured && b.featured) return 1;
+      return new Date(b.created_date).getTime() - new Date(a.created_date).getTime();
+    })
+  : projects;
+
+// Get unique statuses for filtering
+const statuses = [...new Set(projects.map(p => p.status))];
+const uniqueTechStack = [...new Set(projects.flatMap(p => p.tech_stack))].slice(0, 8);
+---
+
+<section class="projects-section" aria-labelledby="projects-heading">
+  {showFilters && (
+    <div class="mb-12 space-y-6">
+      <!-- Search Bar -->
+      <div class="relative max-w-md mx-auto">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+        <input
+          type="text"
+          id="project-search"
+          placeholder="Search projects..."
+          class="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-colors"
+          aria-label="Search projects"
+        />
+      </div>
+      
+      <!-- Filter Buttons -->
+      <div class="flex flex-wrap gap-2 justify-center">
+        <button 
+          data-filter="all" 
+          class="filter-btn active px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-cyan-500 text-white hover:bg-cyan-400"
+          aria-pressed="true"
+        >
+          All Projects
+        </button>
+        {statuses.map((status) => (
+          <button 
+            data-filter={status} 
+            class="filter-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gray-700 text-gray-300 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-gray-900"
+            aria-pressed="false"
+          >
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </button>
+        ))}
+        <button 
+          data-filter="featured" 
+          class="filter-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gray-700 text-gray-300 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-gray-900"
+          aria-pressed="false"
+        >
+          ⭐ Featured
+        </button>
+      </div>
+      
+      <!-- Tech Stack Filter -->
+      {uniqueTechStack.length > 0 && (
+        <div class="text-center">
+          <details class="inline-block">
+            <summary class="cursor-pointer text-cyan-400 hover:text-cyan-300 font-medium">
+              Filter by Technology ▼
+            </summary>
+            <div class="mt-2 flex flex-wrap gap-2 justify-center max-w-2xl mx-auto">
+              {uniqueTechStack.map((tech) => (
+                <button 
+                  data-tech-filter={tech}
+                  class="tech-filter-btn px-3 py-1 text-sm rounded-md bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-cyan-400 border border-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                >
+                  {tech}
+                </button>
+              ))}
+            </div>
+          </details>
+        </div>
+      )}
+    </div>
+  )}
+
+  <!-- Projects Grid -->
+  <div 
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+    id="projects-grid"
+    role="list"
+    aria-label="Projects list"
+  >
+    {sortedProjects.map((project) => (
+      <div 
+        class="project-item" 
+        data-status={project.status}
+        data-featured={project.featured}
+        data-tech={project.tech_stack.join(',')}
+        data-name={project.name.toLowerCase()}
+        data-description={project.description_short.toLowerCase()}
+        role="listitem"
+      >
+        <ProjectCard project={project} featured={project.featured} />
+      </div>
+    ))}
+  </div>
+
+  <!-- No Results Message -->
+  <div id="no-results" class="hidden text-center py-12">
+    <div class="text-gray-400 text-lg mb-2">No projects found</div>
+    <p class="text-gray-500">Try adjusting your search or filter criteria</p>
+  </div>
+
+  <!-- Results Count -->
+  {projects.length > 0 && (
+    <div class="text-center mt-8 text-gray-500">
+      Showing <span id="results-count">{sortedProjects.length}</span> of {projects.length} projects
+    </div>
+  )}
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('project-search') as HTMLInputElement;
+    const filterButtons = document.querySelectorAll('.filter-btn') as NodeListOf<HTMLButtonElement>;
+    const techFilterButtons = document.querySelectorAll('.tech-filter-btn') as NodeListOf<HTMLButtonElement>;
+    const projectItems = document.querySelectorAll('.project-item') as NodeListOf<HTMLElement>;
+    const noResultsDiv = document.getElementById('no-results') as HTMLElement;
+    const resultsCount = document.getElementById('results-count') as HTMLElement;
+    
+    let activeStatusFilter = 'all';
+    let activeTechFilters = new Set<string>();
+    let searchTerm = '';
+
+    function updateResults() {
+      let visibleCount = 0;
+      
+      projectItems.forEach(item => {
+        const status = item.dataset.status || '';
+        const featured = item.dataset.featured === 'true';
+        const tech = item.dataset.tech?.split(',') || [];
+        const name = item.dataset.name || '';
+        const description = item.dataset.description || '';
+        
+        let isVisible = true;
+        
+        // Status filter
+        if (activeStatusFilter === 'featured') {
+          isVisible = isVisible && featured;
+        } else if (activeStatusFilter !== 'all') {
+          isVisible = isVisible && status === activeStatusFilter;
+        }
+        
+        // Tech filter
+        if (activeTechFilters.size > 0) {
+          const hasTech = [...activeTechFilters].some(filter => 
+            tech.some(t => t.toLowerCase().includes(filter.toLowerCase()))
+          );
+          isVisible = isVisible && hasTech;
+        }
+        
+        // Search filter
+        if (searchTerm) {
+          const searchMatch = name.includes(searchTerm) || description.includes(searchTerm);
+          isVisible = isVisible && searchMatch;
+        }
+        
+        if (isVisible) {
+          item.style.display = 'block';
+          visibleCount++;
+        } else {
+          item.style.display = 'none';
+        }
+      });
+      
+      // Update UI
+      if (noResultsDiv) {
+        noResultsDiv.style.display = visibleCount === 0 ? 'block' : 'none';
+      }
+      if (resultsCount) {
+        resultsCount.textContent = visibleCount.toString();
+      }
+    }
+
+    // Search functionality
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        searchTerm = (e.target as HTMLInputElement).value.toLowerCase();
+        updateResults();
+      });
+    }
+
+    // Status filter functionality
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Update active states
+        filterButtons.forEach(b => {
+          b.classList.remove('active', 'bg-cyan-500', 'text-white');
+          b.classList.add('bg-gray-700', 'text-gray-300');
+          b.setAttribute('aria-pressed', 'false');
+        });
+        button.classList.add('active', 'bg-cyan-500', 'text-white');
+        button.classList.remove('bg-gray-700', 'text-gray-300');
+        button.setAttribute('aria-pressed', 'true');
+        
+        activeStatusFilter = button.dataset.filter || 'all';
+        updateResults();
+      });
+    });
+
+    // Tech filter functionality
+    techFilterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tech = button.dataset.techFilter || '';
+        
+        if (activeTechFilters.has(tech)) {
+          activeTechFilters.delete(tech);
+          button.classList.remove('bg-cyan-500', 'text-white');
+          button.classList.add('bg-gray-800', 'text-gray-300');
+        } else {
+          activeTechFilters.add(tech);
+          button.classList.add('bg-cyan-500', 'text-white');
+          button.classList.remove('bg-gray-800', 'text-gray-300');
+        }
+        
+        updateResults();
+      });
+    });
+  });
+</script>
+
+<style>
+  .filter-btn.active {
+    @apply bg-cyan-500 text-white;
+  }
+  
+  .tech-filter-btn.active {
+    @apply bg-cyan-500 text-white border-cyan-500;
+  }
+  
+  .project-item {
+    transition: all 0.3s ease;
+  }
+  
+  .project-item[style*="display: none"] {
+    display: none !important;
+  }
+</style>

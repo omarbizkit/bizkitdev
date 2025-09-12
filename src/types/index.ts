@@ -1,14 +1,15 @@
 export interface Project {
-  id: string
-  title: string
-  description: string
-  image: string
-  tags: string[]
-  url?: string
-  github?: string
-  featured: boolean
-  createdAt: Date
-  updatedAt: Date
+  id: string;
+  name: string;
+  description_short: string;
+  description_long: string;
+  status: 'idea' | 'development' | 'live' | 'archived';
+  tech_stack: string[];
+  subdomain_url: string;
+  github_url: string;
+  screenshot_url: string;
+  created_date: string;
+  featured: boolean;
 }
 
 export interface Skill {
