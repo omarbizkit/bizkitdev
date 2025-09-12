@@ -6,21 +6,21 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        PUBLIC_SUPABASE_URL: ${PUBLIC_SUPABASE_URL}
-        PUBLIC_SUPABASE_ANON_KEY: ${PUBLIC_SUPABASE_ANON_KEY}
-        PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-https://bizkit.dev}
+        PUBLIC_SUPABASE_URL: ${PUBLIC_SUPABASE_URL:-https://mock.supabase.co}
+        PUBLIC_SUPABASE_ANON_KEY: ${PUBLIC_SUPABASE_ANON_KEY:-mock-anon-key-safe-for-public-repo}
+        PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-http://localhost:3000}
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
       - PORT=3000
       - HOST=0.0.0.0
-      - PUBLIC_SUPABASE_URL=${PUBLIC_SUPABASE_URL}
-      - PUBLIC_SUPABASE_ANON_KEY=${PUBLIC_SUPABASE_ANON_KEY}
-      - PUBLIC_SITE_URL=${PUBLIC_SITE_URL:-https://bizkit.dev}
-      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
-      - SESSION_SECRET=${SESSION_SECRET}
-      - CSRF_SECRET=${CSRF_SECRET}
+      - PUBLIC_SUPABASE_URL=${PUBLIC_SUPABASE_URL:-https://mock.supabase.co}
+      - PUBLIC_SUPABASE_ANON_KEY=${PUBLIC_SUPABASE_ANON_KEY:-mock-anon-key-safe-for-public-repo}
+      - PUBLIC_SITE_URL=${PUBLIC_SITE_URL:-http://localhost:3000}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-mock-service-key-safe-for-public-repo}
+      - SESSION_SECRET=${SESSION_SECRET:-docker-dev-session-secret-change-in-production}
+      - CSRF_SECRET=${CSRF_SECRET:-docker-dev-csrf-secret-change-in-production}
     volumes:
       - app_logs:/app/logs
     restart: unless-stopped

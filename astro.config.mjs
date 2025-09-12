@@ -20,8 +20,8 @@ export default defineConfig({
   
   // Server configuration
   server: {
-    port: 4321,
-    host: true
+    port: parseInt(process.env.PORT || '4321'),
+    host: process.env.HOST || 'localhost'
   },
   
   // Image optimization
