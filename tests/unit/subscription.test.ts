@@ -20,17 +20,6 @@ vi.mock('@/lib/supabase', () => ({
 }))
 
 describe('Subscription Utils', () => {
-  const mockSupabase = vi.hoisted(() => ({
-    from: vi.fn(() => ({
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      single: vi.fn(),
-      insert: vi.fn(),
-      update: vi.fn().mockReturnThis()
-    })),
-    rpc: vi.fn()
-  }))
-
   beforeEach(() => {
     vi.clearAllMocks()
   })

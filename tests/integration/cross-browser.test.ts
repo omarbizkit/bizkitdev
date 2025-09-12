@@ -17,7 +17,7 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
     let context: BrowserContext;
     let page: Page;
 
-    beforeAll(async () => {
+    test.beforeAll(async () => {
       try {
         browser = await launcher.launch();
         context = await browser.newContext();
@@ -28,13 +28,13 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
       }
     });
 
-    afterAll(async () => {
+    test.afterAll(async () => {
       if (browser) {
         await browser.close();
       }
     });
 
-    it('should load homepage successfully', async () => {
+    test('should load homepage successfully', async () => {
       if (!page) return; // Skip if browser not available
       
       await page.goto(baseURL);
@@ -48,7 +48,7 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
       await expect(main).toBeVisible();
     });
 
-    it('should handle CSS Grid and Flexbox layouts', async () => {
+    test('should handle CSS Grid and Flexbox layouts', async () => {
       if (!page) return;
       
       await page.goto(baseURL);
@@ -70,7 +70,7 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
       }
     });
 
-    it('should support modern JavaScript features', async () => {
+    test('should support modern JavaScript features', async () => {
       if (!page) return;
       
       await page.goto(baseURL);
@@ -100,7 +100,7 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
       expect(supportsES6).toBe(true);
     });
 
-    it('should handle font loading gracefully', async () => {
+    test('should handle font loading gracefully', async () => {
       if (!page) return;
       
       await page.goto(baseURL);
@@ -116,16 +116,16 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
     });
   });
 
-  describe('Responsive Design Integration', () => {
+  test.describe('Responsive Design Integration', () => {
     let browser: Browser;
     let page: Page;
 
-    beforeAll(async () => {
+    test.beforeAll(async () => {
       browser = await chromium.launch();
       page = await browser.newPage();
     });
 
-    afterAll(async () => {
+    test.afterAll(async () => {
       await browser.close();
     });
 
@@ -138,8 +138,9 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
       { name: 'Desktop Large', width: 1920, height: 1080 }
     ];
 
-    describe.each(viewports)('$name ($width x $height)', ({ name, width, height }) => {
-      it('should display properly', async () => {
+    viewports.forEach(({ name, width, height }) => {
+      test.describe(`${name} (${width} x ${height})`, () => {
+        test(`should display properly on ${name}`, async () => {
         await page.setViewportSize({ width, height });
         await page.goto(baseURL);
         
@@ -159,7 +160,7 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
         await expect(main).toBeVisible();
       });
 
-      it('should handle touch interactions on mobile', async () => {
+      test('should handle touch interactions on mobile', async () => {
         if (width < 768) {
           await page.setViewportSize({ width, height });
           await page.goto(baseURL);
@@ -178,7 +179,7 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
         }
       });
 
-      it('should adapt navigation for screen size', async () => {
+      test('should adapt navigation for screen size', async () => {
         await page.setViewportSize({ width, height });
         await page.goto(baseURL);
         
@@ -198,8 +199,9 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
         }
       });
     });
+  });
 
-    it('should handle orientation changes', async () => {
+    test('should handle orientation changes', async () => {
       // Start in portrait
       await page.setViewportSize({ width: 375, height: 667 });
       await page.goto(baseURL);
@@ -220,7 +222,7 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
       await expect(main).toBeVisible();
     });
 
-    it('should handle zoom levels gracefully', async () => {
+    test('should handle zoom levels gracefully', async () => {
       await page.setViewportSize({ width: 1280, height: 720 });
       await page.goto(baseURL);
       
@@ -242,20 +244,20 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
     });
   });
 
-  describe('Performance Across Devices', () => {
+  test.describe('Performance Across Devices', () => {
     let browser: Browser;
     let page: Page;
 
-    beforeAll(async () => {
+    test.beforeAll(async () => {
       browser = await chromium.launch();
       page = await browser.newPage();
     });
 
-    afterAll(async () => {
+    test.afterAll(async () => {
       await browser.close();
     });
 
-    it('should load efficiently on slow connections', async () => {
+    test('should load efficiently on slow connections', async () => {
       // Simulate slow 3G
       await page.route('**/*', async route => {
         await new Promise(resolve => setTimeout(resolve, 100)); // Add delay
@@ -271,7 +273,7 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
       expect(loadTime).toBeLessThan(10000); // 10 seconds
     });
 
-    it('should handle limited memory gracefully', async () => {
+    test('should handle limited memory gracefully', async () => {
       await page.goto(baseURL);
       
       // Simulate memory pressure by creating large objects
@@ -293,26 +295,34 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
     });
   });
 
-  describe('Feature Detection Integration', () => {
+  test.describe('Feature Detection Integration', () => {
     let browser: Browser;
     let page: Page;
 
-    beforeAll(async () => {
+    test.beforeAll(async () => {
       browser = await chromium.launch();
       page = await browser.newPage();
     });
 
-    afterAll(async () => {
+    test.afterAll(async () => {
       await browser.close();
     });
 
-    it('should gracefully degrade when features are unavailable', async () => {
+    test('should gracefully degrade when features are unavailable', async () => {
       await page.goto(baseURL);
       
       // Test without JavaScript
       // JavaScript disabled testing - create new context with JS disabled
       const contextWithoutJS = await browser.newContext({ javaScriptEnabled: false });
       const pageWithoutJS = await contextWithoutJS.newPage();
+      await pageWithoutJS.goto(baseURL);
+      
+      // Basic content should still be visible on the JS-disabled page
+      const mainWithoutJS = pageWithoutJS.locator('main');
+      await expect(mainWithoutJS).toBeVisible();
+      
+      // Re-enable JavaScript by using the regular page
+      await contextWithoutJS.close();
       await page.reload();
       
       // Basic content should still be visible
@@ -325,7 +335,7 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
       await page.reload();
     });
 
-    it('should handle missing Web APIs gracefully', async () => {
+    test('should handle missing Web APIs gracefully', async () => {
       await page.goto(baseURL);
       
       // Mock missing API
@@ -339,7 +349,7 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
       expect(title).toBeDefined();
     });
 
-    it('should provide appropriate fallbacks for modern features', async () => {
+    test('should provide appropriate fallbacks for modern features', async () => {
       await page.goto(baseURL);
       
       // Check for CSS custom properties support
@@ -358,4 +368,5 @@ test.describe('Cross-Browser Compatibility Integration Tests', () => {
       }
     });
   });
+});
 });

@@ -1,23 +1,23 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import type { Browser, Page } from 'playwright';
-import { chromium } from 'playwright';
+import { test, expect } from '@playwright/test';
+import type { Browser, Page } from '@playwright/test';
+import { chromium } from '@playwright/test';
 
-describe('Form Interactions Integration Tests', () => {
+test.describe('Form Interactions Integration Tests', () => {
   let browser: Browser;
   let page: Page;
   const baseURL = 'http://localhost:4321';
 
-  beforeAll(async () => {
+  test.beforeAll(async () => {
     browser = await chromium.launch();
     page = await browser.newPage();
   });
 
-  afterAll(async () => {
+  test.afterAll(async () => {
     await browser.close();
   });
 
-  describe('Contact Form Integration', () => {
-    it('should render accessible contact form when available', async () => {
+  test.describe('Contact Form Integration', () => {
+    test('should render accessible contact form when available', async () => {
       await page.goto(baseURL);
       
       // Look for any contact forms on the page
@@ -46,7 +46,7 @@ describe('Form Interactions Integration Tests', () => {
       }
     });
 
-    it('should handle form validation properly', async () => {
+    test('should handle form validation properly', async () => {
       await page.goto(baseURL);
       
       const forms = page.locator('form');
@@ -73,7 +73,7 @@ describe('Form Interactions Integration Tests', () => {
       }
     });
 
-    it('should support keyboard navigation in forms', async () => {
+    test('should support keyboard navigation in forms', async () => {
       await page.goto(baseURL);
       
       const forms = page.locator('form');
@@ -100,7 +100,7 @@ describe('Form Interactions Integration Tests', () => {
       }
     });
 
-    it('should provide proper error feedback', async () => {
+    test('should provide proper error feedback', async () => {
       await page.goto(baseURL);
       
       const forms = page.locator('form');
@@ -132,12 +132,11 @@ describe('Form Interactions Integration Tests', () => {
     });
   });
 
-  describe('Newsletter Subscription Integration', () => {
-    it('should handle subscription form interactions', async () => {
+  test.describe('Newsletter Subscription Integration', () => {
+    test('should handle subscription form interactions', async () => {
       await page.goto(baseURL);
       
       // Look for newsletter subscription forms
-      const subscriptionForms = page.locator('form:has(input[type="email"]):has(*[text()*="subscribe" i])');
       const subscriptionInputs = page.locator('input[type="email"][name*="email"], input[type="email"][placeholder*="email" i]');
       
       if (await subscriptionInputs.count() > 0) {
@@ -175,7 +174,7 @@ describe('Form Interactions Integration Tests', () => {
       }
     });
 
-    it('should handle subscription errors gracefully', async () => {
+    test('should handle subscription errors gracefully', async () => {
       await page.goto(baseURL);
       
       const subscriptionInputs = page.locator('input[type="email"][name*="email"], input[type="email"][placeholder*="email" i]');
@@ -213,7 +212,7 @@ describe('Form Interactions Integration Tests', () => {
       }
     });
 
-    it('should prevent duplicate submissions', async () => {
+    test('should prevent duplicate submissions', async () => {
       await page.goto(baseURL);
       
       const subscriptionInputs = page.locator('input[type="email"][name*="email"], input[type="email"][placeholder*="email" i]');
@@ -252,8 +251,8 @@ describe('Form Interactions Integration Tests', () => {
     });
   });
 
-  describe('Form Accessibility Integration', () => {
-    it('should announce form status changes to screen readers', async () => {
+  test.describe('Form Accessibility Integration', () => {
+    test('should announce form status changes to screen readers', async () => {
       await page.goto(baseURL);
       
       const forms = page.locator('form');
@@ -281,7 +280,7 @@ describe('Form Interactions Integration Tests', () => {
       }
     });
 
-    it('should have proper field descriptions and help text', async () => {
+    test('should have proper field descriptions and help text', async () => {
       await page.goto(baseURL);
       
       const forms = page.locator('form');
@@ -305,7 +304,7 @@ describe('Form Interactions Integration Tests', () => {
       }
     });
 
-    it('should support high contrast mode', async () => {
+    test('should support high contrast mode', async () => {
       // Emulate high contrast media query
       await page.emulateMedia({ forcedColors: 'active' });
       await page.goto(baseURL);
@@ -333,8 +332,8 @@ describe('Form Interactions Integration Tests', () => {
     });
   });
 
-  describe('Form Performance Integration', () => {
-    it('should handle large form data efficiently', async () => {
+  test.describe('Form Performance Integration', () => {
+    test('should handle large form data efficiently', async () => {
       await page.goto(baseURL);
       
       const textareas = page.locator('textarea');
@@ -357,7 +356,7 @@ describe('Form Interactions Integration Tests', () => {
       }
     });
 
-    it('should debounce validation for better performance', async () => {
+    test('should debounce validation for better performance', async () => {
       await page.goto(baseURL);
       
       const emailInputs = page.locator('input[type="email"]');
@@ -366,7 +365,7 @@ describe('Form Interactions Integration Tests', () => {
         
         // Type rapidly to test debouncing
         await emailInput.focus();
-        await emailInput.type('test@example', { delay: 50 });
+        await emailInput.fill('test@example');
         
         // Wait for any debounced validation
         await page.waitForTimeout(1000);
