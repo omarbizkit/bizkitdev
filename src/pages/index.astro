@@ -6,6 +6,7 @@ import ModernHero from '../components/ModernHero.astro';
 import ProjectGrid from '../components/ProjectGrid.astro';
 import projectsData from '../content/projects.json';
 import type { Project } from '../types/index.ts';
+import StructuredData from '../components/StructuredData.astro';
 
 const projects = projectsData.projects as Project[];
 ---
@@ -99,4 +100,7 @@ const projects = projectsData.projects as Project[];
       </div>
     </div>
   </section>
+
+  <!-- Structured Data for Homepage SEO -->
+  <StructuredData type="homepage" />
 </CleanLayout>

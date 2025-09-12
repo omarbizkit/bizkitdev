@@ -8,6 +8,7 @@ import OptimizedImage from '../../components/OptimizedImage.astro';
 import SEO from '../../components/SEO.astro';
 import projectsData from '../../content/projects.json';
 import type { Project } from '../../types/index.ts';
+import StructuredData from '../../components/StructuredData.astro';
 
 export async function getStaticPaths() {
   const projects = projectsData.projects as Project[];
@@ -237,4 +238,7 @@ const pageDescription = project.description_short;
       </div>
     </section>
   </div>
+
+  <!-- Structured Data for Project SEO Enhancement -->
+  <StructuredData type="project" data={project} />
 </CleanLayout>
