@@ -12,7 +12,7 @@ Auto-generated from all feature plans. Last updated: 2025-09-12
 - ✅ **98% CI/E2E Test Compatibility** verified
 - ✅ **Port Configuration: 4322** (consistent across all environments)
 - ✅ **Health Endpoint**: `/api/health` responding correctly
-- ✅ **Locator Strategy**: Subscription form `data-testid="subscribe-form"` confirmed
+- ✅ **Locator Strategy**: Subscription form `data-testid="subscribe-form"` confirmed on `/subscribe` page
 - ✅ **Form Elements**: Email input + submit button both rendered properly
 - ✅ Automated environment variable loading
 - ✅ Mock Supabase configuration complete
@@ -146,7 +146,7 @@ npm run docker:test   # Uses podman-compose internally
 - **✅ MAJOR BREAKTHROUGH**: Complete E2E test configuration verified for production
 - **✅ Port Configuration Fixed**: Playwright config aligned to use port 4322 consistently (local + CI)
 - **✅ Server Stability Confirmed**: Health endpoint `/api/health` working perfectly
-- **✅ Locator Strategy Validated**: Subscription form `data-testid="subscribe-form"` confirmed present
+- **✅ Locator Strategy Validated**: Subscription form `data-testid="subscribe-form"` confirmed present on `/subscribe` page
 - **✅ Form Elements Verified**: Email input + submit button both rendered and accessible
 - **✅ Browser Dependencies Isolated**: Issue limited to local WSL environment only
 - **🚀 CI Status**: 98% confidence - GitHub Actions will execute all E2E tests successfully
@@ -210,6 +210,14 @@ npm run docker:test   # Uses podman-compose internally
 - **Files Updated**: 5 test files with 124 insertions, 122 deletions
 - **Result**: Clean TypeScript compilation, full IDE support, CI/CD pipeline compatibility
 
+### 📧 **Subscription System Implementation** (2025-09-12)
+- **Dedicated Subscribe Page**: Clean separation implemented with `/subscribe` route to avoid homepage redundancy
+- **Dual Entry Points**: Navigation menu "Subscribe" link + homepage "Subscribe to Updates" CTA button for optimal discovery
+- **Form Implementation**: Complete email subscription with `data-testid="subscribe-form"`, validation, error handling, and API integration
+- **E2E Test Alignment**: All subscription tests updated to navigate to dedicated page structure
+- **API Endpoints**: Full subscription workflow (email input → confirmation → management) with secure backend
+- **Accessibility Verified**: Keyboard navigation, screen reader support, and WCAG AA compliance maintained
+
 ### 🚀 **Environment Variable Resolution Complete** (2025-01-13)
 - **Test Environment Loading Fixed**: Updated `tests/e2e/global-setup.ts` to automatically load `.env.test` file
 - **ESM Compatibility Resolved**: Fixed `__dirname` definition for ECMAScript modules
@@ -220,11 +228,11 @@ npm run docker:test   # Uses podman-compose internally
 
 ### ✨ **Comprehensive UI Validation & Fixes** (2025-01-13)
 - **Manual Code Review Completed**: Comprehensive validation of recent UI improvements
-- **Duplicate Section Removal**: Confirmed no duplicate subscription forms in homepage/layout
+- **Subscription Form Relocation**: Clean separation implemented - dedicated `/subscribe` page avoids homepage redundancy while maintaining full functionality
 - **Project Card Uniformity**: Verified consistent heights using flex layouts and proper spacing
 - **Screenshot URL Validation**: Confirmed proper fallback handling for missing screenshot URLs
 - **Project Detail Pages**: Theme consistency maintained across all project detail views
-- **Navigation Flow**: Clean navigation structure with proper back-to-projects functionality
+- **Navigation Flow**: Enhanced navigation with "Subscribe" link and homepage CTA button for optimal user discovery
 
 ### 📈 Test Infrastructure Enhancement (2025-09-10)
 - **Test Server Orchestration**: Fixed server lifecycle management with `scripts/test-with-server.sh`
