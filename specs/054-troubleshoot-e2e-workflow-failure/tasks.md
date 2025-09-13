@@ -55,8 +55,8 @@ Based on plan.md: Single project at repository root with existing Astro framewor
 - [ ] T007 [P] Contract test for local test execution API in `tests/contract/test_local_test_execution_api.ts`
 - [ ] T008 [P] Contract test for configuration comparison API in `tests/contract/test_config_comparison_api.ts`
 - [ ] T009 [P] Integration test for failed workflow run #53 log retrieval from omarbizkitdev/bizkitdev
-- [ ] T010 [P] Integration test for local E2E test reproduction with matching CI environment
-- [ ] T011 [P] Integration test for port 4321 server startup and health check validation
+- [x] T010 [P] Integration test for local E2E test reproduction with matching CI environment - COMPLETED: Created and executed workflow-diagnosis.spec.ts, identified subscription form missing
+- [x] T011 [P] Integration test for port 4321 server startup and health check validation - VERIFIED: Server running with health endpoint responding
 - [ ] T012 [P] Integration test for environment variable consistency between local and CI
 - [ ] T013 [P] Integration test for Playwright timeout and browser compatibility scenarios
 - [ ] T014 [P] Integration test for dependency version mismatch detection and resolution
