@@ -1,0 +1,399 @@
+openapi: 3.0.3
+info:
+  title: Configuration Comparison API
+  description: Contracts for comparing local vs CI configuration to identify environment-specific issues
+  version: 1.0.0
+  contact:
+    name: Troubleshooting Framework
+
+servers:
+  - url: https://config-analysis.local
+    description: Configuration analysis endpoint
+
+paths:
+  /analyze-environments:
+    post:
+      summary: Compare local and CI environment configurations
+      description: Analyze differences between local development and GitHub Actions CI environment to identify configuration drift
+      operationId: compareEnvironmentConfigurations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvironmentComparisonRequest'
+      responses:
+        '200':
+          description: Configuration analysis completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentAnalysisResult'
+        '400':
+          description: Invalid request or configuration data
+        '500':
+          description: Analysis failure
+
+  /validate-configuration:
+    post:
+      summary: Validate configuration files for consistency
+      description: Validate .env files, playwright config, and package.json for configuration consistency
+      operationId: validateConfigurationConsistency
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidationRequest'
+      responses:
+        '200':
+          description: Validation completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResult'
+        '400':
+          description: Invalid configuration data
+        '500':
+          description: Validation failure
+
+  /health-check/{environmentType}:
+    post:
+      summary: Execute health checks for specific environment
+      description: Run environment-specific health checks to ensure proper setup
+      operationId: performEnvironmentHealthCheck
+      parameters:
+        - name: environmentType
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: ["local", "ci", "production"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HealthCheckConfig'
+      responses:
+        '200':
+          description: Health check completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResult'
+        '400':
+          description: Invalid health check configuration
+        '500':
+          description: Health check failure
+
+  /diagnostics/full-analysis:
+    get:
+      summary: Get comprehensive diagnostic report
+      description: Generate full diagnostic report including environment comparison, validation, and health checks
+      operationId: getFullDiagnosticReport
+      responses:
+        '200':
+          description: Full diagnostic report generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FullDiagnosticReport'
+        '500':
+          description: Diagnostic report generation failure
+
+components:
+  schemas:
+    EnvironmentComparisonRequest:
+      type: object
+      required:
+        - localConfig
+        - ciConfig
+        - compareScope
+      properties:
+        localConfig:
+          $ref: '#/components/schemas/EnvironmentSnapshot'
+        ciConfig:
+          $ref: '#/components/schemas/EnvironmentSnapshot'
+        compareScope:
+          type: array
+          items:
+            type: string
+            enum: ["dependencies", "environment-variables", "playwright-config", "system-requirements", "port-configuration"]
+          example: ["dependencies", "environment-variables", "port-configuration"]
+
+    EnvironmentSnapshot:
+      type: object
+      required:
+        - environmentType
+        - nodeVersion
+        - packageJson
+      properties:
+        environmentType:
+          type: string
+          enum: ["local", "ci", "production"]
+        nodeVersion:
+          type: string
+          example: "18.19.0"
+        packageJson:
+          type: object
+          description: Full package.json content
+        environmentVariables:
+          type: object
+          description: Relevant environment variables
+        playwrightConfig:
+          type: object
+          description: Playwright configuration object
+        systemInfo:
+          type: object
+          properties:
+            os:
+              type: string
+              example: "Linux"
+            arch:
+              type: string
+              example: "x64"
+            totalMemory:
+              type: integer
+              description: Total system memory in MB
+
+    EnvironmentAnalysisResult:
+      type: object
+      required:
+        - compatibilityScore
+        - differences
+        - criticalIssues
+      properties:
+        compatibilityScore:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Percentage match between environments
+        differences:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfigurationDifference'
+        criticalIssues:
+          type: array
+          items:
+            $ref: '#/components/schemas/CriticalIssue'
+        recommendations:
+          type: array
+          items:
+            type: string
+          description: Actionable recommendations to improve compatibility
+
+    ConfigurationDifference:
+      type: object
+      required:
+        - type
+        - category
+        - severity
+        - description
+      properties:
+        type:
+          type: string
+          enum: ["missing", "mismatch", "additional", "incompatible"]
+        category:
+          type: string
+          enum: ["dependency", "environment", "configuration", "system"]
+        severity:
+          type: string
+          enum: ["low", "medium", "high", "critical"]
+        description:
+          type: string
+          example: "Node.js version mismatch: CI uses 18.20.1 vs local 18.19.0"
+        localValue:
+          type: string
+          description: Value in local environment
+          nullable: true
+        ciValue:
+          type: string
+          description: Value in CI environment
+          nullable: true
+
+    CriticalIssue:
+      type: object
+      required:
+        - issueType
+        - description
+        - impact
+      properties:
+        issueType:
+          type: string
+          enum: ["port-conflict", "missing-dependency", "incompatible-version", "invalid-config", "security-issue"]
+        description:
+          type: string
+          example: "Port 4321 not available in CI environment"
+        impact:
+          type: string
+          enum: ["blocking", "degrading", "potential-failure", "performance"]
+        resolution:
+          type: string
+          description: Suggested resolution approach
+
+    ValidationRequest:
+      type: object
+      required:
+        - configFiles
+        - validationRules
+      properties:
+        configFiles:
+          type: object
+          description: Configuration files to validate
+          properties:
+            envLocal:
+              type: string
+              description: Content of .env.local file
+            envTest:
+              type: string
+              description: Content of .env.test file
+            playwrightConfig:
+              type: string
+              description: Content of playwright.config.js
+            packageJson:
+              type: string
+              description: Content of package.json
+        validationRules:
+          type: array
+          items:
+            type: string
+            enum: ["environment-consistency", "dependency-resolution", "port-compatibility", "config-syntax", "security-check"]
+          example: ["environment-consistency", "dependency-resolution"]
+
+    ValidationResult:
+      type: object
+      required:
+        - overallStatus
+        - validations
+      properties:
+        overallStatus:
+          type: string
+          enum: ["pass", "partial", "fail"]
+        validations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfigValidation'
+
+    ConfigValidation:
+      type: object
+      required:
+        - validationType
+        - status
+        - errors
+      properties:
+        validationType:
+          type: string
+          example: "environment-consistency"
+        status:
+          type: string
+          enum: ["pass", "fail", "warning"]
+        errors:
+          type: array
+          items:
+            type: string
+            example: ".env.local references undefined SUPABASE_ANON_KEY"
+        warnings:
+          type: array
+          items:
+            type: string
+            example: "Unused environment variable: DEBUG_MODE"
+        recommendations:
+          type: array
+          items:
+            type: string
+            example: "Consider moving debug variable to .env.development.local"
+
+    HealthCheckConfig:
+      type: object
+      required:
+        - checkTypes
+      properties:
+        checkTypes:
+          type: array
+          items:
+            type: string
+            enum: ["server-startup", "port-availability", "dependencies-installed", "browser-binaries", "mock-services", "environment-variables"]
+          example: ["server-startup", "port-availability", "dependencies-installed"]
+
+    HealthCheckResult:
+      type: object
+      required:
+        - environmentType
+        - overallHealth
+        - checks
+      properties:
+        environmentType:
+          type: string
+          example: "ci"
+        overallHealth:
+          type: string
+          enum: ["healthy", "warning", "unhealthy"]
+        checks:
+          type: array
+          items:
+            $ref: '#/components/schemas/HealthCheck'
+
+    HealthCheck:
+      type: object
+      required:
+        - name
+        - status
+        - duration
+      properties:
+        name:
+          type: string
+          example: "server-startup"
+        status:
+          type: string
+          enum: ["passed", "failed", "warning"]
+        duration:
+          type: integer
+          description: Check duration in milliseconds
+        message:
+          type: string
+          example: "Server started successfully on port 4321"
+        errorDetails:
+          type: string
+          description: Error details if check failed
+          nullable: true
+
+    FullDiagnosticReport:
+      type: object
+      required:
+        - timestamp
+        - environmentComparison
+        - configValidation
+        - healthChecks
+        - recommendations
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        environmentComparison:
+          $ref: '#/components/schemas/EnvironmentAnalysisResult'
+        configValidation:
+          $ref: '#/components/schemas/ValidationResult'
+        healthChecks:
+          type: object
+          description: Health check results by environment
+          additionalProperties:
+            $ref: '#/components/schemas/HealthCheckResult'
+        recommendations:
+          type: object
+          properties:
+            immediate:
+              type: array
+              items:
+                type: string
+              description: Actions to take right away
+            short_term:
+              type: array
+              items:
+                type: string
+              description: Actions for next few days
+            monitoring:
+              type: array
+              items:
+                type: string
+              description: Ongoing monitoring recommendations

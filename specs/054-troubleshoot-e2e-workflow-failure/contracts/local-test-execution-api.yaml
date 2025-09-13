@@ -1,0 +1,293 @@
+openapi: 3.0.3
+info:
+  title: Local Test Execution API
+  description: Contracts for executing E2E tests locally to reproduce CI failures
+  version: 1.0.0
+  contact:
+    name: Troubleshooting Framework
+
+servers:
+  - url: http://localhost:{port}
+    description: Local development server
+    variables:
+      port:
+        default: "4321"
+        description: Server port (fixed at 4321)
+
+paths:
+  /start-server:
+    post:
+      summary: Start local development server
+      description: Start the Astro development server with proper configuration for testing
+      operationId: startLocalServer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServerStartRequest'
+      responses:
+        '200':
+          description: Server started successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerStatus'
+        '400':
+          description: Invalid configuration
+        '409':
+          description: Server already running or port conflict
+        '500':
+          description: Server startup failure
+
+  /health:
+    get:
+      summary: Check server health for test readiness
+      description: Health endpoint to verify server is ready for E2E testing
+      operationId: checkServerHealth
+      responses:
+        '200':
+          description: Server is healthy and ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '503':
+          description: Server is not ready or unhealthy
+
+  /run-tests:
+    post:
+      summary: Execute specific E2E test scenarios
+      description: Run individual test scenarios or complete test suite locally
+      operationId: executeTestScenarios
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestExecutionRequest'
+      responses:
+        '200':
+          description: Test execution completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestExecutionResult'
+        '400':
+          description: Invalid test configuration
+        '408':
+          description: Test execution timed out
+        '500':
+          description: Test execution error
+
+  /test-results/{testId}:
+    get:
+      summary: Retrieve detailed test results
+      description: Get detailed results for a specific test execution
+      operationId: getTestResults
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "e2e-subscription-flow-20250913123456"
+      responses:
+        '200':
+          description: Test results retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestExecutionResult'
+        '404':
+          description: Test result not found
+
+components:
+  schemas:
+    ServerStartRequest:
+      type: object
+      required:
+        - environment
+        - port
+        - mockData
+      properties:
+        environment:
+          type: string
+          enum: ["development", "test", "production"]
+          example: "test"
+        port:
+          type: integer
+          minimum: 3000
+          maximum: 9999
+          example: 4321
+        mockData:
+          type: boolean
+          description: Use mock data instead of real APIs
+          example: true
+        watchMode:
+          type: boolean
+          description: Enable watch mode for automatic restarts
+          example: false
+
+    ServerStatus:
+      type: object
+      required:
+        - status
+        - port
+        - uptime
+      properties:
+        status:
+          type: string
+          enum: ["starting", "ready", "healthy", "unhealthy", "stopped"]
+        port:
+          type: integer
+          example: 4321
+        uptime:
+          type: integer
+          description: Uptime in seconds
+          minimum: 0
+        url:
+          type: string
+          format: uri
+          example: "http://localhost:4321"
+        processId:
+          type: integer
+          description: Server process ID
+
+    HealthStatus:
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+          enum: ["healthy", "unhealthy", "starting"]
+        timestamp:
+          type: string
+          format: date-time
+        responseTime:
+          type: integer
+          description: Response time in milliseconds
+        version:
+          type: string
+          example: "1.0.0"
+        environment:
+          type: string
+          example: "test"
+
+    TestExecutionRequest:
+      type: object
+      required:
+        - testScenario
+        - config
+      properties:
+        testScenario:
+          type: string
+          enum: ["single", "e2e-snapshot", "e2e-all"]
+          example: "e2e-all"
+        config:
+          type: object
+          properties:
+            browsers:
+              type: array
+              items:
+                type: string
+                enum: ["chromium", "firefox", "webkit", "mobile"]
+              example: ["chromium", "firefox"]
+            timeout:
+              type: integer
+              minimum: 30000
+              maximum: 300000
+              example: 60000
+            headless:
+              type: boolean
+              example: true
+            parallel:
+              type: integer
+              minimum: 1
+              maximum: 8
+              example: 2
+        specificTests:
+          type: array
+          items:
+            type: string
+          description: List of specific test files to run (optional)
+          example: ["tests/e2e/subscription-flow.spec.ts"]
+
+    TestExecutionResult:
+      type: object
+      required:
+        - testId
+        - status
+        - summary
+      properties:
+        testId:
+          type: string
+          example: "e2e-subscription-flow-20250913123456"
+        status:
+          type: string
+          enum: ["success", "partial_success", "failure", "timeout"]
+        summary:
+          type: object
+          properties:
+            totalTests:
+              type: integer
+              minimum: 0
+            passedTests:
+              type: integer
+              minimum: 0
+            failedTests:
+              type: integer
+              minimum: 0
+            skippedTests:
+              type: integer
+              minimum: 0
+            duration:
+              type: integer
+              description: Total duration in milliseconds
+        failures:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestFailure'
+        metadata:
+          type: object
+          properties:
+            startTime:
+              type: string
+              format: date-time
+            endTime:
+              type: string
+              format: date-time
+            playwrightVersion:
+              type: string
+            nodeVersion:
+              type: string
+
+    TestFailure:
+      type: object
+      required:
+        - testName
+        - error
+        - duration
+      properties:
+        testName:
+          type: string
+          example: "should display subscription form"
+        error:
+          type: string
+          example: "Locator not found: data-testid=subscribe-form"
+        duration:
+          type: integer
+          description: Test duration in milliseconds
+        screenshot:
+          type: string
+          description: Path to failure screenshot (relative)
+        browserLogs:
+          type: array
+          items:
+            type: string
+          description: Browser console logs during failure
+        stackTrace:
+          type: string
+          description: Stack trace if available
