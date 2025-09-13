@@ -13,8 +13,8 @@ test.describe('Visitor Discovery Flow', () => {
 
   test.describe('Landing Page Experience', () => {
     test('should display Omar Torres branding and hero section', async ({ page }) => {
-      // Check for main heading with tagline (not name - H1 shows tagline)
-      await expect(page.locator('h1')).toContainText('The Mind Behind The Code');
+      // Check for main hero heading (first section on homepage)
+      await expect(page.locator('section').first().locator('h1')).toContainText('The Mind Behind The Code');
 
       // Check for professional identity (subtitle)
       await expect(page.getByText('Data & AI Enthusiast')).toBeVisible();
