@@ -43,19 +43,32 @@ CREATE INDEX IF NOT EXISTS idx_subscribers_unsubscribe_token ON subscribers(unsu
 ALTER TABLE subscribers ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for subscribers table
--- Policy for inserting new subscriptions (anyone can subscribe)
-CREATE POLICY "Anyone can insert subscription" ON subscribers
+-- ✅ WORKING: Explicit anon role policies (separate from authenticated)
+CREATE POLICY "anon_can_insert_subscriptions" ON subscribers
 FOR INSERT
+TO anon
 WITH CHECK (true);
 
--- Policy for selecting subscribers (only confirmed and active for public access)
-CREATE POLICY "Public read access for confirmed subscribers" ON subscribers
+CREATE POLICY "anon_can_read_confirmed_subscriptions" ON subscribers
 FOR SELECT
+TO anon
 USING (confirmed = true AND active = true);
 
--- Policy for updating subscriptions (only for email confirmation and unsubscribe)
-CREATE POLICY "Allow subscription status updates" ON subscribers
+CREATE POLICY "anon_can_update_subscriptions" ON subscribers
 FOR UPDATE
+TO anon
+USING (true)
+WITH CHECK (true);
+
+-- For future authenticated users (separate from anon policies)
+CREATE POLICY "authenticated_can_insert_subscriptions" ON subscribers
+FOR INSERT
+TO authenticated
+WITH CHECK (true);
+
+CREATE POLICY "authenticated_can_update_subscriptions" ON subscribers
+FOR UPDATE
+TO authenticated
 USING (true)
 WITH CHECK (true);
 
@@ -98,11 +111,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Grant necessary permissions
-GRANT USAGE ON SCHEMA public TO anon, authenticated;
-GRANT ALL ON subscribers TO anon, authenticated;
-GRANT EXECUTE ON FUNCTION confirm_subscription(TEXT) TO anon, authenticated;
-GRANT EXECUTE ON FUNCTION unsubscribe_email(TEXT) TO anon, authenticated;
+-- Grant necessary permissions (separate for each role)
+GRANT USAGE ON SCHEMA public TO anon;
+GRANT ALL ON subscribers TO anon;
+GRANT EXECUTE ON FUNCTION confirm_subscription(TEXT) TO anon;
+GRANT EXECUTE ON FUNCTION unsubscribe_email(TEXT) TO anon;
+
+-- Permissions for authenticated users (when you add user authentication)
+GRANT USAGE ON SCHEMA public TO authenticated;
+GRANT ALL ON subscribers TO authenticated;
+GRANT EXECUTE ON FUNCTION confirm_subscription(TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION unsubscribe_email(TEXT) TO authenticated;
 
 -- Insert some example data for testing (remove in production)
 -- INSERT INTO subscribers (email, confirmed, active) VALUES 
@@ -115,5 +134,6 @@ SELECT COUNT(*) as total_subscribers
 FROM subscribers 
 WHERE confirmed = true AND active = true;
 
--- Grant access to the view
-GRANT SELECT ON active_subscribers_count TO anon, authenticated;
+-- Grant access to the view (separate for each role)
+GRANT SELECT ON active_subscribers_count TO anon;
+GRANT SELECT ON active_subscribers_count TO authenticated;
