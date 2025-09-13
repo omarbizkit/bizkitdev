@@ -256,6 +256,14 @@ npm run docker:test   # Uses podman-compose internally
 - **Accessibility Verified**: Keyboard navigation, screen reader support, and WCAG AA compliance maintained
 - **Production Fix**: Resolved INVALID_JSON error with client-side form handling instead of direct API submissions
 
+### 🎨 **Newsletter UX Improvements** (2025-09-13)
+- **API Consistency Fixed**: Updated `/api/subscribe/check` to properly differentiate between new (EMAIL_AVAILABLE) and existing (ALREADY_SUBSCRIBED) subscribers
+- **Navigation Clarity Enhanced**: Changed homepage CTA from "📬 Subscribe to Updates" → "📧 Newsletter Signup" for clearer page navigation intent
+- **Loading States Added**: Implemented animated spinner and progressive button text ("Checking..." → "Redirecting..." → "Ready")
+- **Mobile Responsiveness Improved**: Enhanced spacing with responsive padding (p-6 md:p-8) and heading sizes (text-lg md:text-xl)
+- **Form State Management**: Better handling of already-subscribed users with immediate feedback and form reset
+- **User Experience Refinement**: Addressed all design review findings for polished subscription flow
+
 ### 🚀 **Environment Variable Resolution Complete** (2025-01-13)
 - **Test Environment Loading Fixed**: Updated `tests/e2e/global-setup.ts` to automatically load `.env.test` file
 - **ESM Compatibility Resolved**: Fixed `__dirname` definition for ECMAScript modules

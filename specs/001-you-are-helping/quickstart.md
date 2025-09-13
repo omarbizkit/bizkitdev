@@ -132,14 +132,19 @@ This guide provides step-by-step validation scenarios for each user story define
 2. **Test homepage pre-check process**
    - Enter a new email address
    - Click submit button
-   - Verify "Checking..." message appears
+   - Verify loading spinner appears with "Checking..." button text
+   - Confirm "EMAIL_AVAILABLE" response handling
+   - Verify "Redirecting..." state before page navigation
    - Confirm redirect to `/subscribe?email=prefilled@email` page
    - Prefilled email appears in subscription form
 
 3. **Test existing subscriber flow**
    - Enter email that has already subscribed
    - Click submit button
-   - Verify "You're already subscribed!" message appears
+   - Verify loading spinner with "Checking..." button text
+   - Confirm "ALREADY_SUBSCRIBED" response handling
+   - Verify success message "You're already subscribed!" appears
+   - Confirm button resets to "Join My Newsletter" and form becomes editable again
    - No redirect occurs
 
 4. **Complete full subscription on dedicated page**
@@ -168,14 +173,18 @@ This guide provides step-by-step validation scenarios for each user story define
 
 ### Success Criteria
 
-- ✅ Homepage pre-check form is functional and accessible
-- ✅ Email pre-check validates existing subscriptions
-- ✅ Redirect flow works for new subscribers with email prefill
-- ✅ Dedicated subscription page completes full signup
-- ✅ Email validation works at both homepage and subscribe page
-- ✅ Confirmation email system operational
-- ✅ Error messages are clear and helpful across all steps
-- ✅ Unsubscribe process works smoothly
+- ✅ Homepage pre-check form is functional with loading spinner and proper UX
+- ✅ Loading states provide clear visual feedback during API interactions
+- ✅ Email pre-check correctly identifies existing vs new subscribers
+- ✅ Responsive design works well on mobile with improved spacing
+- ✅ Redirect flow works smoothly for new subscribers with email prefill
+- ✅ Dedicated subscription page completes full signup process
+- ✅ Email validation works at both homepage and subscribe page with helpful error messages
+- ✅ Success messages are user-friendly and form resets properly after confirmation
+- ✅ Confirmation email system operational with proper backend handling
+- ✅ Error handling is comprehensive across all interaction steps
+- ✅ Unsubscribe process works smoothly and maintains good UX
+- ✅ Accessibility standards maintained (ARIA labels, keyboard navigation, screen readers)
 
 ---
 
