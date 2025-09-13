@@ -176,9 +176,9 @@ test.describe('Subscription Engagement Flow', () => {
       
       await page.goto(`/api/subscribe/confirm?token=${confirmationToken}`);
       
-      // Should show confirmation page
+      // Should show confirmation page (use specific selector to avoid conflicts)
       await expect(page.locator('h1')).toContainText(/confirmed|success/i);
-      await expect(page.getByText(/thank you|confirmed/i)).toBeVisible();
+      await expect(page.locator('p')).toContainText(/thank you|confirmed/i);
       
       // Should have link back to homepage
       const homeLink = page.getByRole('link', { name: /homepage|home/i });
