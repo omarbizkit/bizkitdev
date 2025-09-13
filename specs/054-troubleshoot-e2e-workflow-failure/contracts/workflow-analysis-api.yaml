@@ -1,0 +1,145 @@
+openapi: 3.0.3
+info:
+  title: Workflow Analysis API
+  description: Contracts for analyzing GitHub Actions workflow failures
+  version: 1.0.0
+  contact:
+    name: Troubleshooting Framework
+
+servers:
+  - url: https://api.github.com
+    description: GitHub API for workflow analysis
+
+paths:
+  /repos/{owner}/{repo}/actions/runs/{run_id}/logs:
+    get:
+      summary: Retrieve workflow run logs
+      description: Download the logs for a specific workflow run to analyze failures
+      operationId: getWorkflowRunLogs
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Repository owner username
+          example: "omarbizkitdev"
+        - name: repo
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Repository name
+          example: "bizkitdev"
+        - name: run_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Workflow run identifier
+          example: "53"
+      responses:
+        '200':
+          description: Logs retrieved successfully
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+                description: Zipped log files
+        '403':
+          description: Forbidden - insufficient permissions or token scope
+        '404':
+          description: Workflow run not found
+        '422':
+          description: Validation failed (invalid run ID)
+        '503':
+          description: Service unavailable (GitHub API rate limits)
+
+components:
+  schemas:
+    WorkflowRun:
+      type: object
+      required:
+        - id
+        - status
+        - conclusion
+        - head_sha
+      properties:
+        id:
+          type: string
+          example: "53"
+        status:
+          type: string
+          enum: ["queued", "in_progress", "completed"]
+        conclusion:
+          type: string
+          enum: ["success", "failure", "neutral", "cancelled", "skipped", "timed_out", "action_required"]
+          nullable: true
+        head_sha:
+          type: string
+          example: "bf32d9f95a7c2e8d4b9e1f7a8c6b5d4e3f2a1b9"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        jobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Job'
+
+    Job:
+      type: object
+      required:
+        - id
+        - name
+        - status
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: "e2e-tests"
+        status:
+          type: string
+          enum: ["queued", "in_progress", "completed"]
+        conclusion:
+          type: string
+          enum: ["success", "failure", "neutral", "cancelled", "skipped", "timed_out", "action_required"]
+          nullable: true
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/Step'
+
+    Step:
+      type: object
+      required:
+        - name
+        - status
+      properties:
+        name:
+          type: string
+          example: "Run E2E Tests"
+        status:
+          type: string
+          enum: ["queued", "in_progress", "completed"]
+        conclusion:
+          type: string
+          enum: ["success", "failure", "neutral", "cancelled", "skipped", "timed_out"]
+          nullable: true
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        number:
+          type: integer
+
+security:
+  - bearerAuth: []
