@@ -57,7 +57,7 @@ Based on plan.md: Single project at repository root with existing Astro framewor
 - [ ] T009 [P] Integration test for failed workflow run #53 log retrieval from omarbizkitdev/bizkitdev
 - [x] T010 [P] Integration test for local E2E test reproduction with matching CI environment - COMPLETED: Created and executed workflow-diagnosis.spec.ts, identified subscription form missing
 - [x] T011 [P] Integration test for port 4321 server startup and health check validation - VERIFIED: Server running with health endpoint responding
-- [ ] T012 [P] Integration test for environment variable consistency between local and CI
+- [x] T012 [P] Integration test for environment variable consistency between local and CI - COMPLETED: Created comprehensive environment validation, revealed subscription form absence is root cause
 - [ ] T013 [P] Integration test for Playwright timeout and browser compatibility scenarios
 - [ ] T014 [P] Integration test for dependency version mismatch detection and resolution
 - [ ] T015 Integration test for complete troubleshooting workflow (log → reproduce → analyze → fix)
