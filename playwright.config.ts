@@ -77,9 +77,11 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: process.env.CI ? undefined : {
-    command: 'npm run dev',
-    url: 'http://localhost:4321',
+  webServer: {
+    command: process.env.CI 
+      ? 'PUBLIC_SUPABASE_URL=https://mock.supabase.co PUBLIC_SUPABASE_ANON_KEY=mock-anon-key-safe-for-ci npm run build && npm run preview'
+      : 'npm run dev',
+    port: 4321,
     reuseExistingServer: !process.env.CI,
     timeout: 60 * 1000
   },
