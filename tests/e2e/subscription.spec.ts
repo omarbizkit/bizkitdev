@@ -49,7 +49,6 @@ test.describe('Subscription Engagement Flow', () => {
         const errorMessage = page.locator('[data-testid="email-error"]');
         await expect(errorMessage).toBeVisible();
         await expect(errorMessage).toContainText(/email|invalid|format/i);
-        }
       }
     });
 
