@@ -24,7 +24,7 @@ const prefilledEmail = url.searchParams.get('email');
         {prefilledEmail && (
           <div class="mt-6 p-4 bg-cyan-500/20 border border-cyan-500/30 rounded-lg max-w-md mx-auto">
             <p class="text-cyan-300 text-sm">
-              ✅ Found your email! Complete the subscription by clicking below.
+              ✅ Your email is ready! Complete your subscription below.
             </p>
           </div>
         )}
@@ -35,7 +35,7 @@ const prefilledEmail = url.searchParams.get('email');
         data-testid="subscribe-form"
         action="/api/subscribe"
         method="POST"
-        class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-lg p-8 max-w-md mx-auto"
+        class={`bg-gray-900/50 backdrop-blur-sm border rounded-lg p-8 max-w-md mx-auto transition-all duration-500 ${prefilledEmail ? 'border-cyan-500/50 shadow-lg shadow-cyan-500/10 animate-pulse' : 'border-gray-800'}`}
       >
         <div class="text-center mb-6">
           <h3 class="text-xl font-semibold mb-2 text-white">Join the Community</h3>
@@ -70,7 +70,7 @@ const prefilledEmail = url.searchParams.get('email');
             class="w-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Subscribe to newsletter"
           >
-            Subscribe
+            {prefilledEmail ? "Complete Subscription" : "Subscribe"}
           </button>
 
           <div
@@ -97,12 +97,43 @@ const prefilledEmail = url.searchParams.get('email');
 </CleanLayout>
 
 <script>
-// Form submission handling
-document.getElementById('email').addEventListener('input', function(e) {
+// Form validation handling
+function updateEmailValidation() {
+  const emailInput = document.getElementById('email');
   const emailError = document.querySelector('[data-testid="email-error"]');
-  if (e.target.checkValidity()) {
+
+  // Force validation update
+  emailInput.setCustomValidity('');
+
+  if (emailInput.checkValidity()) {
     emailError.classList.add('hidden');
+  } else {
+    emailError.classList.remove('hidden');
   }
+}
+
+document.getElementById('email').addEventListener('input', updateEmailValidation);
+
+// Check validation on page load (important for prefilled emails)
+document.addEventListener('DOMContentLoaded', function() {
+  // Small delay to ensure prefilled values are set
+  setTimeout(function() {
+    updateEmailValidation();
+
+    // Trigger validation on form reset (when email is prefilled)
+    const emailInput = document.getElementById('email');
+    if (emailInput && emailInput.value) {
+      updateEmailValidation();
+    }
+
+    // Force initial validation regardless of prefilled state
+    setTimeout(function() {
+      const currentEmailInput = document.getElementById('email');
+      if (currentEmailInput) {
+        updateEmailValidation();
+      }
+    }, 500);
+  }, 100);
 });
 
 async function handleSubscribe(event) {
@@ -125,13 +156,15 @@ async function handleSubscribe(event) {
 
   try {
     const formData = new FormData(form);
+    const emailValue = formData.get('email');
+
     const response = await fetch(form.action, {
       method: form.method,
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email: formData.get('email')
+        email: emailValue || emailInput.value || ''
       })
     });
 
@@ -200,32 +233,40 @@ async function handleSubscribe(event) {
   }
 }
 
+// Check validation on page load (important for prefilled emails)
+document.addEventListener('DOMContentLoaded', function() {
+  // Small delay to ensure prefilled values are set
+  setTimeout(function() {
+    updateEmailValidation();
+
+    // Force initial validation regardless of prefilled state
+    setTimeout(function() {
+      const formField = document.getElementById('email');
+      if (formField) {
+        updateEmailValidation();
+      }
+    }, 500);
+  }, 100);
+});
+
 // Attach event listener to form
 document.addEventListener('DOMContentLoaded', function() {
-  const subscribeForm = document.querySelector('[data-testid="subscribe-form"]');
-  if (subscribeForm) {
-    subscribeForm.addEventListener('submit', handleSubscribe);
+  const subscriptionForm = document.querySelector('[data-testid="subscribe-form"]');
+  if (subscriptionForm) {
+    subscriptionForm.addEventListener('submit', handleSubscribe);
   }
 });
 </script>
 
 <style>
   /* Form validation styles */
-  input:invalid:not(:placeholder-shown) {
+  input:invalid {
     border-color: #ef4444;
   }
 
-  input:valid:not(:placeholder-shown) {
+  input:valid {
     border-color: #10b981;
   }
 
-  /* Show error message when input is invalid */
-  input:invalid:not(:placeholder-shown) ~ [data-testid="email-error"] {
-    display: block;
-  }
-
-  /* Hide error message when input becomes valid */
-  input:valid:not(:placeholder-shown) ~ [data-testid="email-error"] {
-    display: none;
-  }
+  /* Error message visibility is controlled by JavaScript to avoid conflicts */
 </style>

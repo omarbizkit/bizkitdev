@@ -81,8 +81,12 @@ As an interested visitor, I want to subscribe with my email to receive updates w
 2. **Given** I click on a project card, **When** the detail page loads, **Then** I see the full project description, screenshot, status, tech stack, and links to launch app and view code
 3. **Given** I want to contact Omar, **When** I navigate to the Contact section, **Then** I see his email address (omarbizkit@hotmail.com) clearly displayed
 4. **Given** I want project updates, **When** I enter my email in the homepage subscribe form and click submit, **Then** I see a loading spinner with "Checking..." status, receive API feedback, and either get redirected to the subscription page (new users) or see a friendly confirmation message (existing users)
-5. **Given** I access the site on mobile, **When** I navigate through all sections, **Then** the layout remains responsive and all touch targets are appropriately sized
-6. **Given** I'm on any page of the site, **When** I view the header and footer, **Then** I see consistent branding and navigation elements
+5. **Given** I navigate to the dedicated subscription page with a prefilled email, **When** the page loads, **Then** I see visual feedback with a cyan glowing border, "Complete Subscription" button text, and clear messaging about what to do next
+6. **Given** I enter an invalid email format in any subscription form, **When** I interact with the field, **Then** I see real-time validation with red border and error message that updates dynamically
+7. **Given** I submit a valid email on the subscription page, **When** the API processes the request, **Then** I receive a 201 success response and see a confirmation message without 400 errors
+8. **Given** I access the site in a development environment, **When** I interact with forms, **Then** I see that all functionality works with mock data to ensure test environment stability
+9. **Given** I access the site on mobile, **When** I navigate through all sections, **Then** the layout remains responsive and all touch targets are appropriately sized
+10. **Given** I'm on any page of the site, **When** I view the header and footer, **Then** I see consistent branding and navigation elements
 
 ### Edge Cases
 
