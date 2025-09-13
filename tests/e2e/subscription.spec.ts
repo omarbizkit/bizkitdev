@@ -33,25 +33,22 @@ test.describe('Subscription Engagement Flow', () => {
     test('should validate email format before submission', async ({ page }) => {
       const subscribeForm = page.locator('[data-testid="subscribe-form"], form[action*="subscribe"]');
       await expect(subscribeForm).toBeVisible();
-      
+
       const emailInput = subscribeForm.locator('input[type="email"]');
       const submitButton = subscribeForm.locator('button[type="submit"], input[type="submit"]');
-      
+
       // Test invalid email formats
       const invalidEmails = ['invalid', 'test@', '@domain.com', 'test..test@domain.com'];
-      
+
       for (const invalidEmail of invalidEmails) {
+        await emailInput.clear();
         await emailInput.fill(invalidEmail);
-        await submitButton.click();
-        
-        // Should show client-side validation error
-        const validationMessage = await emailInput.evaluate(el => (el as HTMLInputElement).validationMessage);
-        expect(validationMessage).toBeTruthy();
-        
-        // Or show custom error message
-        const errorMessage = page.locator('[data-testid="email-error"], .error-message, .field-error');
-        if (await errorMessage.isVisible()) {
-          await expect(errorMessage).toContainText(/email|invalid|format/i);
+        await emailInput.blur(); // Trigger validation
+
+        // Should show custom CSS-based error message
+        const errorMessage = page.locator('[data-testid="email-error"]');
+        await expect(errorMessage).toBeVisible();
+        await expect(errorMessage).toContainText(/email|invalid|format/i);
         }
       }
     });
@@ -80,7 +77,7 @@ test.describe('Subscription Engagement Flow', () => {
       await submitButton.click();
       
       // Should show success message
-      const successMessage = page.locator('[data-testid="success-message"], .success-message, .alert-success');
+      const successMessage = subscribeForm.locator('[data-testid="success-message"]');
       await expect(successMessage).toBeVisible();
       await expect(successMessage).toContainText(/check.*email|confirmation|subscribed/i);
       
@@ -95,8 +92,8 @@ test.describe('Subscription Engagement Flow', () => {
       const subscribeForm = page.locator('[data-testid="subscribe-form"], form[action*="subscribe"]');
       const emailInput = subscribeForm.locator('input[type="email"]');
       const submitButton = subscribeForm.locator('button[type="submit"], input[type="submit"]');
-      
-      // Mock API error response
+
+      // Mock API error response - simulate already subscribed error
       await page.route('**/api/subscribe', route => {
         route.fulfill({
           status: 409,
@@ -107,15 +104,16 @@ test.describe('Subscription Engagement Flow', () => {
           })
         });
       });
-      
+
+      // Fill form and submit
       await emailInput.fill(testEmail);
       await submitButton.click();
-      
-      // Should show error message
-      const errorMessage = page.locator('[data-testid="error-message"], .error-message, .alert-error');
+
+      // Should show error message (form has data-testid="error-message")
+      const errorMessage = subscribeForm.locator('[data-testid="error-message"]');
       await expect(errorMessage).toBeVisible();
       await expect(errorMessage).toContainText(/already.*subscribed|error/i);
-      
+
       // Form should remain usable for retry
       await expect(emailInput).toBeEnabled();
       await expect(submitButton).toBeEnabled();
@@ -210,7 +208,7 @@ test.describe('Subscription Engagement Flow', () => {
       
       // Should show error page
       await expect(page.locator('h1')).toContainText(/invalid|error|expired/i);
-      await expect(page.getByText(/invalid.*link|expired/i)).toBeVisible();
+      await expect(page.locator('h1')).toContainText(/invalid.*link|expired/i);
       
       // Should have navigation back
       const homeLink = page.getByRole('link', { name: /homepage|home/i });
@@ -243,7 +241,7 @@ test.describe('Subscription Engagement Flow', () => {
       
       // Should show expiration message
       await expect(page.locator('h1')).toContainText(/expired/i);
-      await expect(page.getByText(/expired.*subscribe again/i)).toBeVisible();
+      await expect(page.locator('p')).toContainText(/expired.*subscribe again/i);
       
       // Should have option to subscribe again
       const subscribeAgainLink = page.getByRole('link', { name: /subscribe again/i });

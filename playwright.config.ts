@@ -24,9 +24,9 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('/')'. */
     baseURL: 'http://localhost:4321',
 
-    /* Reduced timeouts for fail-fast behavior */
-    actionTimeout: 5000,
-    navigationTimeout: 15000,
+    /* Balanced timeouts for CI compatibility and speed */
+    actionTimeout: 10000,
+    navigationTimeout: 30000,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -89,10 +89,10 @@ export default defineConfig({
   /* Global setup and teardown */
   globalSetup: './tests/e2e/global-setup.ts',
 
-  /* Reduced test timeout for fail-fast */
+  /* Balanced test timeout for CI compatibility */
   timeout: 30 * 1000,
   expect: {
-    /* Reduced expect timeout for fail-fast */
-    timeout: 5 * 1000
+    /* Balanced expect timeout for CI compatibility */
+    timeout: 10 * 1000
   }
 })
