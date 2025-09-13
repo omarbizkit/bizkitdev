@@ -15,7 +15,7 @@ test.describe('Subscription Engagement Flow', () => {
   test.describe('Email Subscription', () => {
     test('should display subscription form on subscribe page', async ({ page }) => {
       // Look for subscription form
-      const subscribeForm = page.locator('[data-testid="subscribe-form"], form[action*="subscribe"]');
+      const subscribeForm = page.locator('[data-testid="hero-subscribe-form"], form[action*="subscribe"]');
       await expect(subscribeForm).toBeVisible();
       
       // Should have email input
@@ -31,7 +31,7 @@ test.describe('Subscription Engagement Flow', () => {
     });
 
     test('should validate email format before submission', async ({ page }) => {
-      const subscribeForm = page.locator('[data-testid="subscribe-form"], form[action*="subscribe"]');
+      const subscribeForm = page.locator('[data-testid="hero-subscribe-form"], form[action*="subscribe"]');
       await expect(subscribeForm).toBeVisible();
 
       const emailInput = subscribeForm.locator('input[type="email"]');
@@ -59,7 +59,7 @@ test.describe('Subscription Engagement Flow', () => {
     });
 
     test('should handle successful subscription', async ({ page }) => {
-      const subscribeForm = page.locator('[data-testid="subscribe-form"], form[action*="subscribe"]');
+      const subscribeForm = page.locator('[data-testid="hero-subscribe-form"], form[action*="subscribe"]');
       const emailInput = subscribeForm.locator('input[type="email"]');
       const submitButton = subscribeForm.locator('button[type="submit"], input[type="submit"]');
       
@@ -94,7 +94,7 @@ test.describe('Subscription Engagement Flow', () => {
     });
 
     test('should handle subscription errors gracefully', async ({ page }) => {
-      const subscribeForm = page.locator('[data-testid="subscribe-form"], form[action*="subscribe"]');
+      const subscribeForm = page.locator('[data-testid="hero-subscribe-form"], form[action*="subscribe"]');
       const emailInput = subscribeForm.locator('input[type="email"]');
       const submitButton = subscribeForm.locator('button[type="submit"], input[type="submit"]');
 
@@ -125,7 +125,7 @@ test.describe('Subscription Engagement Flow', () => {
     });
 
     test('should handle server errors', async ({ page }) => {
-      const subscribeForm = page.locator('[data-testid="subscribe-form"], form[action*="subscribe"]');
+      const subscribeForm = page.locator('[data-testid="hero-subscribe-form"], form[action*="subscribe"]');
       const emailInput = subscribeForm.locator('input[type="email"]');
       const submitButton = subscribeForm.locator('button[type="submit"], input[type="submit"]');
       
@@ -346,7 +346,7 @@ test.describe('Subscription Engagement Flow', () => {
       await expect(page).toHaveURL('/subscribe');
 
       // Now on subscribe page, find the email input
-      const subscribeForm = page.locator('[data-testid="subscribe-form"]');
+      const subscribeForm = page.locator('[data-testid="hero-subscribe-form"]');
       await expect(subscribeForm).toBeVisible();
 
       const emailInput = subscribeForm.locator('input[type="email"]');
@@ -385,7 +385,7 @@ test.describe('Subscription Engagement Flow', () => {
     });
 
     test('should have proper ARIA labels and roles', async ({ page }) => {
-      const subscribeForm = page.locator('[data-testid="subscribe-form"], form[action*="subscribe"]');
+      const subscribeForm = page.locator('[data-testid="hero-subscribe-form"], form[action*="subscribe"]');
       const emailInput = subscribeForm.locator('input[type="email"]');
       const submitButton = subscribeForm.locator('button[type="submit"], input[type="submit"]');
       
@@ -408,7 +408,7 @@ test.describe('Subscription Engagement Flow', () => {
     });
 
     test('should provide clear feedback for screen readers', async ({ page }) => {
-      const subscribeForm = page.locator('[data-testid="subscribe-form"], form[action*="subscribe"]');
+      const subscribeForm = page.locator('[data-testid="hero-subscribe-form"], form[action*="subscribe"]');
       const emailInput = subscribeForm.locator('input[type="email"]');
       
       // Mock error response for testing feedback
@@ -446,7 +446,7 @@ test.describe('Subscription Engagement Flow', () => {
 
   test.describe('Security Considerations', () => {
     test('should protect against XSS in error messages', async ({ page }) => {
-      const subscribeForm = page.locator('[data-testid="subscribe-form"], form[action*="subscribe"]');
+      const subscribeForm = page.locator('[data-testid="hero-subscribe-form"], form[action*="subscribe"]');
       const emailInput = subscribeForm.locator('input[type="email"]');
       
       // Mock response with potential XSS payload
@@ -477,7 +477,7 @@ test.describe('Subscription Engagement Flow', () => {
     });
 
     test.skip('should implement rate limiting feedback', async ({ page }) => {
-      const subscribeForm = page.locator('[data-testid="subscribe-form"], form[action*="subscribe"]');
+      const subscribeForm = page.locator('[data-testid="hero-subscribe-form"], form[action*="subscribe"]');
       const emailInput = subscribeForm.locator('input[type="email"]');
       const submitButton = subscribeForm.locator('button[type="submit"]');
 

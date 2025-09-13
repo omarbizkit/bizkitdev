@@ -16,7 +16,7 @@ test.describe('Playwright Timeout and Browser Compatibility Scenarios', () => {
       const startTime = Date.now();
 
       try {
-        const subscribeForm = page.locator('data-testid=subscribe-form');
+        const subscribeForm = page.locator('data-testid=hero-subscribe-form');
 
         // Use the exact timeout configuration from our Playwright config
         await expect(subscribeForm).toBeVisible({
@@ -56,7 +56,7 @@ test.describe('Playwright Timeout and Browser Compatibility Scenarios', () => {
         const startTime = Date.now();
 
         try {
-          const form = page.locator('data-testid=subscribe-form');
+          const form = page.locator('data-testid=hero-subscribe-form');
           await expect(form).toBeVisible({ timeout });
 
           console.log(`✅ ${expected}: Form appeared within ${timeout}ms`);
@@ -96,7 +96,7 @@ test.describe('Playwright Timeout and Browser Compatibility Scenarios', () => {
       console.log(`Browser characteristics: ${JSON.stringify(characteristics)}`);
 
       try {
-        const form = page.locator('data-testid=subscribe-form');
+        const form = page.locator('data-testid=hero-subscribe-form');
 
         // Test with browser-specific timeout expectations
         const timeout = browserName === 'webkit' ? 15000 : 10000;
@@ -130,7 +130,7 @@ test.describe('Playwright Timeout and Browser Compatibility Scenarios', () => {
       console.log('🔍 TESTING: Multiple form detection methods');
 
       const detectionMethods = [
-        'data-testid=subscribe-form',    // Test ID (most specific)
+        'data-testid=hero-subscribe-form',    // Test ID (most specific)
         'form[action*="subscribe"]',     // Form action
         '[id*="subscribe"]',             // ID contains
         '.newsletter, .subscribe',        // CSS class
@@ -192,7 +192,7 @@ test.describe('Playwright Timeout and Browser Compatibility Scenarios', () => {
       // Test form-specific timing
       const formStartTime = Date.now();
       try {
-        const form = page.locator('data-testid=subscribe-form');
+        const form = page.locator('data-testid=hero-subscribe-form');
         await expect(form).toBeVisible({ timeout: 2000 }); // Quick check
 
         const formLoadTime = Date.now() - formStartTime;

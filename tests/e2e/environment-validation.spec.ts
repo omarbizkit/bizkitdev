@@ -21,7 +21,7 @@ test.describe('Environment Variable Consistency Testing', () => {
 
       try {
         // This form might only exist in development mode or with specific env vars
-        const subscribeForm = page.locator('data-testid=subscribe-form');
+        const subscribeForm = page.locator('data-testid=hero-subscribe-form');
         const isFormVisible = await subscribeForm.isVisible().catch(() => false);
 
         // Log environment context for debugging
@@ -63,7 +63,7 @@ test.describe('Environment Variable Consistency Testing', () => {
 
       try {
         // The subscription form might depend on Supabase for validation
-        const form = page.locator('data-testid=subscribe-form');
+        const form = page.locator('data-testid=hero-subscribe-form');
         await form.waitFor({ state: 'visible', timeout: 5000 });
 
         console.log('✅ Supabase configuration valid - form loads');
@@ -103,7 +103,7 @@ test.describe('Environment Variable Consistency Testing', () => {
       await page.goto(testConfig.baseURL);
 
       try {
-        const form = page.locator('data-testid=subscribe-form');
+        const form = page.locator('data-testid=hero-subscribe-form');
 
         // Different browsers might have different timing/success rates
         await form.waitFor({ state: 'visible', timeout: 10000 });
@@ -181,7 +181,7 @@ test.describe('Environment Variable Consistency Testing', () => {
       await page.goto('http://localhost:4321');
 
       // Test if these environment differences actually affect the form
-      const formExists = await page.locator('data-testid=subscribe-form').isVisible().catch(() => false);
+      const formExists = await page.locator('data-testid=hero-subscribe-form').isVisible().catch(() => false);
 
       if (!formExists && differences.some(d => d.includes('base_url') || d.includes('CI'))) {
         console.error('❌ CRITICAL: Environment drift causes form loading failure');
@@ -204,7 +204,7 @@ test.describe('Environment Variable Consistency Testing', () => {
 
       // Check server response time could affect test timing
       try {
-        const form = page.locator('data-testid=subscribe-form');
+        const form = page.locator('data-testid=hero-subscribe-form');
 
         // Use timing that matches our Playwright configuration
         await form.waitFor({ state: 'visible', timeout: 10000 });

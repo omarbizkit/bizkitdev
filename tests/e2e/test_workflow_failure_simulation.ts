@@ -46,7 +46,7 @@ test.describe('E2E Workflow Failure Simulation', () => {
       try {
         // Navigate and wait for elements that would timeout in CI
         await page.goto('http://localhost:4321');
-        const subscribeForm = page.locator('data-testid=subscribe-form');
+        const subscribeForm = page.locator('data-testid=hero-subscribe-form');
 
         // This would fail with "locator not found" if server isn't ready
         await expect(subscribeForm).toBeVisible({ timeout: 10000 });

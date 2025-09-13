@@ -17,7 +17,7 @@ test.describe('Complete Troubleshooting Workflow Validation', () => {
       console.log('✅ STEP 1: Server responding (infrastructure OK)');
 
       // Step 2: Initial problem identification
-      const subscribeForm = page.locator('data-testid=subscribe-form');
+      const subscribeForm = page.locator('data-testid=hero-subscribe-form');
       const formExists = await subscribeForm.count().then(count => count > 0);
 
       console.log(`📊 STEP 2: Subscription form existence check: ${formExists ? 'FOUND' : 'NOT FOUND'}`);
@@ -38,7 +38,7 @@ test.describe('Complete Troubleshooting Workflow Validation', () => {
 
       // Attempt standard form interactions that would occur in E2E tests
       const interactionSteps = [
-        { description: 'Locate form by data-testid', selector: 'data-testid=subscribe-form', method: 'getAttribute' },
+        { description: 'Locate form by data-testid', selector: 'data-testid=hero-subscribe-form', method: 'getAttribute' },
         { description: 'Locate form by CSS class', selector: '.newsletter, .subscribe', method: 'count' },
         { description: 'Locate email inputs', selector: 'input[type="email"]', method: 'count' },
         { description: 'Locate submit buttons', selector: 'button[type="submit"]', method: 'count' }
@@ -144,8 +144,8 @@ test.describe('Complete Troubleshooting Workflow Validation', () => {
       // Step 3d: Style and visibility analysis
       console.log('🔍 Step 3d: CSS and visibility analysis');
 
-      const subscribeForm = page.locator('data-testid=subscribe-form');
-      const hasInvisibleForm = await page.locator('data-testid=subscribe-form').isVisible()
+      const subscribeForm = page.locator('data-testid=hero-subscribe-form');
+      const hasInvisibleForm = await page.locator('data-testid=hero-subscribe-form').isVisible()
         .catch(() => {
           console.log('⚠️ Form locator not found (expected)');
           return false;

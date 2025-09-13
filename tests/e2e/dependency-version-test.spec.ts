@@ -118,7 +118,7 @@ test.describe('Dependency Version Mismatch Detection and Resolution', () => {
         await page.goto('http://localhost:4321'); // Preview server
 
         try {
-          const form = page.locator('data-testid=subscribe-form');
+          const form = page.locator('data-testid=hero-subscribe-form');
           await expect(form).toBeVisible({ timeout: 5000 });
 
           console.log('✅ Built version renders subscription form correctly');
