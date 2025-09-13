@@ -75,11 +75,28 @@ export const POST: APIRoute = async ({ request }) => {
                               import.meta.env.PUBLIC_SUPABASE_URL?.includes('mock.supabase.co');
 
     if (isTestEnvironment) {
-      // Test mode - check test subscribers
+      // Test mode - same logic as main subscribe API for consistency
       const subscriberId = import.meta.env.NODE_ENV === 'test' ? 'test-id' : Math.random().toString(36);
 
-      // In test environment, always return EMAIL_AVAILABLE for lightweight checking
-      // (actual database check would happen on the subscribe page)
+      // Check for existing email that simulates already subscribed (same logic as subscribe.ts)
+      if (email === 'already-subscribed@test.com' || globalThis.testSubscribers?.has(email)) {
+        return new Response(
+          JSON.stringify({
+            message: 'ALREADY_SUBSCRIBED',
+            email: email,
+            isConfirmed: true
+          }),
+          {
+            status: 409, // Conflict
+            headers: {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-cache'
+            }
+          }
+        );
+      }
+
+      // Email is available for subscription
       return new Response(
         JSON.stringify({
           message: 'EMAIL_AVAILABLE',

@@ -38,9 +38,9 @@ const {
     </p>
     
     <!-- Newsletter Subscription -->
-    <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 mt-12 max-w-md mx-auto">
-      <div class="text-center mb-6">
-        <h3 class="text-xl font-semibold text-white mb-2">Stay Updated</h3>
+    <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 md:p-8 mt-12 max-w-md mx-auto">
+      <div class="text-center mb-5 md:mb-6">
+        <h3 class="text-lg md:text-xl font-semibold text-white mb-2">Stay Updated</h3>
         <p class="text-gray-400 text-sm">Get the latest on my projects and insights delivered to your inbox.</p>
       </div>
 
@@ -63,7 +63,8 @@ const {
           id="hero-submit-btn"
           class="w-full px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-lg font-semibold text-white hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Join My Newsletter
+          <span id="hero-button-text">Join My Newsletter</span>
+          <span id="hero-loading-spinner" class="inline-block ml-2 w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin hidden"></span>
         </button>
         <div id="hero-message" class="text-sm text-center hidden min-h-[40px] flex items-center justify-center">
           <!-- Success or error messages will be inserted here -->
@@ -156,8 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
     messageBox.className = 'text-sm text-center hidden min-h-[40px] flex items-center justify-center';
 
     // Set loading state
-    submitButton.disabled = true;
-    submitButton.textContent = 'Checking...';
+    updateButtonState('loading');
     emailInput.disabled = true;
 
     try {
@@ -173,28 +173,30 @@ document.addEventListener('DOMContentLoaded', function() {
       const data = await response.json();
 
       if (response.status === 200 && data.message === 'EMAIL_AVAILABLE') {
-        // Email is not subscribed, redirect to subscribe page with prefilled email
+        // Email is not subscribed, continue to redirect
+        updateButtonState('redirecting');
         window.location.href = `/subscribe?email=${encodeURIComponent(email)}`;
         return;
 
       } else if (response.status === 409 && data.message === 'ALREADY_SUBSCRIBED') {
-        // Email is already subscribed
+        // Email is already subscribed - show success and reset
         showSuccess('You\'re already subscribed! Check your email for updates.');
+        updateButtonState('ready');
+        emailInput.disabled = false;
         return;
 
       } else {
         // Handle other errors
         showError(data.message || 'Something went wrong. Please try again.');
+        updateButtonState('ready');
+        emailInput.disabled = false;
         return;
       }
 
     } catch (error) {
       console.error('Newsletter check error:', error);
       showError('Network error. Please try again later.');
-    } finally {
-      // Reset form state
-      submitButton.disabled = false;
-      submitButton.textContent = 'Join My Newsletter';
+      updateButtonState('ready');
       emailInput.disabled = false;
     }
   });
@@ -209,6 +211,35 @@ document.addEventListener('DOMContentLoaded', function() {
     messageBox.className = 'text-sm text-center text-red-400 min-h-[40px] flex items-center justify-center';
     messageBox.textContent = message;
     emailError.classList.add('hidden');
+  }
+
+  function updateButtonState(state) {
+    const buttonText = document.getElementById('hero-button-text');
+    const loadingSpinner = document.getElementById('hero-loading-spinner');
+
+    if (!buttonText || !loadingSpinner) {
+      console.error('Button state elements not found');
+      return;
+    }
+
+    switch (state) {
+      case 'loading':
+        buttonText.textContent = 'Checking...';
+        loadingSpinner.classList.remove('hidden');
+        submitButton.disabled = true;
+        break;
+      case 'redirecting':
+        buttonText.textContent = 'Redirecting...';
+        loadingSpinner.classList.remove('hidden');
+        submitButton.disabled = true;
+        break;
+      case 'ready':
+      default:
+        buttonText.textContent = 'Join My Newsletter';
+        loadingSpinner.classList.add('hidden');
+        submitButton.disabled = false;
+        break;
+    }
   }
 });
 </script>
