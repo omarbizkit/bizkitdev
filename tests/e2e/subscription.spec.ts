@@ -281,7 +281,7 @@ test.describe('Subscription Engagement Flow', () => {
       
       // Should show unsubscribe confirmation (more specific)
       await expect(page.locator('h1')).toContainText(/unsubscribed/i);
-      await expect(page.locator('p')).toContainText(/unsubscribed.*updates/i);
+      await expect(page.locator('p').first()).toContainText(/unsubscribed.*updates/i);
       
       // Should have navigation back
       const homeLink = page.getByRole('link', { name: /homepage|home/i });

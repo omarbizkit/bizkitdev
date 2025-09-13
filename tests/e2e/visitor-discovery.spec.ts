@@ -39,11 +39,12 @@ test.describe('Visitor Discovery Flow', () => {
       // Check for main navigation
       const nav = page.locator('nav, [role="navigation"]');
       await expect(nav).toBeVisible();
-      
-      // Should have key navigation links
-      await expect(page.getByRole('link', { name: 'About' })).toBeVisible();
-      await expect(page.getByRole('link', { name: 'Work' })).toBeVisible();
-      await expect(page.getByRole('link', { name: 'Contact' })).toBeVisible();
+
+      // Should have key navigation links (scoped to navigation element)
+      await expect(nav.getByRole('link', { name: 'Projects' })).toBeVisible();
+      await expect(nav.getByRole('link', { name: 'About' })).toBeVisible();
+      await expect(nav.getByRole('link', { name: 'Subscribe' })).toBeVisible();
+      await expect(nav.getByRole('link', { name: 'Contact' })).toBeVisible();
     });
 
     test('should be responsive on mobile devices', async ({ page }) => {

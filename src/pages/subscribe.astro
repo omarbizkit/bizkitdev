@@ -83,6 +83,95 @@ import CleanLayout from '../layouts/CleanLayout.astro';
   </div>
 </CleanLayout>
 
+<script>
+// Form submission handling
+document.getElementById('email').addEventListener('input', function(e) {
+  const emailError = document.querySelector('[data-testid="email-error"]');
+  if (e.target.checkValidity()) {
+    emailError.classList.add('hidden');
+  }
+});
+
+async function handleSubscribe(event) {
+  event.preventDefault();
+
+  const form = event.target;
+  const submitButton = form.querySelector('button[type="submit"]');
+  const emailInput = form.querySelector('#email');
+  const successMessage = form.querySelector('[data-testid="success-message"]');
+  const errorMessage = form.querySelector('[data-testid="error-message"]');
+
+  // Disable form during submission
+  submitButton.disabled = true;
+  submitButton.textContent = 'Subscribing...';
+  emailInput.disabled = true;
+
+  // Hide previous messages
+  successMessage.classList.add('hidden');
+  errorMessage.classList.add('hidden');
+
+  try {
+    const formData = new FormData(form);
+    const response = await fetch(form.action, {
+      method: form.method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: formData.get('email')
+      })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      // Success - sanitize message to prevent XSS
+      const sanitizedMessage = (data.message || 'Thank you! Please check your email to confirm your subscription.')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;');
+      successMessage.textContent = sanitizedMessage;
+      successMessage.classList.remove('hidden');
+      form.reset();
+    } else {
+      // Error - sanitize message to prevent XSS
+      const sanitizedMessage = (data.message || 'Something went wrong. Please try again.')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;');
+      errorMessage.textContent = sanitizedMessage;
+      errorMessage.classList.remove('hidden');
+    }
+  } catch (error) {
+    console.error('Subscription error:', error);
+    errorMessage.textContent = 'Network error. Please try again.';
+    errorMessage.classList.remove('hidden');
+  } finally {
+    // Re-enable form only if not successful
+    if (!successMessage.classList.contains('hidden')) {
+      // Keep form disabled on success
+      return;
+    }
+
+    submitButton.disabled = false;
+    submitButton.textContent = 'Subscribe';
+    emailInput.disabled = false;
+  }
+}
+
+// Attach event listener to form
+document.addEventListener('DOMContentLoaded', function() {
+  const subscribeForm = document.querySelector('[data-testid="subscribe-form"]');
+  if (subscribeForm) {
+    subscribeForm.addEventListener('submit', handleSubscribe);
+  }
+});
+</script>
+
 <style>
   /* Form validation styles */
   input:invalid:not(:placeholder-shown) {

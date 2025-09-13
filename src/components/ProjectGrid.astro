@@ -94,9 +94,10 @@ const uniqueTechStack = [...new Set(projects.flatMap(p => p.tech_stack))].slice(
   )}
 
   <!-- Projects Grid -->
-  <div 
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+  <div
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 project-grid"
     id="projects-grid"
+    data-testid="project-grid"
     role="list"
     aria-label="Projects list"
   >
