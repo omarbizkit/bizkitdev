@@ -97,6 +97,9 @@ src/
 
 tests/
 ├── contract/           # API contract tests (5 files, 70+ tests)
+├── design-review/      # Design review system artifacts
+│   ├── screenshots/    # Test screenshots (auto-managed)
+│   └── scripts/        # Design review test scripts
 ├── integration/        # Integration tests (4 files, comprehensive coverage)
 ├── e2e/                # End-to-end tests (4 files, user journeys)
 └── unit/               # Unit tests (auth, subscription utilities)

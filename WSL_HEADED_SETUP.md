@@ -41,10 +41,10 @@ The design-review agent will:
 
 ```bash
 # Test headless mode with screenshots (works now)
-PLAYWRIGHT_BROWSERS_PATH=/tmp/playwright-browsers node design-review-test.js
+PLAYWRIGHT_BROWSERS_PATH=/tmp/playwright-browsers node tests/design-review/scripts/design-review-test.js
 
 # Test headed mode (requires deps)
-PLAYWRIGHT_BROWSERS_PATH=/tmp/playwright-browsers DISPLAY=:0 node wsl-headed-test.js --headed
+PLAYWRIGHT_BROWSERS_PATH=/tmp/playwright-browsers DISPLAY=:0 node tests/design-review/scripts/wsl-headed-test.js --headed
 
 # Open in Windows browser from WSL
 explorer.exe http://localhost:4321

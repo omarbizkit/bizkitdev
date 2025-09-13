@@ -34,8 +34,8 @@ import { chromium } from 'playwright';
     await page.goto('http://localhost:4321', { waitUntil: 'networkidle' });
     
     console.log('📸 Taking screenshot...');
-    await page.screenshot({ 
-      path: 'wsl-headed-test.png', 
+    await page.screenshot({
+      path: '../screenshots/wsl-headed-test.png',
       fullPage: true 
     });
     

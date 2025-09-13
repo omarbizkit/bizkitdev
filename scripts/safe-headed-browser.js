@@ -49,13 +49,64 @@ function checkSystemHealth() {
 }
 
 async function cleanupScreenshots() {
-  console.log('🧹 Cleaning up test screenshots...');
+  console.log('🧹 Cleaning up design review screenshots...');
+  let cleanupSuccess = false;
+
   try {
-    execSync('find . -maxdepth 1 -name "*test*.png" -o -name "*headed*.png" -o -name "*browser*.png" -o -name "*screenshot*.png" -o -name "*design*.png" -o -name "*review*.png" | xargs rm -f 2>/dev/null || true');
-    console.log('✅ Screenshot cleanup completed');
+    // Clean up from proper directory
+    const result1 = execSync('rm -rf tests/design-review/screenshots/*.png 2>/dev/null || true', { encoding: 'utf-8' });
+
+    // Also clean up any screenshots that might end up in root (safety measure)
+    const result2 = execSync('find . -maxdepth 1 -name "*test*.png" -o -name "*headed*.png" -o -name "*browser*.png" -o -name "*screenshot*.png" -o -name "*design*.png" -o -name "*review*.png" | xargs rm -f 2>/dev/null || true', { encoding: 'utf-8' });
+
+    // Verify cleanup succeeded
+    const remaining = execSync('find tests/design-review/screenshots -name "*.png" 2>/dev/null | wc -l || echo 0', { encoding: 'utf-8' }).trim();
+    const rootRemaining = execSync('find . -maxdepth 1 -name "*test*.png" -o -name "*headed*.png" -o -name "*browser*.png" -o -name "*screenshot*.png" -o -name "*design*.png" -o -name "*review*.png" | wc -l', { encoding: 'utf-8' }).trim();
+
+    if (remaining === '0' && rootRemaining === '0') {
+      console.log('✅ Screenshot cleanup completed successfully');
+      cleanupSuccess = true;
+    } else {
+      console.log(`⚠️ Cleanup verification failed: ${remaining} screenshots in design-review, ${rootRemaining} in root`);
+    }
+
   } catch (error) {
-    console.log('⚠️ Screenshot cleanup warning:', error.message);
+    console.log('❌ Screenshot cleanup failed:', error.message);
+    // Force cleanup attempt with different approach
+    try {
+      execSync('bash scripts/cleanup-design-screenshots.sh', { stdio: 'inherit' });
+      cleanupSuccess = true;
+    } catch (fallbackError) {
+      console.log('❌ Fallback cleanup also failed:', fallbackError.message);
+    }
   }
+
+  return cleanupSuccess;
+}
+
+// Enhanced cleanup function with multiple fallback strategies
+async function enforceCleanup() {
+  console.log('🛡️ ENFORCING mandatory cleanup...');
+
+  const strategies = [
+    () => cleanupScreenshots(),
+    () => execSync('bash scripts/cleanup-design-screenshots.sh', { stdio: 'inherit' }),
+    () => execSync('rm -rf tests/design-review/screenshots/* 2>/dev/null || true'),
+    () => execSync('find . -maxdepth 1 \\( -name "*test*.png" -o -name "*headed*.png" -o -name "*browser*.png" -o -name "*screenshot*.png" -o -name "*design*.png" -o -name "*review*.png" -o -name "*test*.js" -o -name "*headed*.js" -o -name "*ui-*.js" \\) ! -name "*.config.js" | head -20 | xargs rm -f 2>/dev/null || true')
+  ];
+
+  for (let i = 0; i < strategies.length; i++) {
+    try {
+      await strategies[i]();
+      console.log(`✅ Cleanup strategy ${i + 1} succeeded`);
+      return true;
+    } catch (error) {
+      console.log(`⚠️ Cleanup strategy ${i + 1} failed:`, error.message);
+    }
+  }
+
+  console.log('❌ ALL cleanup strategies failed - manual intervention required');
+  return false;
 }
 
 async function launchMandatorySafeBrowser() {
@@ -131,30 +182,99 @@ async function launchMandatorySafeBrowser() {
   }
 }
 
+// Process exit handlers to ensure cleanup always runs
+function setupCleanupHandlers() {
+  const cleanupOnExit = async (signal) => {
+    console.log(`\n🚨 Process termination detected (${signal}) - forcing cleanup...`);
+    await enforceCleanup();
+    process.exit(0);
+  };
+
+  // Handle various termination signals
+  process.on('SIGINT', () => cleanupOnExit('SIGINT'));    // Ctrl+C
+  process.on('SIGTERM', () => cleanupOnExit('SIGTERM'));  // Termination request
+  process.on('SIGQUIT', () => cleanupOnExit('SIGQUIT'));  // Quit signal
+  process.on('exit', () => {
+    console.log('🚨 Process exit detected - attempting final cleanup...');
+    try {
+      execSync('bash scripts/cleanup-design-screenshots.sh', { stdio: 'inherit' });
+    } catch (e) {
+      console.log('⚠️ Exit cleanup failed:', e.message);
+    }
+  });
+
+  // Handle uncaught exceptions
+  process.on('uncaughtException', async (error) => {
+    console.log('🚨 Uncaught exception detected - forcing cleanup before crash...');
+    console.error('Error:', error);
+    await enforceCleanup();
+    process.exit(1);
+  });
+
+  // Handle unhandled promise rejections
+  process.on('unhandledRejection', async (reason, promise) => {
+    console.log('🚨 Unhandled rejection detected - forcing cleanup...');
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    await enforceCleanup();
+    process.exit(1);
+  });
+}
+
 // Export for use by design review agent
-export { launchMandatorySafeBrowser, checkSystemHealth, cleanupScreenshots };
+export { launchMandatorySafeBrowser, checkSystemHealth, cleanupScreenshots, enforceCleanup, setupCleanupHandlers };
 
 // If run directly, test the mandatory safe browser launch
 if (import.meta.url === `file://${process.argv[1]}`) {
   (async () => {
+    // Setup cleanup handlers first
+    setupCleanupHandlers();
+
     console.log('🧪 Testing MANDATORY safe headed browser launch...');
-    const browser = await launchMandatorySafeBrowser();
+    let browser = null;
 
-    console.log('🌐 Testing browser functionality with live navigation...');
-    const page = await browser.newPage();
-    await page.goto('http://localhost:4321');
+    try {
+      browser = await launchMandatorySafeBrowser();
 
-    // Wait for user observation
-    console.log('👀 Browser should be visible on your Windows screen for 5 seconds...');
-    await page.waitForTimeout(5000);
+      console.log('🌐 Testing browser functionality with live navigation...');
+      const page = await browser.newPage();
+      await page.goto('http://localhost:4322');
 
-    await page.screenshot({ path: 'mandatory-headed-test.png', fullPage: true });
-    console.log('📸 Screenshot captured during live navigation');
+      // Wait for user observation
+      console.log('👀 Browser should be visible on your Windows screen for 5 seconds...');
+      await page.waitForTimeout(5000);
 
-    await browser.close();
+      // Ensure directory exists before screenshot
+      execSync('mkdir -p tests/design-review/screenshots', { stdio: 'ignore' });
+      await page.screenshot({ path: 'tests/design-review/screenshots/mandatory-headed-test.png', fullPage: true });
+      console.log('📸 Screenshot captured during live navigation');
 
-    // Clean up screenshots after testing
-    await cleanupScreenshots();
-    console.log('🔚 MANDATORY headed browser test completed successfully');
-  })().catch(console.error);
+      await browser.close();
+      browser = null; // Mark as closed
+
+    } catch (error) {
+      console.log('❌ Browser testing error:', error.message);
+      if (browser) {
+        try {
+          await browser.close();
+        } catch (closeError) {
+          console.log('⚠️ Browser close error:', closeError.message);
+        }
+      }
+    } finally {
+      // ALWAYS run enhanced cleanup
+      console.log('🛡️ Running mandatory enhanced cleanup...');
+      const cleanupSuccess = await enforceCleanup();
+
+      if (cleanupSuccess) {
+        console.log('🔚 MANDATORY headed browser test completed successfully');
+      } else {
+        console.log('⚠️ Test completed but cleanup had issues - check manually');
+        process.exit(1);
+      }
+    }
+  })().catch(async (error) => {
+    console.error('🚨 Critical error in browser test:', error);
+    await enforceCleanup();
+    process.exit(1);
+  });
 }

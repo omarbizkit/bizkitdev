@@ -23,9 +23,9 @@ import { chromium } from 'playwright';
   
   // Take screenshot of desktop viewport
   console.log('📸 Capturing desktop screenshot (1440x900)...');
-  await page.screenshot({ 
-    path: 'homepage-desktop.png', 
-    fullPage: true 
+  await page.screenshot({
+    path: '../screenshots/homepage-desktop.png',
+    fullPage: true
   });
 
   // Check for console errors
@@ -61,18 +61,18 @@ import { chromium } from 'playwright';
   console.log('📱 Testing tablet viewport (768x1024)...');
   await page.setViewportSize({ width: 768, height: 1024 });
   await page.waitForTimeout(500);
-  await page.screenshot({ 
-    path: 'homepage-tablet.png', 
-    fullPage: true 
+  await page.screenshot({
+    path: '../screenshots/homepage-tablet.png',
+    fullPage: true
   });
   
   // Test responsive design - mobile
   console.log('📱 Testing mobile viewport (375x667)...');
   await page.setViewportSize({ width: 375, height: 667 });
   await page.waitForTimeout(500);
-  await page.screenshot({ 
-    path: 'homepage-mobile.png', 
-    fullPage: true 
+  await page.screenshot({
+    path: '../screenshots/homepage-mobile.png',
+    fullPage: true
   });
   
   // Reset to desktop
@@ -87,17 +87,17 @@ import { chromium } from 'playwright';
     await firstProjectLink.click();
     await page.waitForLoadState('networkidle');
     
-    await page.screenshot({ 
-      path: 'project-detail-desktop.png', 
-      fullPage: true 
+    await page.screenshot({
+      path: '../screenshots/project-detail-desktop.png',
+      fullPage: true
     });
     
     console.log('📱 Testing project detail on mobile...');
     await page.setViewportSize({ width: 375, height: 667 });
     await page.waitForTimeout(500);
-    await page.screenshot({ 
-      path: 'project-detail-mobile.png', 
-      fullPage: true 
+    await page.screenshot({
+      path: '../screenshots/project-detail-mobile.png',
+      fullPage: true
     });
   }
   

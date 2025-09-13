@@ -20,7 +20,7 @@ async function runUIReview() {
     
     // Take full page screenshot of homepage
     await page.screenshot({ 
-      path: '/home/omarb/dev/projects/bizkitdev/ui-review-homepage-desktop.png', 
+      path: '../screenshots/ui-review-homepage-desktop.png', 
       fullPage: true 
     });
     console.log('✅ Homepage screenshot captured at desktop viewport (1440px)');
@@ -34,7 +34,7 @@ async function runUIReview() {
     
     // Take screenshot of project grid
     await page.locator('.project-grid, [data-testid="project-grid"]').screenshot({ 
-      path: '/home/omarb/dev/projects/bizkitdev/ui-review-project-grid.png' 
+      path: '../screenshots/ui-review-project-grid.png' 
     });
     console.log('✅ Project grid screenshot captured');
 
@@ -66,7 +66,7 @@ async function runUIReview() {
       
       // Take screenshot of project detail page
       await page.screenshot({ 
-        path: '/home/omarb/dev/projects/bizkitdev/ui-review-project-detail.png', 
+        path: '../screenshots/ui-review-project-detail.png', 
         fullPage: true 
       });
       console.log('✅ Project detail page screenshot captured');
@@ -77,7 +77,7 @@ async function runUIReview() {
         await themeToggle.click();
         await page.waitForTimeout(500);
         await page.screenshot({ 
-          path: '/home/omarb/dev/projects/bizkitdev/ui-review-theme-toggle.png', 
+          path: '../screenshots/ui-review-theme-toggle.png', 
           fullPage: true 
         });
         console.log('✅ Theme toggle functionality captured');
@@ -95,7 +95,7 @@ async function runUIReview() {
     await page.setViewportSize({ width: 768, height: 1024 });
     await page.waitForTimeout(1000);
     await page.screenshot({ 
-      path: '/home/omarb/dev/projects/bizkitdev/ui-review-tablet-768px.png', 
+      path: '../screenshots/ui-review-tablet-768px.png', 
       fullPage: true 
     });
     console.log('✅ Tablet viewport (768px) screenshot captured');
@@ -104,7 +104,7 @@ async function runUIReview() {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.waitForTimeout(1000);
     await page.screenshot({ 
-      path: '/home/omarb/dev/projects/bizkitdev/ui-review-mobile-375px.png', 
+      path: '../screenshots/ui-review-mobile-375px.png', 
       fullPage: true 
     });
     console.log('✅ Mobile viewport (375px) screenshot captured');
@@ -120,7 +120,7 @@ async function runUIReview() {
     if (await emailInput.count() > 0) {
       await emailInput.fill('test@example.com');
       await page.screenshot({ 
-        path: '/home/omarb/dev/projects/bizkitdev/ui-review-form-interaction.png' 
+        path: '../screenshots/ui-review-form-interaction.png' 
       });
       console.log('✅ Form interaction captured');
     }

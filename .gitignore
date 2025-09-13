@@ -77,6 +77,22 @@ playwright/.cache/
 # Test artifacts
 *.lcov
 junit.xml
+
+# Design review test artifacts
+tests/design-review/screenshots/
+/*test*.png
+/*headed*.png
+/*browser*.png
+/*screenshot*.png
+/*design*.png
+/*review*.png
+# Temporary test scripts (should be in tests/design-review/scripts/)
+/*test*.js
+/*headed*.js
+/*browser*.js
+/*design-review*.js
+/*ui-*.js
+/*wsl*.js
 results.xml
 
 # === TYPESCRIPT ===

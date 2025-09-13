@@ -573,6 +573,41 @@
 /* SEARCH & FORM ELEMENTS   */
 /* ======================== */
 
+/* CRITICAL FIX: Form inputs WCAG AA compliance */
+[data-theme="light"] .input-cyber,
+[data-theme="light"] input[type="email"],
+[data-theme="light"] input[type="text"],
+[data-theme="light"] input[type="search"],
+[data-theme="light"] textarea {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  border: 2px solid var(--border-primary) !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08) !important;
+  font-weight: 500;
+}
+
+[data-theme="light"] .input-cyber::placeholder,
+[data-theme="light"] input[type="email"]::placeholder,
+[data-theme="light"] input[type="text"]::placeholder,
+[data-theme="light"] input[type="search"]::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: var(--text-quaternary) !important;
+  opacity: 1;
+}
+
+[data-theme="light"] .input-cyber:focus,
+[data-theme="light"] input[type="email"]:focus,
+[data-theme="light"] input[type="text"]:focus,
+[data-theme="light"] input[type="search"]:focus,
+[data-theme="light"] textarea:focus {
+  border-color: var(--accent-purple) !important;
+  box-shadow:
+    0 0 0 3px rgba(99, 102, 241, 0.15),
+    0 4px 12px rgba(99, 102, 241, 0.12) !important;
+  outline: none !important;
+}
+
+/* Specific project search styling */
 [data-theme="light"] #project-search {
   background: var(--card-bg) !important;
   border: 2px solid var(--border-primary) !important;
@@ -587,7 +622,7 @@
 
 [data-theme="light"] #project-search:focus {
   border-color: var(--accent-purple) !important;
-  box-shadow: 
+  box-shadow:
     0 0 0 3px rgba(99, 102, 241, 0.15),
     0 6px 20px rgba(99, 102, 241, 0.12) !important;
 }

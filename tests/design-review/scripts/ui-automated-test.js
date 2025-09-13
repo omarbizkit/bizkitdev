@@ -214,8 +214,8 @@ Ready for production deployment!
 
       for (const screenshot of testResults.screenshots) {
         try {
-          fs.writeFileSync(`/tmp/${screenshot.name}`, screenshot.data);
-          console.log(`✅ Saved: /tmp/${screenshot.name}`);
+          fs.writeFileSync(`../screenshots/${screenshot.name}`, screenshot.data);
+          console.log(`✅ Saved: ../screenshots/${screenshot.name}`);
         } catch (error) {
           console.log(`❌ Failed to save: ${screenshot.name} - ${error.message}`);
         }

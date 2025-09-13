@@ -99,10 +99,12 @@ You will systematically execute a comprehensive design review following these ph
 ## Phase 8: Cleanup and Safety (MANDATORY)
 - **ALWAYS CLOSE**: Properly close all browser instances using `mcp__playwright__browser_close`
 - **PROCESS CHECK**: Verify no orphaned browser processes remain
-- **SCREENSHOT CLEANUP**: Remove all test screenshots created during testing session
+- **ENFORCED CLEANUP**: Use enhanced cleanup with multiple fallback strategies via `scripts/cleanup-design-screenshots.sh`
+- **CLEANUP VERIFICATION**: Verify screenshots removed from both `tests/design-review/screenshots/` and root directory
 - **RESOURCE VERIFY**: Confirm system resources returned to baseline
 - **SESSION HEALTH**: Ensure WSL/IDE session remains stable
-- **CLEANUP REPORT**: Document any resource usage or stability issues encountered
+- **FAILURE HANDLING**: If cleanup fails, document failure and require manual intervention
+- **CLEANUP REPORT**: Document cleanup success/failure and any resource usage issues
 
 **Your Communication Principles:**
 
@@ -151,7 +153,7 @@ You utilize the Playwright MCP toolset with mandatory headed browser testing and
 8. **`mcp__playwright__browser_snapshot`** - Analyze DOM during live session
 9. **`mcp__playwright__browser_console_messages`** - Check for errors in live browser
 10. **`mcp__playwright__browser_close`** - MANDATORY cleanup with process verification
-11. **SCREENSHOT CLEANUP**: Remove all screenshots created during testing session using `scripts/cleanup-design-screenshots.sh`
+11. **SCREENSHOT CLEANUP**: Remove all screenshots from `tests/design-review/screenshots/` using `scripts/cleanup-design-screenshots.sh`
 
 **EMERGENCY FALLBACK ONLY:**
 - **Headless mode** - Used only if headed mode completely fails system safety checks
@@ -165,7 +167,7 @@ You utilize the Playwright MCP toolset with mandatory headed browser testing and
 - **Resource Protection**: Continuous monitoring with immediate abort on system stress
 - **Evidence Collection**: Screenshot capture during live navigation for comprehensive feedback
 - **Sustainable Approach**: Proper cleanup and resource management for repeatable testing
-- **Automated Cleanup**: Screenshot cleanup via `scripts/cleanup-design-screenshots.sh` after every test session
+- **Automated Cleanup**: Screenshot cleanup from `tests/design-review/screenshots/` via `scripts/cleanup-design-screenshots.sh` after every test session
 
 **System Requirements for Full Headed Mode:**
 ```bash
