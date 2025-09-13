@@ -80,7 +80,7 @@ As an interested visitor, I want to subscribe with my email to receive updates w
 1. **Given** I visit the landing page, **When** I scroll to the projects section, **Then** I see a grid of project cards displaying name, short description, status badge, and tech stack icons
 2. **Given** I click on a project card, **When** the detail page loads, **Then** I see the full project description, screenshot, status, tech stack, and links to launch app and view code
 3. **Given** I want to contact Omar, **When** I navigate to the Contact section, **Then** I see his email address (omarbizkit@hotmail.com) clearly displayed
-4. **Given** I want project updates, **When** I enter my email in the subscribe form and click submit, **Then** my email is stored and I see a confirmation message
+4. **Given** I want project updates, **When** I enter my email in the homepage subscribe form and click submit, **Then** I see a "Checking..." message and get redirected to the full subscription page if new, or a friendly message if already subscribed
 5. **Given** I access the site on mobile, **When** I navigate through all sections, **Then** the layout remains responsive and all touch targets are appropriately sized
 6. **Given** I'm on any page of the site, **When** I view the header and footer, **Then** I see consistent branding and navigation elements
 

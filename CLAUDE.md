@@ -245,11 +245,16 @@ npm run docker:test   # Uses podman-compose internally
 
 ### 📧 **Subscription System Implementation** (2025-09-12)
 - **Dedicated Subscribe Page**: Clean separation implemented with `/subscribe` route to avoid homepage redundancy
-- **Dual Entry Points**: Navigation menu "Subscribe" link + homepage "Subscribe to Updates" CTA button for optimal discovery
-- **Form Implementation**: Complete email subscription with `data-testid="subscribe-form"`, validation, error handling, and API integration
-- **E2E Test Alignment**: All subscription tests updated to navigate to dedicated page structure
-- **API Endpoints**: Full subscription workflow (email input → confirmation → management) with secure backend
+- **Multi-Entry Points**: Navigation menu "Subscribe" link + homepage newsletter pre-check form + redirect flow for optimal discovery
+- **Homepage Pre-Check Flow**: Lightweight client-side validation → API check → intelligent redirect (new subscribers → `/subscribe` page, existing → friendly message)
+- **Form Implementation**: Complete subscription workflow with `data-testid="subscribe-form"` on subscribe page and `hero-subscribe-form` on homepage
+- **API Endpoints**:
+  - `/api/subscribe/check` ✅ - Lightweight subscription status pre-check
+  - `/api/subscribe` ✅ - Newsletter subscription
+  - `/api/subscribe/confirm` ✅ - Email confirmation
+- **E2E Test Alignment**: Subscription tests updated for both homepage pre-check and dedicated page subscription flows
 - **Accessibility Verified**: Keyboard navigation, screen reader support, and WCAG AA compliance maintained
+- **Production Fix**: Resolved INVALID_JSON error with client-side form handling instead of direct API submissions
 
 ### 🚀 **Environment Variable Resolution Complete** (2025-01-13)
 - **Test Environment Loading Fixed**: Updated `tests/e2e/global-setup.ts` to automatically load `.env.test` file
@@ -379,6 +384,9 @@ If browser automation is not available, the system automatically uses the **manu
 
 # Accessibility Focus
 "@agent-design-review WCAG compliance audit for forms and interactive elements"
+
+# Form Interaction Testing
+"@agent-design-review test homepage newsletter form pre-check flow - validate email validation, API responses, and redirect behavior"
 
 # Performance Testing
 "@agent-design-review page load times and responsiveness for mobile views"

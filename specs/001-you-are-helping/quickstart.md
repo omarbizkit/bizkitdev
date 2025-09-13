@@ -124,39 +124,57 @@ This guide provides step-by-step validation scenarios for each user story define
 
 ### Validation Steps
 
-1. **Locate subscription form**
-   - Find Subscribe section on landing page
+1. **Locate homepage subscription form**
+   - Find Subscribe section on landing page hero area
    - Verify form has email input and submit button
    - Form is styled consistently with site theme
 
-2. **Test subscription process**
-   - Enter valid email address
+2. **Test homepage pre-check process**
+   - Enter a new email address
    - Click submit button
-   - Verify success message appears
+   - Verify "Checking..." message appears
+   - Confirm redirect to `/subscribe?email=prefilled@email` page
+   - Prefilled email appears in subscription form
+
+3. **Test existing subscriber flow**
+   - Enter email that has already subscribed
+   - Click submit button
+   - Verify "You're already subscribed!" message appears
+   - No redirect occurs
+
+4. **Complete full subscription on dedicated page**
+   - On subscribe page with prefilled email
+   - Click submit button
+   - Verify full validation and subscription process
    - Check that confirmation email is sent
 
-3. **Validate email confirmation**
+5. **Validate email confirmation**
    - Open confirmation email in inbox
    - Click confirmation link
    - Verify subscription is activated
    - See confirmation page on website
 
-4. **Test error handling**
-   - Try subscribing with invalid email format
+6. **Test error handling**
+   - Try subscribing with invalid email format on homepage
+   - Verify client-side validation errors
+   - Test server-side validation on subscribe page
    - Attempt to subscribe with same email twice
    - Verify appropriate error messages display
 
-5. **Test unsubscribe flow**
+7. **Test unsubscribe flow**
    - Use unsubscribe link from email
    - Verify unsubscribe confirmation page
    - Confirm email is removed from active subscribers
 
 ### Success Criteria
 
-- ✅ Subscription form is functional and accessible
-- ✅ Email validation works properly
+- ✅ Homepage pre-check form is functional and accessible
+- ✅ Email pre-check validates existing subscriptions
+- ✅ Redirect flow works for new subscribers with email prefill
+- ✅ Dedicated subscription page completes full signup
+- ✅ Email validation works at both homepage and subscribe page
 - ✅ Confirmation email system operational
-- ✅ Error messages are clear and helpful
+- ✅ Error messages are clear and helpful across all steps
 - ✅ Unsubscribe process works smoothly
 
 ---
