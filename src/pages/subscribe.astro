@@ -148,6 +148,30 @@ async function handleSubscribe(event) {
       successMessage.textContent = sanitizedMessage;
       successMessage.classList.remove('hidden');
       form.reset();
+    } else if (response.status === 429) {
+      // Rate limit error - disable form temporarily
+      const sanitizedMessage = (data.message || 'Too many requests. Please try again later.')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;');
+      errorMessage.textContent = sanitizedMessage;
+      errorMessage.classList.remove('hidden');
+
+      // Disable form for rate limiting
+      submitButton.disabled = true;
+      emailInput.disabled = true;
+      submitButton.textContent = 'Temporarily Disabled';
+
+      // Re-enable after 30 seconds
+      setTimeout(() => {
+        submitButton.disabled = false;
+        emailInput.disabled = false;
+        submitButton.textContent = 'Subscribe';
+        errorMessage.classList.add('hidden');
+      }, 30000);
+
     } else {
       // Error - sanitize message to prevent XSS
       const sanitizedMessage = (data.message || 'Something went wrong. Please try again.')
