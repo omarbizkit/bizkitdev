@@ -33,6 +33,7 @@ A modern, high-performance portfolio website built with Astro featuring a dark n
 - [Playwright](https://playwright.dev/) - E2E testing
 - [ESLint](https://eslint.org/) - Code linting
 - [Prettier](https://prettier.io/) - Code formatting
+- **Design Review Agent** - Automated UI/UX testing with headed browser navigation
 
 ### DevOps
 - [Docker](https://www.docker.com/) - Multi-stage containerization
@@ -271,6 +272,34 @@ The project uses a custom dark neon sci-fi theme defined in:
 - 🟢 **Testing**: 84% coverage with 100+ test scenarios
 - 🟢 **Deployment**: Complete CI/CD pipeline with Docker containerization
 - 🟢 **Monitoring**: Health checks, logging, error handling
+
+## 🎨 Design Review System
+
+This project includes an advanced design review system with automated UI/UX testing capabilities:
+
+### Features
+- **Headed Browser Testing**: Live UI navigation with visible browser windows in WSL environment
+- **Automated Screenshots**: Evidence capture during live browser navigation for comprehensive feedback
+- **Safety Protocols**: Resource monitoring and crash prevention for stable testing sessions
+- **Multi-Viewport Testing**: Desktop (1440px), tablet (768px), and mobile (375px) validation
+- **Accessibility Auditing**: WCAG 2.1 AA compliance verification
+- **Interactive Testing**: Real-time hover states, form interactions, and user flow validation
+
+### Usage
+```bash
+# Invoke design review agent for comprehensive UI testing
+@agent-design-review test homepage responsive design across all viewports
+
+# Use slash command for diff-based reviews
+/design-review validate theme consistency and navigation flow
+```
+
+### Capabilities
+- **Live Browser Navigation**: Actual browser interaction with visible window through WSLg
+- **Evidence Collection**: Screenshots captured during live navigation for thorough analysis
+- **Resource Management**: Automatic cleanup of test artifacts and browser processes
+- **Safety-First Approach**: Pre-flight system checks and emergency fallback protocols
+- **WSL Optimized**: Specifically configured for stable WSL/Windows integration
 
 ## 🤝 Contributing
 
