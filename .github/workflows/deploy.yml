@@ -37,7 +37,25 @@ jobs:
         run: npm run test
 
       - name: Install Playwright dependencies
-        run: npx playwright install --with-deps chromium
+        run: |
+          export PLAYWRIGHT_BROWSERS_PATH=/tmp/playwright-browsers
+          npx playwright install --with-deps chromium
+          echo "PLAYWRIGHT_BROWSERS_PATH=$PLAYWRIGHT_BROWSERS_PATH" >> $GITHUB_ENV
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: /tmp/playwright-browsers
+
+      - name: Verify browser environment setup
+        run: |
+          echo "🔍 BROWSER ENVIRONMENT VERIFICATION:"
+          echo "   PLAYWRIGHT_BROWSERS_PATH: $PLAYWRIGHT_BROWSERS_PATH"
+          echo "   Playwright version: $(npx playwright --version)"
+          echo "   Browser directory exists: $(ls -la $PLAYWRIGHT_BROWSERS_PATH 2>/dev/null || echo 'BROWSER DIR NOT FOUND')"
+          echo "   Chromium binary exists: $(find $PLAYWRIGHT_BROWSERS_PATH -name "*chromium*" -prune -type d 2>/dev/null || echo 'NO CHROMIUM BROWSER DIR')"
+          echo "   Firefox binary exists: $(find $PLAYWRIGHT_BROWSERS_PATH -name "*firefox*" -prune -type d 2>/dev/null || echo 'NO FIREFOX BROWSER DIR')"
+          echo "   WebKit binary exists: $(find $PLAYWRIGHT_BROWSERS_PATH -name "*webkit*" -prune -type d 2>/dev/null || echo 'NO WEBKIT BROWSER DIR')"
+          echo "   System packages (success metrics):"
+          which google-chrome 2>/dev/null && echo "   ✅ chromium available" || echo "   ❌ chromium missing"
+          which firefox 2>/dev/null && echo "   ✅ firefox available" || echo "   ❌ firefox missing"
 
       - name: Start development server
         run: |

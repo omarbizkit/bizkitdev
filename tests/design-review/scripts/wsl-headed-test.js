@@ -1,14 +1,21 @@
 import { chromium } from 'playwright';
 
 (async () => {
-  console.log('🔍 WSL Headed Browser Test Starting...');
+  console.log('🔍 Cross-Platform Headed Browser Test Starting...');
+
+  // Environment setup for WSL, CI, and other environments
+  const browserPath = process.env.PLAYWRIGHT_BROWSERS_PATH || '/tmp/playwright-browsers';
+  console.log(`🔧 Browser environment: PLAYWRIGHT_BROWSERS_PATH=${browserPath}`);
+
   console.log('📍 Environment check:');
   console.log(`   - DISPLAY: ${process.env.DISPLAY || 'not set'}`);
   console.log(`   - WSL_DISTRO_NAME: ${process.env.WSL_DISTRO_NAME || 'not set'}`);
-  
+  console.log(`   - PLAYWRIGHT_BROWSERS_PATH: ${browserPath}`);
+
   try {
-    // Force headed mode for WSL with specific launch options
-    const browser = await chromium.launch({ 
+    // Cross-platform headed mode with environment-specific configurations
+    const isWSL = !!process.env.WSL_DISTRO_NAME;
+    const launchOptions = {
       headless: false,
       slowMo: 1000, // 1 second delays for visibility
       args: [
@@ -17,11 +24,18 @@ import { chromium } from 'playwright';
         '--disable-dev-shm-usage',
         '--disable-extensions',
         '--remote-debugging-port=9222'
-      ],
-      env: {
-        DISPLAY: ':0'
-      }
-    });
+      ]
+    };
+
+    if (isWSL) {
+      // WSL-specific configuration
+      launchOptions.env = { DISPLAY: ':0' };
+      console.log('🖥️ Detected WSL environment - using X11 display forwarding');
+    } else {
+      console.log('🔧 Using native desktop environment');
+    }
+
+    const browser = await chromium.launch(launchOptions);
     
     console.log('✅ Browser launched successfully!');
     
