@@ -46,11 +46,7 @@ test.describe('Subscription Engagement Flow', () => {
 
       // Check that the form prevents submission with invalid email
       await emailInput.click(); // Refocus to ensure validation state
-      const submitButton = subscribeForm.locator('button[type="submit"]');
-
-      // The form should be validatable (basic form validation check)
-      const form = page.locator('[data-testid="subscribe-form"]');
-      const inputElement = emailInput.getAttribute('type');
+      const inputElement = await emailInput.getAttribute('type');
 
       // If we have an email input type, check that at least there's basic form validation
       if (inputElement === 'email') {
