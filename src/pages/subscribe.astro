@@ -99,8 +99,10 @@ const prefilledEmail = url.searchParams.get('email');
 <script>
 // Form validation handling
 function updateEmailValidation() {
-  const emailInput = document.getElementById('email');
-  const emailError = document.querySelector('[data-testid="email-error"]');
+  const emailInput = document.getElementById('email') as HTMLInputElement;
+  const emailError = document.querySelector('[data-testid="email-error"]') as HTMLElement;
+
+  if (!emailInput || !emailError) return;
 
   // Force validation update
   emailInput.setCustomValidity('');
@@ -112,7 +114,10 @@ function updateEmailValidation() {
   }
 }
 
-document.getElementById('email').addEventListener('input', updateEmailValidation);
+const emailElement = document.getElementById('email');
+if (emailElement) {
+  emailElement.addEventListener('input', updateEmailValidation);
+}
 
 // Check validation on page load (important for prefilled emails)
 document.addEventListener('DOMContentLoaded', function() {
@@ -121,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateEmailValidation();
 
     // Trigger validation on form reset (when email is prefilled)
-    const emailInput = document.getElementById('email');
+    const emailInput = document.getElementById('email') as HTMLInputElement;
     if (emailInput && emailInput.value) {
       updateEmailValidation();
     }
@@ -136,14 +141,16 @@ document.addEventListener('DOMContentLoaded', function() {
   }, 100);
 });
 
-async function handleSubscribe(event) {
+async function handleSubscribe(event: Event) {
   event.preventDefault();
 
-  const form = event.target;
-  const submitButton = form.querySelector('button[type="submit"]');
-  const emailInput = form.querySelector('#email');
-  const successMessage = form.querySelector('[data-testid="success-message"]');
-  const errorMessage = form.querySelector('[data-testid="error-message"]');
+  const form = event.target as HTMLFormElement;
+  if (!form) return;
+  
+  const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+  const emailInput = form.querySelector('#email') as HTMLInputElement;
+  const successMessage = form.querySelector('[data-testid="success-message"]') as HTMLElement;
+  const errorMessage = form.querySelector('[data-testid="error-message"]') as HTMLElement;
 
   // Disable form during submission
   submitButton.disabled = true;

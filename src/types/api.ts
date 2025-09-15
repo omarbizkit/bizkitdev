@@ -32,6 +32,11 @@ export interface SubscribeRequest {
   email: string;                 // Email format, max length: 254
 }
 
+// Check Subscription Request
+export interface CheckSubscriptionRequest {
+  email: string;                 // Email format, max length: 254
+}
+
 // Subscription Response
 export interface SubscribeResponse {
   success: boolean;

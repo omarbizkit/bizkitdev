@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Email validation on input
   emailInput.addEventListener('input', function(e) {
-    if (e.target.checkValidity()) {
+    if (e.target && e.target instanceof HTMLInputElement && e.target.checkValidity()) {
       emailError.classList.add('hidden');
     }
   });
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
   heroForm.addEventListener('submit', async function(event) {
     event.preventDefault();
 
-    const email = emailInput.value.trim();
+    const email = (emailInput as HTMLInputElement).value.trim();
 
     // Basic validation
     if (!email) {
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    if (!emailInput.checkValidity()) {
+    if (!(emailInput as HTMLInputElement).checkValidity()) {
       showError('Please enter a valid email address.');
       emailError.classList.remove('hidden');
       return;
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Set loading state
     updateButtonState('loading');
-    emailInput.disabled = true;
+    (emailInput as HTMLInputElement).disabled = true;
 
     try {
       // Make API call to check subscription status
@@ -182,14 +182,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Email is already subscribed - show success and reset
         showSuccess('You\'re already subscribed! Check your email for updates.');
         updateButtonState('ready');
-        emailInput.disabled = false;
+        (emailInput as HTMLInputElement).disabled = false;
         return;
 
       } else {
         // Handle other errors
         showError(data.message || 'Something went wrong. Please try again.');
         updateButtonState('ready');
-        emailInput.disabled = false;
+        (emailInput as HTMLInputElement).disabled = false;
         return;
       }
 
@@ -197,23 +197,23 @@ document.addEventListener('DOMContentLoaded', function() {
       console.error('Newsletter check error:', error);
       showError('Network error. Please try again later.');
       updateButtonState('ready');
-      emailInput.disabled = false;
+      (emailInput as HTMLInputElement).disabled = false;
     }
   });
 
-  function showSuccess(message) {
-    messageBox.className = 'text-sm text-center text-green-400 min-h-[40px] flex items-center justify-center';
-    messageBox.textContent = message;
-    emailError.classList.add('hidden');
+  function showSuccess(message: string) {
+    messageBox!.className = 'text-sm text-center text-green-400 min-h-[40px] flex items-center justify-center';
+    messageBox!.textContent = message;
+    emailError!.classList.add('hidden');
   }
 
-  function showError(message) {
-    messageBox.className = 'text-sm text-center text-red-400 min-h-[40px] flex items-center justify-center';
-    messageBox.textContent = message;
-    emailError.classList.add('hidden');
+  function showError(message: string) {
+    messageBox!.className = 'text-sm text-center text-red-400 min-h-[40px] flex items-center justify-center';
+    messageBox!.textContent = message;
+    emailError!.classList.add('hidden');
   }
 
-  function updateButtonState(state) {
+  function updateButtonState(state: 'loading' | 'redirecting' | 'ready' | 'idle') {
     const buttonText = document.getElementById('hero-button-text');
     const loadingSpinner = document.getElementById('hero-loading-spinner');
 
@@ -226,18 +226,18 @@ document.addEventListener('DOMContentLoaded', function() {
       case 'loading':
         buttonText.textContent = 'Checking...';
         loadingSpinner.classList.remove('hidden');
-        submitButton.disabled = true;
+        (submitButton as HTMLButtonElement).disabled = true;
         break;
       case 'redirecting':
         buttonText.textContent = 'Redirecting...';
         loadingSpinner.classList.remove('hidden');
-        submitButton.disabled = true;
+        (submitButton as HTMLButtonElement).disabled = true;
         break;
       case 'ready':
       default:
         buttonText.textContent = 'Join My Newsletter';
         loadingSpinner.classList.add('hidden');
-        submitButton.disabled = false;
+        (submitButton as HTMLButtonElement).disabled = false;
         break;
     }
   }
