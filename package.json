@@ -21,12 +21,12 @@
     "format:check": "prettier --check .",
     "typecheck": "astro check",
     "type-check": "astro check",
-    "docker:build": "podman build --build-arg PUBLIC_SUPABASE_URL=https://mock.supabase.co --build-arg PUBLIC_SUPABASE_ANON_KEY=mock-anon-key --build-arg PUBLIC_SITE_URL=http://localhost:3000 -t bizkitdev-portfolio .",
-    "docker:run": "podman run -p 3000:3000 bizkitdev-portfolio",
+    "docker:build": "podman build --build-arg PUBLIC_SUPABASE_URL=https://mock.supabase.co --build-arg PUBLIC_SUPABASE_ANON_KEY=mock-anon-key --build-arg PUBLIC_SITE_URL=http://localhost:4321 -t bizkitdev-portfolio .",
+    "docker:run": "podman run -p 4321:4321 bizkitdev-portfolio",
     "docker:dev": "podman-compose --env-file .env.docker --profile dev up -d",
     "docker:prod": "podman-compose --env-file .env.docker up -d",
     "docker:stop": "podman-compose down",
-    "docker:test": "podman-compose --env-file .env.docker up --build -d && sleep 10 && curl http://localhost:3000 && podman-compose down",
+    "docker:test": "podman-compose --env-file .env.docker up --build -d && sleep 10 && curl http://localhost:4321 && podman-compose down",
     "docker:logs": "podman-compose logs -f app"
   },
   "dependencies": {
