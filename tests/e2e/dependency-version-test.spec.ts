@@ -95,14 +95,18 @@ test.describe('Dependency Version Mismatch Detection and Resolution', () => {
         execSync('npm run build', { stdio: 'pipe', timeout: 30000 });
         console.log('✅ Build completed successfully');
 
-        // Start the preview server to test built version
-        const previewProcess = execSync('npm run preview', {
-          detached: true,
-          stdio: 'pipe',
-          encoding: 'utf8'
-        });
-
-        console.log('✅ Preview server started (build might reveal component issues)');
+        // In CI, use existing server instead of starting new preview server
+        if (process.env.CI) {
+          console.log('✅ Using existing server in CI (port 4321 already in use)');
+        } else {
+          // Start the preview server to test built version (local development only)
+          const previewProcess = execSync('npm run preview', {
+            detached: true,
+            stdio: 'pipe',
+            encoding: 'utf8'
+          });
+          console.log('✅ Preview server started (build might reveal component issues)');
+        }
 
       } catch (buildError) {
         console.error('❌ BUILD FAILED - this could prevent component rendering:');
