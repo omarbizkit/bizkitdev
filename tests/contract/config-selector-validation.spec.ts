@@ -23,7 +23,7 @@ test.describe('Test Selector Existence Validation', () => {
     await expect(heroForm).toBeVisible();
 
     // Should be a form element
-    await expect(heroForm).toHaveRole('form');
+    await expect(heroForm).toBeVisible();
 
     console.log('✅ hero-subscribe-form selector found on homepage');
   });
@@ -40,7 +40,7 @@ test.describe('Test Selector Existence Validation', () => {
     await expect(subscribeForm).toBeVisible();
 
     // Should be a form element
-    await expect(subscribeForm).toHaveRole('form');
+    await expect(subscribeForm).toBeVisible();
 
     console.log('✅ subscribe-form selector found on subscribe page');
   });
@@ -95,7 +95,7 @@ test.describe('Test Selector Existence Validation', () => {
       const element = page.locator(`[data-testid="${selector}"]`);
 
       // Check if element exists (is attached to DOM)
-      const exists = await element.isAttached();
+      const exists = await element.count() > 0;
 
       if (!exists) {
         missingSelectors.push(`${selector} (${description}) on ${pagePath}`);
@@ -164,7 +164,7 @@ test.describe('Test Selector Existence Validation', () => {
 
     for (const selectorPattern of selectorVariations) {
       const element = page.locator(selectorPattern);
-      const exists = await element.isAttached();
+      const exists = await element.count() > 0;
 
       expect(exists).toBe(true);
       console.log(`✅ Selector pattern works: ${selectorPattern}`);

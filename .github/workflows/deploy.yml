@@ -80,7 +80,7 @@ jobs:
           TEST_BASE_URL: http://localhost:4321
 
       - name: Run contract tests
-        run: npm run test:contract
+        run: npx playwright test -c playwright.contract.config.ts
         env:
           TEST_BASE_URL: http://localhost:4321
           PUBLIC_SUPABASE_URL: https://mock.supabase.co

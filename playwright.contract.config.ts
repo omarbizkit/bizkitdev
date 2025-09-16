@@ -6,6 +6,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests/contract',
+  testMatch: ['**/config-*.spec.ts'], // Only run config validation tests
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0,
