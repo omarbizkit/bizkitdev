@@ -1,0 +1,202 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "E2E Test Configuration Validation API",
+    "version": "1.0.0",
+    "description": "Internal API contracts for validating E2E test configuration alignment"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Server health check endpoint",
+        "description": "Validates that the development server is running and ready for tests",
+        "responses": {
+          "200": {
+            "description": "Server is healthy and ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["healthy"]
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "port": {
+                      "type": "number"
+                    },
+                    "environment": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["status", "timestamp", "port"]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Server is not ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["unhealthy"]
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ConfigurationValidationRequest": {
+        "type": "object",
+        "properties": {
+          "serverPort": {
+            "type": "number",
+            "description": "Expected server port"
+          },
+          "playwrightConfig": {
+            "type": "object",
+            "description": "Playwright configuration object"
+          },
+          "environment": {
+            "type": "string",
+            "enum": ["development", "ci", "test"]
+          }
+        },
+        "required": ["serverPort", "playwrightConfig", "environment"]
+      },
+      "ConfigurationValidationResponse": {
+        "type": "object",
+        "properties": {
+          "isValid": {
+            "type": "boolean"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationWarning"
+            }
+          }
+        },
+        "required": ["isValid", "errors", "warnings"]
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": ["PORT_MISMATCH", "SELECTOR_NOT_FOUND", "BROWSER_NOT_INSTALLED", "HEALTH_CHECK_FAILED"]
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "type": "object"
+          }
+        },
+        "required": ["code", "message"]
+      },
+      "ValidationWarning": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": ["DEPRECATED_SELECTOR", "SLOW_HEALTH_CHECK", "BROWSER_VERSION_OLD"]
+          },
+          "message": {
+            "type": "string"
+          },
+          "suggestion": {
+            "type": "string"
+          }
+        },
+        "required": ["code", "message"]
+      },
+      "SelectorValidationRequest": {
+        "type": "object",
+        "properties": {
+          "selectors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TestSelector"
+            }
+          },
+          "pageUrl": {
+            "type": "string"
+          }
+        },
+        "required": ["selectors", "pageUrl"]
+      },
+      "SelectorValidationResponse": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SelectorValidationResult"
+            }
+          }
+        },
+        "required": ["results"]
+      },
+      "SelectorValidationResult": {
+        "type": "object",
+        "properties": {
+          "selector": {
+            "type": "string"
+          },
+          "exists": {
+            "type": "boolean"
+          },
+          "count": {
+            "type": "number"
+          },
+          "alternatives": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["selector", "exists", "count"]
+      },
+      "TestSelector": {
+        "type": "object",
+        "properties": {
+          "testId": {
+            "type": "string"
+          },
+          "fallbackSelector": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": ["testId"]
+      }
+    }
+  }
+}

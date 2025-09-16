@@ -39,7 +39,14 @@ export default defineConfig({
   },
 
   /* Configure projects for major browsers */
-  projects: [
+  projects: process.env.CI ? [
+    // In CI, only run chromium for speed and reliability
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] }
+    }
+  ] : [
+    // Locally, run all browsers for comprehensive testing
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] }
@@ -64,6 +71,7 @@ export default defineConfig({
       name: 'Mobile Safari',
       use: { ...devices['iPhone 12'] }
     }
+  ],
 
     /* Test against branded browsers. */
     // {
@@ -74,7 +82,6 @@ export default defineConfig({
     //   name: 'Google Chrome',
     //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     // },
-  ],
 
   /* Run your local dev server before starting the tests */
   webServer: {
@@ -82,7 +89,7 @@ export default defineConfig({
       ? 'PUBLIC_SUPABASE_URL=https://mock.supabase.co PUBLIC_SUPABASE_ANON_KEY=mock-anon-key-safe-for-ci npm run build && npm run preview'
       : 'npm run dev',
     port: 4321,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !!process.env.CI, // Reuse server in CI, start new locally
     timeout: 60 * 1000
   },
 

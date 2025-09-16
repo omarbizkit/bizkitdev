@@ -346,7 +346,7 @@ test.describe('Subscription Engagement Flow', () => {
       await expect(page).toHaveURL('/subscribe');
 
       // Now on subscribe page, find the email input
-      const subscribeForm = page.locator('[data-testid="hero-subscribe-form"]');
+      const subscribeForm = page.locator('[data-testid="subscribe-form"]');
       await expect(subscribeForm).toBeVisible();
 
       const emailInput = subscribeForm.locator('input[type="email"]');
