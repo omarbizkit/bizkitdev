@@ -273,7 +273,7 @@ test.describe('Visitor Discovery Flow', () => {
       await expect(page.locator('main h1, h1')).toContainText(/404|Not Found/i);
       
       // Should have navigation back to home
-      const homeLink = page.getByRole('link', { name: /home|back/i });
+      const homeLink = page.getByRole('link', { name: 'Home', exact: true });
       await expect(homeLink).toBeVisible();
       
       // Clicking home link should work
@@ -297,7 +297,7 @@ test.describe('Visitor Discovery Flow', () => {
       const aboutLink = page.getByRole('link', { name: 'About' });
       if (await aboutLink.isVisible()) {
         await aboutLink.click();
-        await expect(page).toHaveURL('/about');
+        await expect(page).toHaveURL('/about/');
       }
     });
   });
