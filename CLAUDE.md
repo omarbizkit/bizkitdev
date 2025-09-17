@@ -142,6 +142,12 @@ npm run docker:test   # Uses podman-compose internally
 
 ## Recent Changes
 
+### 🔧 **APPLICATION-LEVEL FIXES PLANNED** - Component Enhancement (2025-09-16)
+- **✅ PLANNING COMPLETE**: Comprehensive plan for fixing 8 critical application issues
+- **✅ SCOPE DEFINED**: Missing test IDs, content structure, SEO gaps, accessibility issues
+- **✅ CONTRACTS CREATED**: Component contracts for ProjectCard, MainHead, and page structure
+- **✅ TDD READY**: Quickstart validation guide for E2E test compliance
+
 ### 🎯 **E2E TROUBLESHOOTING COMPLETED** - Root Cause Resolved (2025-09-16)
 - **✅ MAJOR BREAKTHROUGH**: **Root cause identified and fixed** - CI port mismatch (4322 vs 4321)
 - **✅ CRITICAL FIX APPLIED**: GitHub Actions workflow now uses port 4321 consistently

@@ -24,9 +24,10 @@ test.describe('Visitor Discovery Flow', () => {
       // Wait for project grid to load
       await expect(page.locator('[data-testid="project-grid"], .project-grid')).toBeVisible();
       
-      // Should have at least 3 featured projects
+      // Should have at least 3 project cards (minimum requirement)
       const projectCards = page.locator('[data-testid="project-card"], .project-card');
-      await expect(projectCards).toHaveCount(3, { timeout: 10000 });
+      const cardCount = await projectCards.count();
+      expect(cardCount).toBeGreaterThanOrEqual(3);
       
       // Each project card should have required elements
       const firstCard = projectCards.first();
@@ -206,9 +207,10 @@ test.describe('Visitor Discovery Flow', () => {
             link.click()
           ]);
           
-          // Should not show 404 error
-          await expect(page.locator('main h1, h1')).not.toContainText('404');
-          await expect(page.locator('main h1, h1')).not.toContainText('Not Found');
+          // Should not show 404 error - check page content avoiding dev tools
+          const pageContent = page.locator('main').first();
+          await expect(pageContent).not.toContainText('404');
+          await expect(pageContent).not.toContainText('Not Found');
           
           // Go back for next test
           await page.goBack();
@@ -230,8 +232,8 @@ test.describe('Visitor Discovery Flow', () => {
       // Page should load within 3 seconds
       expect(loadTime).toBeLessThan(3000);
       
-      // Core content should be visible
-      await expect(page.locator('h1')).toBeVisible();
+      // Core content should be visible - target main content H1 specifically
+      await expect(page.locator('main h1, section h1, [class*="hero"] h1').first()).toBeVisible();
       await expect(page.locator('[data-testid="project-grid"], .project-grid')).toBeVisible();
     });
 

@@ -1,0 +1,232 @@
+# Component Contracts: Application-Level Issue Fixes
+
+# This file defines the contracts for component enhancements rather than API endpoints
+# since this feature focuses on frontend component fixes
+
+version: "1.0.0"
+info:
+  title: "Application Component Contracts"
+  description: "Contracts for enhanced components with test IDs, accessibility, and SEO"
+  version: "1.0.0"
+
+# Component Interface Contracts
+components:
+
+  # ProjectCard Component Contract
+  ProjectCard:
+    type: "astro-component"
+    props:
+      project:
+        type: "object"
+        required: true
+        description: "Project data from projects.json"
+        properties:
+          id: { type: "string", required: true }
+          title: { type: "string", required: true }
+          description: { type: "string", required: true }
+          technologies: { type: "array", required: true }
+          github: { type: "string", required: false }
+          demo: { type: "string", required: false }
+          screenshot: { type: "string", required: false }
+
+    required_attributes:
+      data-testid:
+        value: "project-card"
+        description: "Required for E2E test identification"
+      role:
+        value: "article"
+        description: "ARIA role for semantic meaning"
+      aria-labelledby:
+        pattern: "project-title-{project.id}"
+        description: "References project title heading ID"
+
+    dom_structure:
+      root_element: "article"
+      required_children:
+        - element: "h3"
+          attributes:
+            id: "project-title-{project.id}"
+          content: "{project.title}"
+        - element: "p"
+          content: "{project.description}"
+        - element: "[data-testid='tech-stack']"
+          content: "Technology stack indicators"
+
+  # MainHead Component Contract
+  MainHead:
+    type: "astro-component"
+    props:
+      title:
+        type: "string"
+        required: true
+        validation:
+          minLength: 10
+          maxLength: 60
+      description:
+        type: "string"
+        required: true
+        validation:
+          minLength: 120
+          maxLength: 160
+
+    required_meta_tags:
+      - name: "title"
+        content: "{title}"
+      - name: "description"
+        content: "{description}"
+      - property: "og:title"
+        content: "{title}"
+      - property: "og:description"
+        content: "{description}"
+      - property: "og:type"
+        content: "website"
+      - property: "og:url"
+        content: "{canonical_url}"
+
+    required_structured_data:
+      type: "application/ld+json"
+      schema:
+        "@context": "https://schema.org"
+        "@type": "Person"
+        "name": "Omar Torres"
+        "jobTitle": "Data & AI Enthusiast"
+        "url": "https://bizkit.dev"
+
+  # Page Content Structure Contract
+  PageContentStructure:
+    type: "page-template"
+    required_elements:
+      h1:
+        count: 1
+        visibility: "visible"
+        content_pattern: "non-empty"
+        description: "Exactly one visible H1 per page"
+
+      interactive_elements:
+        aria_labels: "required"
+        keyboard_navigation: "supported"
+        description: "All clickable elements must have ARIA labels"
+
+      form_elements:
+        labels: "associated"
+        validation: "client-side"
+        description: "Form inputs must have associated labels"
+
+# Test Contracts
+test_requirements:
+
+  e2e_visibility:
+    project_cards:
+      selector: '[data-testid="project-card"]'
+      minimum_count: 3
+      visibility: "visible"
+      timeout: 10000
+
+    project_grid:
+      selector: '[data-testid="project-grid"]'
+      visibility: "visible"
+      contains_cards: true
+
+    page_structure:
+      h1_elements:
+        count: ">= 1"
+        per_page: "exactly 1"
+        visibility: "visible"
+
+  accessibility:
+    wcag_aa_compliance:
+      color_contrast: "4.5:1 minimum"
+      keyboard_navigation: "full_support"
+      screen_reader: "compatible"
+      aria_labels: "present_on_interactive"
+
+    form_accessibility:
+      label_association: "required"
+      error_messaging: "descriptive"
+      focus_management: "logical_order"
+
+  seo_compliance:
+    meta_tags:
+      title: "present_and_unique"
+      description: "present_and_descriptive"
+      open_graph: "complete_set"
+
+    structured_data:
+      format: "json_ld"
+      validation: "schema_org_compliant"
+      type: "Person"
+
+# Performance Contracts
+performance_requirements:
+
+  component_rendering:
+    project_cards:
+      render_time: "< 100ms"
+      memory_impact: "< 5% increase"
+
+    meta_tags:
+      generation_time: "< 10ms"
+      dom_size_impact: "< 2KB"
+
+  page_load:
+    homepage:
+      total_load_time: "< 3000ms"
+      content_visible_time: "< 1000ms"
+
+    project_pages:
+      total_load_time: "< 2000ms"
+      content_visible_time: "< 800ms"
+
+# Error Handling Contracts
+error_handling:
+
+  missing_project_data:
+    fallback: "display_placeholder"
+    user_message: "Project information temporarily unavailable"
+    log_level: "warning"
+
+  missing_meta_tags:
+    fallback: "use_default_values"
+    user_impact: "none"
+    log_level: "info"
+
+  accessibility_failures:
+    fallback: "graceful_degradation"
+    user_impact: "minimal"
+    log_level: "warning"
+
+# Integration Contracts
+integration_requirements:
+
+  astro_framework:
+    version_compatibility: ">= 5.13.7"
+    ssr_support: "required"
+    static_generation: "preserved"
+
+  playwright_testing:
+    version_compatibility: ">= 1.40.0"
+    selector_strategy: "data-testid_preferred"
+    timeout_configuration: "optimized"
+
+  existing_components:
+    backward_compatibility: "maintained"
+    api_preservation: "required"
+    styling_consistency: "enforced"
+
+# Success Criteria Contracts
+success_metrics:
+
+  test_results:
+    e2e_test_success_rate: ">= 95%"
+    accessibility_test_passing: "100%"
+    performance_test_passing: "100%"
+
+  code_quality:
+    typescript_errors: "0"
+    lint_errors: "0"
+    test_coverage: ">= 84%"
+
+  user_experience:
+    page_load_performance: "meets_budget"
+    accessibility_compliance: "wcag_aa"
+    seo_optimization: "complete"

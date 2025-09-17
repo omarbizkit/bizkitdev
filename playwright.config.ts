@@ -89,7 +89,7 @@ export default defineConfig({
       ? 'PUBLIC_SUPABASE_URL=https://mock.supabase.co PUBLIC_SUPABASE_ANON_KEY=mock-anon-key-safe-for-ci npm run build && npm run preview'
       : 'npm run dev',
     port: 4321,
-    reuseExistingServer: !!process.env.CI, // Reuse server in CI, start new locally
+    reuseExistingServer: true, // Always reuse existing server
     timeout: 60 * 1000
   },
 
