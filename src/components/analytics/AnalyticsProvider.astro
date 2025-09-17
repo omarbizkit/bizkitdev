@@ -1,0 +1,219 @@
+---
+/**
+ * AnalyticsProvider Component
+ *
+ * Unified analytics provider that initializes and manages all analytics services
+ * based on user consent preferences.
+ *
+ * Based on: specs/057-advanced-analytics-monitoring/research.md
+ * Feature: 057-advanced-analytics-monitoring
+ * Generated: 2025-09-17
+ */
+
+// Import all analytics services and utilities
+import { getAnalyticsConfig } from '../../lib/analytics/config';
+import { getConsentLevel } from '../../lib/analytics/consent';
+import type { ConsentLevel } from '../../types/analytics';
+
+// Get current consent via Astro's middleware context
+const { consent } = Astro.locals;
+const consentLevel = consent?.level || 'none';
+const hasConsented = consent?.hasConsented || false;
+const isFirstVisit = consent?.isFirstVisit || true;
+const canTrackAnalytics = consent?.canTrackAnalytics?.() || false;
+const canTrackPerformance = consent?.canTrackPerformance?.() || false;
+const canTrackMarketing = consent?.canTrackMarketing?.() || false;
+
+// Determine which services to initialize
+const shouldInitializeAnalytics = canTrackAnalytics || consentLevel === 'analytics';
+const shouldInitializePerformance = canTrackPerformance || consentLevel === 'analytics';
+const shouldInitializeSentry = consentLevel !== 'none'; // Always allow essential error tracking
+
+// Get analytics configuration
+const analyticsConfig = getAnalyticsConfig();
+---
+
+<!-- Server-side: Generate initialization data for client -->
+{(() => {
+  const config = {
+    consentLevel,
+    hasConsented,
+    isFirstVisit,
+    canTrackAnalytics: shouldInitializeAnalytics,
+    canTrackPerformance: shouldInitializePerformance,
+    canTrackSentry: shouldInitializeSentry,
+    services: {
+      ga4: {
+        enabled: shouldInitializeAnalytics && analyticsConfig.ga4.enabled,
+        measurementId: analyticsConfig.ga4.measurementId,
+        privacySettings: analyticsConfig.ga4.privacySettings
+      },
+      sentry: {
+        enabled: shouldInitializeSentry && analyticsConfig.sentry.enabled,
+        dsn: analyticsConfig.sentry.dsn,
+        environment: analyticsConfig.sentry.environment,
+        release: analyticsConfig.sentry.release
+      },
+      performance: {
+        enabled: shouldInitializePerformance && analyticsConfig.performance.enabled,
+        vitals: analyticsConfig.performance.coreWebVitals,
+        thresholds: analyticsConfig.performance.thresholds
+      }
+    }
+  };
+
+  return <meta name="analytics-config" content={JSON.stringify(config).replace(/"/g, '&quot;')} />;
+})()}
+
+<!-- Client-side initialization -->
+<script define:vars={{ consentLevel, shouldInitializeAnalytics, shouldInitializePerformance, shouldInitializeSentry, analyticsConfig }}>
+  import { initializeGA4 } from '../../lib/analytics/ga4';
+  import { initializeSentry } from '../../lib/analytics/sentry';
+  import { initializePerformanceTracking } from '../../lib/analytics/performance';
+  import { trackEvent } from '../../lib/analytics/consent';
+
+  class AnalyticsProvider {
+    private static initialized = false;
+
+    static async initialize() {
+      // Prevent double initialization
+      if (this.initialized) return;
+      this.initialized = true;
+
+      const promises = [];
+
+      // Initialize Google Analytics 4 if consent allows
+      if (shouldInitializeAnalytics && analyticsConfig.ga4.enabled) {
+        promises.push(this.initializeGA4());
+      }
+
+      // Initialize Sentry error tracking (essential)
+      if (shouldInitializeSentry && analyticsConfig.sentry.enabled) {
+        promises.push(this.initializeSentry());
+      }
+
+      // Initialize performance tracking if consent allows
+      if (shouldInitializePerformance && analyticsConfig.performance.enabled) {
+        promises.push(this.initializePerformance());
+      }
+
+      // Wait for all initializations
+      await Promise.allSettled(promises);
+
+      // Track provider initialization
+      if (consentLevel !== 'none') {
+        trackEvent('analytics_provider_initialized', {
+          consentLevel,
+          services: {
+            ga4: shouldInitializeAnalytics,
+            sentry: shouldInitializeSentry,
+            performance: shouldInitializePerformance
+          }
+        });
+      }
+    }
+
+    private static async initializeGA4() {
+      try {
+        await initializeGA4({
+          measurementId: analyticsConfig.ga4.measurementId,
+          privacySettings: analyticsConfig.ga4.privacySettings
+        });
+
+        // Track page view after GA4 initialization
+        trackEvent('page_view', {
+          page_location: window.location.href,
+          page_title: document.title,
+          consent_level: consentLevel
+        });
+      } catch (error) {
+        console.warn('[AnalyticsProvider] GA4 initialization failed:', error);
+        trackEvent('ga4_initialization_error', {
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    }
+
+    private static async initializeSentry() {
+      try {
+        await initializeSentry(analyticsConfig.sentry);
+
+        // Track successful Sentry initialization
+        trackEvent('sentry_initialized', {
+          consent_level: consentLevel
+        });
+      } catch (error) {
+        console.warn('[AnalyticsProvider] Sentry initialization failed:', error);
+      }
+    }
+
+    private static async initializePerformance() {
+      try {
+        await initializePerformanceTracking(analyticsConfig.performance);
+
+        // Track performance metrics initialization
+        trackEvent('performance_tracking_initialized', {
+          consent_level: consentLevel
+        });
+      } catch (error) {
+        console.warn('[AnalyticsProvider] Performance tracking initialization failed:', error);
+        trackEvent('performance_initialization_error', {
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    }
+
+    static trackEvent(eventName: string, parameters?: Record<string, any>) {
+      trackEvent(eventName, parameters);
+    }
+  }
+
+  // Initialize analytics when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    AnalyticsProvider.initialize().then(() => {
+      // Mark provider as ready for global analytics interface
+      window.analyticsProvider = AnalyticsProvider;
+
+      // Listen for consent changes
+      window.addEventListener('consentChanged', (event: any) => {
+        if (event.detail.reinitializeAnalytics) {
+          // Reinitialize with new consent settings
+          setTimeout(() => AnalyticsProvider.initialize(), 100);
+        }
+      });
+    }).catch(error => {
+      console.error('[AnalyticsProvider] Initialization error:', error);
+    });
+  });
+</script>
+
+<style is:global>
+  /* Global styles for analytics provider */
+
+  /* Hide analytics elements from access by default */
+  .ga4-analytics,
+  .sentry-tracking,
+  .analytics-performance {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Privacy-by-design: prevent fingerprinting attempts */
+  .analytics-provider {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Performance monitoring - no layout impact */
+  .analytics-vitals {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+</style>

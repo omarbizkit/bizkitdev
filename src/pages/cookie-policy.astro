@@ -1,0 +1,797 @@
+---
+/**
+ * Cookie Policy Page
+ *
+ * Detailed cookie usage and management information.
+ * Based on: specs/057-advanced-analytics-monitoring/research.md
+ * Feature: 057-advanced-analytics-monitoring
+ * Generated: 2025-09-17
+ */
+
+import CleanLayout from '../layouts/CleanLayout.astro';
+
+const title = 'Cookie Policy - Omar Torres';
+const description = 'Learn about how we use cookies and similar technologies on our website, and how you can manage your preferences.';
+---
+
+<CleanLayout title={title} description={description}>
+  <main class="cookie-policy">
+    <div class="container mx-auto px-6 py-12 max-w-4xl">
+
+      <!-- Header -->
+      <header class="cookie-header mb-12">
+        <h1 class="text-4xl font-bold text-white mb-4">Cookie Policy</h1>
+        <div class="cookie-meta text-gray-400 text-sm">
+          <p>Last updated: <time datetime="2025-09-17">September 17, 2025</time></p>
+          <p>Effective date: <time datetime="2025-09-17">September 17, 2025</time></p>
+        </div>
+        <div class="cookie-summary mt-6 p-4 bg-cyan-900/30 border border-cyan-700 rounded-lg">
+          <p class="text-cyan-200 text-sm">
+            <strong>Quick Summary:</strong> We use cookies to enhance your experience, analyze site usage, and remember your preferences.
+            You can control which cookies we use through our <button id="open-cookie-preferences" class="underline hover:text-cyan-100">cookie preference center</button>.
+          </p>
+        </div>
+      </header>
+
+      <!-- Table of Contents -->
+      <nav class="cookie-toc mb-12 p-6 bg-gray-900/50 rounded-lg border border-gray-800">
+        <h2 class="text-xl font-semibold text-white mb-4">Table of Contents</h2>
+        <ol class="space-y-2 text-cyan-400">
+          <li><a href="#what-are-cookies" class="hover:text-cyan-300 transition-colors">1. What Are Cookies?</a></li>
+          <li><a href="#how-we-use-cookies" class="hover:text-cyan-300 transition-colors">2. How We Use Cookies</a></li>
+          <li><a href="#types-of-cookies" class="hover:text-cyan-300 transition-colors">3. Types of Cookies We Use</a></li>
+          <li><a href="#third-party-cookies" class="hover:text-cyan-300 transition-colors">4. Third-Party Cookies</a></li>
+          <li><a href="#cookie-management" class="hover:text-cyan-300 transition-colors">5. Managing Your Cookie Preferences</a></li>
+          <li><a href="#browser-settings" class="hover:text-cyan-300 transition-colors">6. Browser Cookie Settings</a></li>
+          <li><a href="#cookie-list" class="hover:text-cyan-300 transition-colors">7. Detailed Cookie List</a></li>
+          <li><a href="#updates" class="hover:text-cyan-300 transition-colors">8. Updates to This Policy</a></li>
+          <li><a href="#contact" class="hover:text-cyan-300 transition-colors">9. Contact Information</a></li>
+        </ol>
+      </nav>
+
+      <!-- Content -->
+      <div class="cookie-content prose prose-invert prose-cyan max-w-none">
+
+        <!-- What Are Cookies -->
+        <section id="what-are-cookies" class="mb-12">
+          <h2 class="text-2xl font-semibold text-white mb-6">1. What Are Cookies?</h2>
+          <div class="text-gray-300 space-y-4">
+            <p>
+              Cookies are small text files that are stored on your device (computer, tablet, or mobile) when you visit a website.
+              They are widely used to make websites work more efficiently and provide information to website owners.
+            </p>
+
+            <div class="bg-blue-900/30 border border-blue-700 p-4 rounded-lg">
+              <h4 class="text-blue-200 font-medium mb-2">Types of Data Stored</h4>
+              <ul class="text-blue-200 text-sm space-y-1">
+                <li>• <strong>Session Information:</strong> Temporary data that helps the website function</li>
+                <li>• <strong>Preferences:</strong> Your settings and choices (like privacy preferences)</li>
+                <li>• <strong>Analytics Data:</strong> Anonymous information about how you use the website</li>
+                <li>• <strong>Performance Data:</strong> Information to help improve website speed and functionality</li>
+              </ul>
+            </div>
+
+            <p>
+              Cookies can be set by the website you're visiting (first-party cookies) or by other services used on the website (third-party cookies).
+              They can be session cookies (deleted when you close your browser) or persistent cookies (stored for a specified period).
+            </p>
+          </div>
+        </section>
+
+        <!-- How We Use Cookies -->
+        <section id="how-we-use-cookies" class="mb-12">
+          <h2 class="text-2xl font-semibold text-white mb-6">2. How We Use Cookies</h2>
+          <div class="text-gray-300 space-y-6">
+
+            <p>We use cookies to:</p>
+
+            <div class="grid gap-6 md:grid-cols-2">
+              <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-800">
+                <div class="flex items-center mb-3">
+                  <svg class="w-5 h-5 text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <h4 class="text-white font-medium">Essential Functions</h4>
+                </div>
+                <ul class="text-sm space-y-1">
+                  <li>• Remember your privacy preferences</li>
+                  <li>• Ensure website security</li>
+                  <li>• Provide basic website functionality</li>
+                  <li>• Maintain session state</li>
+                </ul>
+              </div>
+
+              <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-800">
+                <div class="flex items-center mb-3">
+                  <svg class="w-5 h-5 text-cyan-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                  </svg>
+                  <h4 class="text-white font-medium">Analytics & Insights</h4>
+                </div>
+                <ul class="text-sm space-y-1">
+                  <li>• Understand how visitors use our site</li>
+                  <li>• Analyze website performance</li>
+                  <li>• Identify popular content</li>
+                  <li>• Track Core Web Vitals</li>
+                </ul>
+              </div>
+
+              <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-800">
+                <div class="flex items-center mb-3">
+                  <svg class="w-5 h-5 text-purple-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  <h4 class="text-white font-medium">User Experience</h4>
+                </div>
+                <ul class="text-sm space-y-1">
+                  <li>• Remember your preferences</li>
+                  <li>• Improve website performance</li>
+                  <li>• Personalize content</li>
+                  <li>• Enhance navigation</li>
+                </ul>
+              </div>
+
+              <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-800">
+                <div class="flex items-center mb-3">
+                  <svg class="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                  </svg>
+                  <h4 class="text-white font-medium">Error Detection</h4>
+                </div>
+                <ul class="text-sm space-y-1">
+                  <li>• Identify technical issues</li>
+                  <li>• Monitor website errors</li>
+                  <li>• Improve reliability</li>
+                  <li>• Debug performance problems</li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Types of Cookies -->
+        <section id="types-of-cookies" class="mb-12">
+          <h2 class="text-2xl font-semibold text-white mb-6">3. Types of Cookies We Use</h2>
+          <div class="text-gray-300 space-y-6">
+
+            <div class="space-y-6">
+
+              <!-- Essential Cookies -->
+              <div class="border border-green-700 bg-green-900/20 p-6 rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-xl font-medium text-white">Essential Cookies</h3>
+                  <span class="px-3 py-1 bg-green-700 text-green-100 text-sm font-medium rounded-full">Always Active</span>
+                </div>
+                <p class="text-green-200 mb-4">
+                  These cookies are necessary for the website to function properly. They cannot be switched off and are usually only set in response to actions you make.
+                </p>
+                <div class="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <h4 class="font-medium text-green-100 mb-2">Purpose:</h4>
+                    <ul class="text-sm space-y-1 text-green-200">
+                      <li>• Website security and functionality</li>
+                      <li>• Privacy preference storage</li>
+                      <li>• Session management</li>
+                      <li>• CSRF protection</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-green-100 mb-2">Duration:</h4>
+                    <ul class="text-sm space-y-1 text-green-200">
+                      <li>• Session: Until browser is closed</li>
+                      <li>• Preferences: 1 year</li>
+                      <li>• Security: 24 hours</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Analytics Cookies -->
+              <div class="border border-cyan-700 bg-cyan-900/20 p-6 rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-xl font-medium text-white">Analytics Cookies</h3>
+                  <span class="px-3 py-1 bg-cyan-700 text-cyan-100 text-sm font-medium rounded-full">Requires Consent</span>
+                </div>
+                <p class="text-cyan-200 mb-4">
+                  These cookies help us understand how visitors interact with our website by collecting and reporting anonymous information.
+                </p>
+                <div class="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <h4 class="font-medium text-cyan-100 mb-2">Information Collected:</h4>
+                    <ul class="text-sm space-y-1 text-cyan-200">
+                      <li>• Page views and navigation patterns</li>
+                      <li>• Time spent on pages</li>
+                      <li>• User interactions (anonymized)</li>
+                      <li>• Traffic sources</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-cyan-100 mb-2">Privacy Protection:</h4>
+                    <ul class="text-sm space-y-1 text-cyan-200">
+                      <li>• IP addresses anonymized</li>
+                      <li>• No personal identification</li>
+                      <li>• Aggregated data only</li>
+                      <li>• GDPR compliant settings</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Performance Cookies -->
+              <div class="border border-purple-700 bg-purple-900/20 p-6 rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-xl font-medium text-white">Performance Cookies</h3>
+                  <span class="px-3 py-1 bg-purple-700 text-purple-100 text-sm font-medium rounded-full">Requires Consent</span>
+                </div>
+                <p class="text-purple-200 mb-4">
+                  These cookies collect information about website performance and help us optimize user experience.
+                </p>
+                <div class="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <h4 class="font-medium text-purple-100 mb-2">Metrics Tracked:</h4>
+                    <ul class="text-sm space-y-1 text-purple-200">
+                      <li>• Core Web Vitals (LCP, FID, CLS)</li>
+                      <li>• Page load times</li>
+                      <li>• Resource loading performance</li>
+                      <li>• Error rates and debugging</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-purple-100 mb-2">Benefits:</h4>
+                    <ul class="text-sm space-y-1 text-purple-200">
+                      <li>• Faster website performance</li>
+                      <li>• Better user experience</li>
+                      <li>• Quick issue identification</li>
+                      <li>• Optimized content delivery</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Functional Cookies -->
+              <div class="border border-yellow-700 bg-yellow-900/20 p-6 rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-xl font-medium text-white">Functional Cookies</h3>
+                  <span class="px-3 py-1 bg-yellow-700 text-yellow-100 text-sm font-medium rounded-full">Requires Consent</span>
+                </div>
+                <p class="text-yellow-200 mb-4">
+                  These cookies enable enhanced functionality and personalization features.
+                </p>
+                <div class="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <h4 class="font-medium text-yellow-100 mb-2">Features Enabled:</h4>
+                    <ul class="text-sm space-y-1 text-yellow-200">
+                      <li>• Language preferences</li>
+                      <li>• Theme settings</li>
+                      <li>• Accessibility options</li>
+                      <li>• User interface preferences</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-yellow-100 mb-2">Duration:</h4>
+                    <ul class="text-sm space-y-1 text-yellow-200">
+                      <li>• Preferences: 1 year</li>
+                      <li>• Settings: Until changed</li>
+                      <li>• Session features: Session only</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Third-Party Cookies -->
+        <section id="third-party-cookies" class="mb-12">
+          <h2 class="text-2xl font-semibold text-white mb-6">4. Third-Party Cookies</h2>
+          <div class="text-gray-300 space-y-6">
+
+            <p>We use carefully selected third-party services that may set their own cookies. All third-party cookies require your consent.</p>
+
+            <div class="space-y-4">
+
+              <div class="bg-gray-900/50 p-6 rounded-lg border border-gray-800">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-lg font-medium text-white">Google Analytics</h3>
+                  <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" class="text-cyan-400 hover:text-cyan-300 text-sm">Privacy Policy ↗</a>
+                </div>
+                <div class="grid gap-4 md:grid-cols-3">
+                  <div>
+                    <h4 class="font-medium text-gray-200 mb-2">Purpose:</h4>
+                    <p class="text-sm text-gray-400">Website analytics and usage insights</p>
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-gray-200 mb-2">Privacy Settings:</h4>
+                    <p class="text-sm text-gray-400">IP anonymization enabled, no ads features</p>
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-gray-200 mb-2">Opt-out:</h4>
+                    <p class="text-sm text-gray-400">Available through cookie preferences</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-gray-900/50 p-6 rounded-lg border border-gray-800">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-lg font-medium text-white">Sentry</h3>
+                  <a href="https://sentry.io/privacy/" target="_blank" rel="noopener" class="text-cyan-400 hover:text-cyan-300 text-sm">Privacy Policy ↗</a>
+                </div>
+                <div class="grid gap-4 md:grid-cols-3">
+                  <div>
+                    <h4 class="font-medium text-gray-200 mb-2">Purpose:</h4>
+                    <p class="text-sm text-gray-400">Error monitoring and performance tracking</p>
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-gray-200 mb-2">Privacy Settings:</h4>
+                    <p class="text-sm text-gray-400">PII filtering enabled, no user tracking</p>
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-gray-200 mb-2">Data Collected:</h4>
+                    <p class="text-sm text-gray-400">Technical errors and performance metrics only</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="bg-orange-900/30 border border-orange-700 p-4 rounded-lg">
+              <h4 class="text-orange-200 font-medium mb-2">Third-Party Control</h4>
+              <p class="text-orange-200 text-sm">
+                While we carefully select and configure third-party services for privacy, each service operates under its own privacy policy.
+                We recommend reviewing the privacy policies of any third-party services you consent to.
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Cookie Management -->
+        <section id="cookie-management" class="mb-12">
+          <h2 class="text-2xl font-semibold text-white mb-6">5. Managing Your Cookie Preferences</h2>
+          <div class="text-gray-300 space-y-6">
+
+            <p>You have full control over which cookies we can use on your device. You can manage your preferences in several ways:</p>
+
+            <div class="grid gap-6 md:grid-cols-2">
+
+              <div class="bg-cyan-900/30 border border-cyan-700 p-6 rounded-lg">
+                <h3 class="text-lg font-medium text-white mb-4">Our Cookie Preference Center</h3>
+                <p class="text-cyan-200 mb-4 text-sm">
+                  The easiest way to manage your cookie preferences is through our built-in preference center.
+                </p>
+                <button
+                  id="open-cookie-preferences-main"
+                  class="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                >
+                  Open Cookie Preferences
+                </button>
+                <div class="mt-4 text-cyan-200 text-sm">
+                  <h4 class="font-medium mb-2">Features:</h4>
+                  <ul class="space-y-1">
+                    <li>• Granular control by category</li>
+                    <li>• See what each cookie does</li>
+                    <li>• Change preferences anytime</li>
+                    <li>• Immediate effect</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="bg-purple-900/30 border border-purple-700 p-6 rounded-lg">
+                <h3 class="text-lg font-medium text-white mb-4">Browser Settings</h3>
+                <p class="text-purple-200 mb-4 text-sm">
+                  You can also control cookies through your browser's privacy settings.
+                </p>
+                <div class="text-purple-200 text-sm">
+                  <h4 class="font-medium mb-2">Browser Options:</h4>
+                  <ul class="space-y-1">
+                    <li>• Block all cookies</li>
+                    <li>• Block third-party cookies only</li>
+                    <li>• Clear existing cookies</li>
+                    <li>• Set cookie expiration rules</li>
+                  </ul>
+                  <p class="mt-3 text-xs text-purple-300">
+                    <strong>Note:</strong> Blocking essential cookies may affect website functionality.
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="bg-green-900/30 border border-green-700 p-4 rounded-lg">
+              <h4 class="text-green-200 font-medium mb-2">Do Not Track</h4>
+              <p class="text-green-200 text-sm">
+                We respect the "Do Not Track" browser header. If you have DNT enabled, we will only use essential cookies
+                necessary for website functionality and will not track your browsing behavior.
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Browser Settings -->
+        <section id="browser-settings" class="mb-12">
+          <h2 class="text-2xl font-semibold text-white mb-6">6. Browser Cookie Settings</h2>
+          <div class="text-gray-300 space-y-6">
+
+            <p>Here's how to manage cookies in popular browsers:</p>
+
+            <div class="grid gap-4 md:grid-cols-2">
+
+              <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-800">
+                <h3 class="font-medium text-white mb-3">Google Chrome</h3>
+                <ol class="text-sm space-y-1 list-decimal list-inside">
+                  <li>Click the three dots menu → Settings</li>
+                  <li>Go to Privacy and security → Cookies and other site data</li>
+                  <li>Choose your preferred cookie settings</li>
+                  <li>Click "See all cookies and site data" to manage specific sites</li>
+                </ol>
+              </div>
+
+              <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-800">
+                <h3 class="font-medium text-white mb-3">Mozilla Firefox</h3>
+                <ol class="text-sm space-y-1 list-decimal list-inside">
+                  <li>Click the menu button → Settings</li>
+                  <li>Go to Privacy & Security</li>
+                  <li>Under Cookies and Site Data, click "Manage Data"</li>
+                  <li>Choose your cookie blocking preferences</li>
+                </ol>
+              </div>
+
+              <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-800">
+                <h3 class="font-medium text-white mb-3">Safari</h3>
+                <ol class="text-sm space-y-1 list-decimal list-inside">
+                  <li>Go to Safari → Preferences</li>
+                  <li>Click the Privacy tab</li>
+                  <li>Choose your cookie and tracking settings</li>
+                  <li>Click "Manage Website Data" for specific sites</li>
+                </ol>
+              </div>
+
+              <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-800">
+                <h3 class="font-medium text-white mb-3">Microsoft Edge</h3>
+                <ol class="text-sm space-y-1 list-decimal list-inside">
+                  <li>Click the three dots menu → Settings</li>
+                  <li>Go to Cookies and site permissions</li>
+                  <li>Click "Cookies and data stored"</li>
+                  <li>Manage your cookie preferences</li>
+                </ol>
+              </div>
+
+            </div>
+
+            <div class="bg-blue-900/30 border border-blue-700 p-4 rounded-lg">
+              <h4 class="text-blue-200 font-medium mb-2">Mobile Browsers</h4>
+              <p class="text-blue-200 text-sm mb-2">
+                Cookie settings on mobile browsers are typically found in:
+              </p>
+              <ul class="text-blue-200 text-sm space-y-1">
+                <li>• <strong>iOS Safari:</strong> Settings app → Safari → Privacy & Security</li>
+                <li>• <strong>Android Chrome:</strong> Chrome app → Settings → Site settings → Cookies</li>
+                <li>• <strong>Android Firefox:</strong> Firefox app → Settings → Privacy</li>
+              </ul>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Cookie List -->
+        <section id="cookie-list" class="mb-12">
+          <h2 class="text-2xl font-semibold text-white mb-6">7. Detailed Cookie List</h2>
+          <div class="text-gray-300 space-y-6">
+
+            <p>Here's a comprehensive list of cookies that may be set on your device:</p>
+
+            <!-- Essential Cookies Table -->
+            <div>
+              <h3 class="text-xl font-medium text-white mb-4">Essential Cookies</h3>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm border border-gray-700 rounded-lg">
+                  <thead class="bg-gray-800">
+                    <tr>
+                      <th class="text-left p-3 border-b border-gray-700">Cookie Name</th>
+                      <th class="text-left p-3 border-b border-gray-700">Purpose</th>
+                      <th class="text-left p-3 border-b border-gray-700">Duration</th>
+                      <th class="text-left p-3 border-b border-gray-700">Type</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-gray-300">
+                    <tr class="border-b border-gray-800">
+                      <td class="p-3 font-mono text-cyan-400">analytics_consent</td>
+                      <td class="p-3">Stores your cookie preferences</td>
+                      <td class="p-3">1 year</td>
+                      <td class="p-3">First-party</td>
+                    </tr>
+                    <tr class="border-b border-gray-800">
+                      <td class="p-3 font-mono text-cyan-400">consent_banner_shown</td>
+                      <td class="p-3">Remembers if consent banner was shown</td>
+                      <td class="p-3">1 year</td>
+                      <td class="p-3">First-party</td>
+                    </tr>
+                    <tr class="border-b border-gray-800">
+                      <td class="p-3 font-mono text-cyan-400">analytics_session</td>
+                      <td class="p-3">Session management</td>
+                      <td class="p-3">Session</td>
+                      <td class="p-3">First-party</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Analytics Cookies Table -->
+            <div>
+              <h3 class="text-xl font-medium text-white mb-4">Analytics Cookies (Requires Consent)</h3>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm border border-gray-700 rounded-lg">
+                  <thead class="bg-gray-800">
+                    <tr>
+                      <th class="text-left p-3 border-b border-gray-700">Cookie Name</th>
+                      <th class="text-left p-3 border-b border-gray-700">Provider</th>
+                      <th class="text-left p-3 border-b border-gray-700">Purpose</th>
+                      <th class="text-left p-3 border-b border-gray-700">Duration</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-gray-300">
+                    <tr class="border-b border-gray-800">
+                      <td class="p-3 font-mono text-cyan-400">_ga</td>
+                      <td class="p-3">Google Analytics</td>
+                      <td class="p-3">Distinguishes unique users</td>
+                      <td class="p-3">2 years</td>
+                    </tr>
+                    <tr class="border-b border-gray-800">
+                      <td class="p-3 font-mono text-cyan-400">_ga_*</td>
+                      <td class="p-3">Google Analytics</td>
+                      <td class="p-3">Contains the session data</td>
+                      <td class="p-3">2 years</td>
+                    </tr>
+                    <tr class="border-b border-gray-800">
+                      <td class="p-3 font-mono text-cyan-400">_gid</td>
+                      <td class="p-3">Google Analytics</td>
+                      <td class="p-3">Distinguishes users for daily reports</td>
+                      <td class="p-3">24 hours</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-800">
+              <h4 class="text-white font-medium mb-2">Cookie Updates</h4>
+              <p class="text-gray-400 text-sm">
+                This list is updated regularly as we add or remove services. New cookies will always respect your existing consent preferences,
+                and we'll notify you of any significant changes through our privacy notice updates.
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Updates -->
+        <section id="updates" class="mb-12">
+          <h2 class="text-2xl font-semibold text-white mb-6">8. Updates to This Cookie Policy</h2>
+          <div class="text-gray-300 space-y-4">
+            <p>
+              We may update this Cookie Policy from time to time to reflect changes in our practices, technology,
+              or legal requirements.
+            </p>
+
+            <div class="bg-yellow-900/30 border border-yellow-700 p-4 rounded-lg">
+              <h4 class="text-yellow-200 font-medium mb-2">When We Update This Policy</h4>
+              <ul class="text-yellow-200 text-sm space-y-1">
+                <li>• We add new cookies or tracking technologies</li>
+                <li>• We remove or change existing cookies</li>
+                <li>• We change third-party services</li>
+                <li>• Legal requirements change</li>
+                <li>• We improve our privacy practices</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-medium text-white mb-3">How We Notify You</h3>
+              <ul class="space-y-2 list-disc list-inside">
+                <li>Update the "Last Updated" date at the top of this policy</li>
+                <li>Display a prominent notice on our website</li>
+                <li>Send email notifications for significant changes (if you've subscribed)</li>
+                <li>May request renewed consent for new cookie categories</li>
+              </ul>
+            </div>
+
+            <p class="text-sm text-gray-400">
+              We encourage you to review this Cookie Policy periodically to stay informed about how we use cookies.
+            </p>
+          </div>
+        </section>
+
+        <!-- Contact -->
+        <section id="contact" class="mb-12">
+          <h2 class="text-2xl font-semibold text-white mb-6">9. Contact Information</h2>
+          <div class="text-gray-300 space-y-6">
+
+            <p>If you have questions about our use of cookies or this Cookie Policy, please contact us:</p>
+
+            <div class="grid gap-6 md:grid-cols-2">
+              <div class="bg-gray-900/50 p-6 rounded-lg border border-gray-800">
+                <h4 class="text-lg font-medium text-white mb-3">Cookie Questions</h4>
+                <p class="text-sm text-gray-400 mb-2">Email:</p>
+                <p class="text-cyan-400 mb-3"><a href="mailto:cookies@bizkit.dev" class="hover:text-cyan-300">cookies@bizkit.dev</a></p>
+                <p class="text-sm text-gray-400 mb-2">Subject Line:</p>
+                <p class="text-sm">"Cookie Policy Question" for faster response</p>
+              </div>
+
+              <div class="bg-gray-900/50 p-6 rounded-lg border border-gray-800">
+                <h4 class="text-lg font-medium text-white mb-3">General Privacy</h4>
+                <p class="text-sm text-gray-400 mb-2">Email:</p>
+                <p class="text-cyan-400 mb-3"><a href="mailto:privacy@bizkit.dev" class="hover:text-cyan-300">privacy@bizkit.dev</a></p>
+                <p class="text-sm text-gray-400 mb-2">Contact Form:</p>
+                <p><a href="/contact" class="text-cyan-400 hover:text-cyan-300">bizkit.dev/contact</a></p>
+              </div>
+            </div>
+
+            <div class="bg-cyan-900/30 border border-cyan-700 p-4 rounded-lg">
+              <h4 class="text-cyan-200 font-medium mb-2">Related Policies</h4>
+              <div class="flex flex-wrap gap-4 text-cyan-200 text-sm">
+                <a href="/privacy-policy" class="underline hover:text-cyan-100">Privacy Policy</a>
+                <a href="/contact" class="underline hover:text-cyan-100">Contact Us</a>
+                <a href="/" class="underline hover:text-cyan-100">Homepage</a>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Footer -->
+      <footer class="cookie-footer mt-16 pt-8 border-t border-gray-800">
+        <div class="text-center text-gray-400 text-sm">
+          <p class="mb-4">This Cookie Policy helps you understand and control your privacy preferences.</p>
+          <div class="flex justify-center space-x-6 mb-6">
+            <button id="open-cookie-preferences-footer" class="text-cyan-400 hover:text-cyan-300 transition-colors underline">
+              Cookie Preferences
+            </button>
+            <a href="/privacy-policy" class="text-cyan-400 hover:text-cyan-300 transition-colors">Privacy Policy</a>
+            <a href="/contact" class="text-cyan-400 hover:text-cyan-300 transition-colors">Contact Us</a>
+          </div>
+          <p class="text-xs">Last updated: September 17, 2025</p>
+        </div>
+      </footer>
+
+    </div>
+  </main>
+</CleanLayout>
+
+<style>
+  /* Cookie Policy Specific Styles */
+  .cookie-policy {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  }
+
+  .cookie-content a {
+    transition: color 0.2s ease;
+  }
+
+  .cookie-toc a {
+    text-decoration: none;
+    padding: 0.25rem 0;
+    display: block;
+  }
+
+  /* Table Styles */
+  .cookie-content table {
+    font-size: 0.875rem;
+    border-collapse: collapse;
+  }
+
+  .cookie-content table th {
+    background: #1f2937;
+    font-weight: 600;
+    color: #f9fafb;
+  }
+
+  .cookie-content table td,
+  .cookie-content table th {
+    padding: 0.75rem;
+    border-bottom: 1px solid #374151;
+  }
+
+  .cookie-content table tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Smooth scrolling for anchor links */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Section spacing */
+  .cookie-content section {
+    scroll-margin-top: 2rem;
+  }
+
+  /* Enhanced readability */
+  .cookie-content p,
+  .cookie-content li {
+    line-height: 1.7;
+  }
+
+  /* Button styles */
+  .cookie-content button {
+    transition: all 0.2s ease-in-out;
+  }
+
+  .cookie-content button:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Print styles */
+  @media print {
+    .cookie-policy {
+      background: white;
+      color: black;
+    }
+
+    .cookie-toc {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+    }
+
+    button {
+      display: none;
+    }
+
+    a {
+      color: #007bff;
+      text-decoration: underline;
+    }
+  }
+
+  /* Mobile responsiveness for tables */
+  @media (max-width: 768px) {
+    .cookie-content table {
+      font-size: 0.75rem;
+    }
+
+    .cookie-content table th,
+    .cookie-content table td {
+      padding: 0.5rem;
+    }
+  }
+</style>
+
+<!-- JavaScript for Cookie Preference Center Integration -->
+<script>
+  // Function to open cookie preferences
+  function openCookiePreferences() {
+    // Try to trigger the consent manager's customize action
+    const consentManager = document.querySelector('[data-testid="consent-manager"]');
+    const customizeBtn = consentManager?.querySelector('[data-action="customize"]');
+
+    if (customizeBtn) {
+      customizeBtn.click();
+    } else {
+      // Fallback: Show an alert if consent manager isn't available
+      alert('Cookie preference center is not available. Please visit the homepage to manage your cookie preferences.');
+    }
+  }
+
+  // Set up event listeners for cookie preference buttons
+  document.addEventListener('DOMContentLoaded', () => {
+    const preferenceButtons = [
+      'open-cookie-preferences',
+      'open-cookie-preferences-main',
+      'open-cookie-preferences-footer'
+    ];
+
+    preferenceButtons.forEach(id => {
+      const button = document.getElementById(id);
+      if (button) {
+        button.addEventListener('click', openCookiePreferences);
+      }
+    });
+  });
+</script>

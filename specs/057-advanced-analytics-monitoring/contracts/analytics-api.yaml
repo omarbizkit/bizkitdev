@@ -1,0 +1,927 @@
+openapi: 3.0.3
+info:
+  title: Advanced Analytics & Performance Monitoring API
+  description: API contracts for analytics events, performance metrics, and privacy management
+  version: 1.0.0
+  contact:
+    name: Omar Torres
+    email: omarbizkit@hotmail.com
+
+servers:
+  - url: http://localhost:4321/api
+    description: Local development server
+  - url: https://bizkit.dev/api
+    description: Production server
+
+paths:
+  /analytics/events:
+    post:
+      summary: Track analytics event
+      description: Submit an analytics event for processing and storage
+      operationId: trackAnalyticsEvent
+      tags:
+        - Analytics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyticsEvent'
+            examples:
+              page_view:
+                summary: Page view tracking
+                value:
+                  category: "page_view"
+                  action: "view"
+                  label: "homepage"
+                  page:
+                    path: "/"
+                    title: "Omar Torres | Data & AI Enthusiast"
+                    url: "https://bizkit.dev/"
+              project_click:
+                summary: Project interaction
+                value:
+                  category: "project_click"
+                  action: "click"
+                  label: "ai-trading-system"
+                  value: 1
+                  page:
+                    path: "/"
+                    title: "Omar Torres | Data & AI Enthusiast"
+                    url: "https://bizkit.dev/"
+      responses:
+        '201':
+          description: Analytics event tracked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Invalid analytics event data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient consent for analytics tracking
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /analytics/events/batch:
+    post:
+      summary: Track multiple analytics events
+      description: Submit multiple analytics events in a single request for efficiency
+      operationId: trackAnalyticsEventsBatch
+      tags:
+        - Analytics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                events:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AnalyticsEvent'
+                  maxItems: 100
+              required:
+                - events
+      responses:
+        '201':
+          description: Analytics events tracked successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  processed:
+                    type: integer
+                  failed:
+                    type: integer
+                  errors:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          description: Invalid batch request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /analytics/performance:
+    post:
+      summary: Track performance metrics
+      description: Submit performance metrics including Core Web Vitals
+      operationId: trackPerformanceMetrics
+      tags:
+        - Performance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformanceMetrics'
+            example:
+              coreWebVitals:
+                lcp:
+                  value: 1200
+                  rating: "good"
+                fid:
+                  value: 80
+                  rating: "good"
+                cls:
+                  value: 0.05
+                  rating: "good"
+              navigationTiming:
+                totalLoadTime: 1800
+                domProcessingTime: 300
+              timestamp: 1694952000000
+              url: "https://bizkit.dev/"
+              deviceType: "desktop"
+      responses:
+        '201':
+          description: Performance metrics tracked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Invalid performance data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /analytics/errors:
+    post:
+      summary: Track error event
+      description: Submit error information for monitoring and debugging
+      operationId: trackErrorEvent
+      tags:
+        - Error Tracking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorEvent'
+            example:
+              type: "javascript_error"
+              severity: "medium"
+              message: "Cannot read property 'click' of null"
+              stack: "TypeError: Cannot read property 'click' of null\n    at HTMLButtonElement.<anonymous> (main.js:42:5)"
+              filename: "main.js"
+              lineNumber: 42
+              columnNumber: 5
+              page:
+                path: "/"
+                title: "Omar Torres | Data & AI Enthusiast"
+                url: "https://bizkit.dev/"
+      responses:
+        '201':
+          description: Error event tracked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Invalid error data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /analytics/consent:
+    post:
+      summary: Update user consent
+      description: Update user's privacy consent preferences
+      operationId: updateUserConsent
+      tags:
+        - Privacy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentUpdate'
+            example:
+              level: "analytics"
+              granularConsent:
+                essential: true
+                functional: true
+                analytics: true
+                performance: true
+                marketing: false
+                personalization: false
+                thirdParty: false
+              method: "banner_accept"
+      responses:
+        '200':
+          description: Consent updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentResponse'
+        '400':
+          description: Invalid consent data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /analytics/consent/{consentId}:
+    get:
+      summary: Get user consent status
+      description: Retrieve current consent preferences for a user
+      operationId: getUserConsent
+      tags:
+        - Privacy
+      parameters:
+        - name: consentId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique consent identifier
+      responses:
+        '200':
+          description: Consent data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentData'
+        '404':
+          description: Consent record not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /analytics/dashboard:
+    get:
+      summary: Get analytics dashboard data
+      description: Retrieve aggregated analytics data for admin dashboard
+      operationId: getAnalyticsDashboard
+      tags:
+        - Dashboard
+      security:
+        - adminAuth: []
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [day, week, month, year]
+            default: week
+          description: Time period for analytics data
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Start date for custom period
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: End date for custom period
+      responses:
+        '200':
+          description: Dashboard data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardData'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    AnalyticsEvent:
+      type: object
+      required:
+        - category
+        - action
+        - page
+        - consentLevel
+      properties:
+        id:
+          type: string
+          description: Unique event identifier (auto-generated if not provided)
+        timestamp:
+          type: integer
+          format: int64
+          description: Unix timestamp in milliseconds (auto-generated if not provided)
+        sessionId:
+          type: string
+          description: User session identifier
+        userId:
+          type: string
+          description: Optional user identifier for returning visitors
+        category:
+          $ref: '#/components/schemas/EventCategory'
+        action:
+          type: string
+          maxLength: 255
+          description: Specific action taken
+        label:
+          type: string
+          maxLength: 255
+          description: Optional event label
+        value:
+          type: integer
+          minimum: 0
+          description: Optional numeric value
+        page:
+          $ref: '#/components/schemas/PageContext'
+        user:
+          $ref: '#/components/schemas/UserContext'
+        consentLevel:
+          $ref: '#/components/schemas/ConsentLevel'
+        anonymized:
+          type: boolean
+          default: true
+          description: Whether PII has been anonymized
+
+    EventCategory:
+      type: string
+      enum:
+        - page_view
+        - page_scroll
+        - page_exit
+        - project_view
+        - project_click
+        - project_filter
+        - tech_stack_click
+        - newsletter_signup
+        - newsletter_success
+        - newsletter_error
+        - contact_form_view
+        - contact_form_submit
+        - navigation_click
+        - external_link_click
+        - social_link_click
+        - performance_metric
+        - error_occurred
+        - slow_loading
+        - time_on_page
+        - scroll_depth
+        - cta_interaction
+
+    PageContext:
+      type: object
+      required:
+        - path
+        - title
+        - url
+      properties:
+        path:
+          type: string
+          maxLength: 500
+          description: Current page path
+        title:
+          type: string
+          maxLength: 255
+          description: Page title
+        referrer:
+          type: string
+          maxLength: 500
+          description: Previous page or external referrer
+        url:
+          type: string
+          maxLength: 500
+          description: Full URL including query params
+        queryParams:
+          type: object
+          additionalProperties:
+            type: string
+          description: Parsed query parameters
+        hash:
+          type: string
+          maxLength: 255
+          description: URL hash/fragment
+        loadTime:
+          type: integer
+          minimum: 0
+          description: Page load time in milliseconds
+
+    UserContext:
+      type: object
+      required:
+        - deviceType
+        - userAgent
+        - browserName
+        - platform
+        - timezone
+        - language
+        - isFirstVisit
+        - sessionStartTime
+      properties:
+        deviceType:
+          $ref: '#/components/schemas/DeviceType'
+        screenResolution:
+          type: string
+          pattern: '^\d+x\d+$'
+          example: "1920x1080"
+        viewportSize:
+          type: string
+          pattern: '^\d+x\d+$'
+          example: "1440x900"
+        userAgent:
+          type: string
+          maxLength: 1000
+          description: Full user agent string
+        browserName:
+          type: string
+          maxLength: 100
+          description: Browser name (Chrome, Firefox, Safari, etc.)
+        browserVersion:
+          type: string
+          maxLength: 50
+          description: Browser version
+        platform:
+          type: string
+          maxLength: 100
+          description: Operating system
+        country:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: Country code (if consented)
+        region:
+          type: string
+          maxLength: 100
+          description: State/region (if consented)
+        timezone:
+          type: string
+          maxLength: 50
+          description: User's timezone
+        language:
+          type: string
+          maxLength: 10
+          description: Primary language
+        isFirstVisit:
+          type: boolean
+          description: Is this user's first visit
+        sessionStartTime:
+          type: integer
+          format: int64
+          description: Session start timestamp
+        pageViews:
+          type: integer
+          minimum: 0
+          description: Page views in current session
+        previousVisits:
+          type: integer
+          minimum: 0
+          description: Number of previous visits
+
+    DeviceType:
+      type: string
+      enum:
+        - desktop
+        - tablet
+        - mobile
+        - unknown
+
+    PerformanceMetrics:
+      type: object
+      required:
+        - timestamp
+        - url
+        - deviceType
+      properties:
+        coreWebVitals:
+          $ref: '#/components/schemas/CoreWebVitals'
+        navigationTiming:
+          $ref: '#/components/schemas/NavigationTimingMetrics'
+        resourceTiming:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceTimingMetrics'
+        customMetrics:
+          type: object
+          additionalProperties:
+            type: number
+        timestamp:
+          type: integer
+          format: int64
+        url:
+          type: string
+          maxLength: 500
+        deviceType:
+          $ref: '#/components/schemas/DeviceType'
+
+    CoreWebVitals:
+      type: object
+      properties:
+        lcp:
+          type: object
+          properties:
+            value:
+              type: number
+              minimum: 0
+            rating:
+              $ref: '#/components/schemas/VitalRating'
+            element:
+              type: string
+              maxLength: 255
+        fid:
+          type: object
+          properties:
+            value:
+              type: number
+              minimum: 0
+            rating:
+              $ref: '#/components/schemas/VitalRating'
+        inp:
+          type: object
+          properties:
+            value:
+              type: number
+              minimum: 0
+            rating:
+              $ref: '#/components/schemas/VitalRating'
+        cls:
+          type: object
+          properties:
+            value:
+              type: number
+              minimum: 0
+            rating:
+              $ref: '#/components/schemas/VitalRating'
+        fcp:
+          type: object
+          properties:
+            value:
+              type: number
+              minimum: 0
+            rating:
+              $ref: '#/components/schemas/VitalRating'
+        ttfb:
+          type: object
+          properties:
+            value:
+              type: number
+              minimum: 0
+            rating:
+              $ref: '#/components/schemas/VitalRating'
+
+    VitalRating:
+      type: string
+      enum:
+        - good
+        - needs-improvement
+        - poor
+
+    NavigationTimingMetrics:
+      type: object
+      properties:
+        domainLookupTime:
+          type: number
+          minimum: 0
+        connectionTime:
+          type: number
+          minimum: 0
+        requestTime:
+          type: number
+          minimum: 0
+        responseTime:
+          type: number
+          minimum: 0
+        domProcessingTime:
+          type: number
+          minimum: 0
+        loadEventTime:
+          type: number
+          minimum: 0
+        totalLoadTime:
+          type: number
+          minimum: 0
+
+    ResourceTimingMetrics:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 500
+        type:
+          type: string
+          maxLength: 50
+        size:
+          type: number
+          minimum: 0
+        duration:
+          type: number
+          minimum: 0
+        startTime:
+          type: number
+          minimum: 0
+
+    ErrorEvent:
+      type: object
+      required:
+        - type
+        - severity
+        - message
+        - page
+      properties:
+        id:
+          type: string
+          description: Unique error identifier
+        timestamp:
+          type: integer
+          format: int64
+          description: When error occurred
+        type:
+          $ref: '#/components/schemas/ErrorType'
+        severity:
+          $ref: '#/components/schemas/ErrorSeverity'
+        message:
+          type: string
+          maxLength: 1000
+          description: Error message
+        stack:
+          type: string
+          maxLength: 5000
+          description: Stack trace
+        filename:
+          type: string
+          maxLength: 500
+          description: File where error occurred
+        lineNumber:
+          type: integer
+          minimum: 0
+          description: Line number of error
+        columnNumber:
+          type: integer
+          minimum: 0
+          description: Column number of error
+        page:
+          $ref: '#/components/schemas/PageContext'
+        user:
+          $ref: '#/components/schemas/UserContext'
+        customData:
+          type: object
+          additionalProperties: true
+          description: Custom error context
+        reproducible:
+          type: boolean
+          default: false
+        resolved:
+          type: boolean
+          default: false
+
+    ErrorType:
+      type: string
+      enum:
+        - javascript_error
+        - network_error
+        - resource_error
+        - promise_rejection
+        - custom_error
+        - analytics_error
+        - performance_error
+
+    ErrorSeverity:
+      type: string
+      enum:
+        - low
+        - medium
+        - high
+        - critical
+
+    ConsentUpdate:
+      type: object
+      required:
+        - level
+        - granularConsent
+        - method
+      properties:
+        level:
+          $ref: '#/components/schemas/ConsentLevel'
+        granularConsent:
+          $ref: '#/components/schemas/GranularConsent'
+        method:
+          $ref: '#/components/schemas/ConsentMethod'
+
+    ConsentData:
+      type: object
+      properties:
+        consentId:
+          type: string
+        timestamp:
+          type: integer
+          format: int64
+        version:
+          type: string
+        level:
+          $ref: '#/components/schemas/ConsentLevel'
+        granularConsent:
+          $ref: '#/components/schemas/GranularConsent'
+        method:
+          $ref: '#/components/schemas/ConsentMethod'
+        expiresAt:
+          type: integer
+          format: int64
+        lastUpdated:
+          type: integer
+          format: int64
+        withdrawnAt:
+          type: integer
+          format: int64
+
+    ConsentLevel:
+      type: string
+      enum:
+        - none
+        - essential
+        - functional
+        - analytics
+        - marketing
+        - full
+
+    GranularConsent:
+      type: object
+      required:
+        - essential
+        - functional
+        - analytics
+        - performance
+        - marketing
+        - personalization
+        - thirdParty
+      properties:
+        essential:
+          type: boolean
+        functional:
+          type: boolean
+        analytics:
+          type: boolean
+        performance:
+          type: boolean
+        marketing:
+          type: boolean
+        personalization:
+          type: boolean
+        thirdParty:
+          type: boolean
+
+    ConsentMethod:
+      type: string
+      enum:
+        - banner_accept
+        - banner_reject
+        - settings_update
+        - auto_essential
+        - gdpr_request
+
+    ConsentResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        consentId:
+          type: string
+        message:
+          type: string
+        effectiveDate:
+          type: integer
+          format: int64
+
+    DashboardData:
+      type: object
+      properties:
+        summary:
+          type: object
+          properties:
+            totalPageViews:
+              type: integer
+            uniqueVisitors:
+              type: integer
+            averageSessionDuration:
+              type: number
+            bounceRate:
+              type: number
+        topPages:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+              pageViews:
+                type: integer
+              averageTime:
+                type: number
+        topProjects:
+          type: array
+          items:
+            type: object
+            properties:
+              projectId:
+                type: string
+              name:
+                type: string
+              views:
+                type: integer
+              clicks:
+                type: integer
+        performanceMetrics:
+          type: object
+          properties:
+            averageLCP:
+              type: number
+            averageFID:
+              type: number
+            averageCLS:
+              type: number
+        errorSummary:
+          type: object
+          properties:
+            totalErrors:
+              type: integer
+            errorRate:
+              type: number
+            topErrors:
+              type: array
+              items:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  count:
+                    type: integer
+                  severity:
+                    $ref: '#/components/schemas/ErrorSeverity'
+
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        timestamp:
+          type: integer
+          format: int64
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: false
+        error:
+          type: string
+        code:
+          type: string
+        timestamp:
+          type: integer
+          format: int64
+
+  securitySchemes:
+    adminAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Admin authentication for dashboard access
+
+security:
+  - {}
+
+tags:
+  - name: Analytics
+    description: Core analytics event tracking
+  - name: Performance
+    description: Performance metrics and monitoring
+  - name: Error Tracking
+    description: Error monitoring and reporting
+  - name: Privacy
+    description: Consent management and privacy controls
+  - name: Dashboard
+    description: Analytics dashboard and reporting

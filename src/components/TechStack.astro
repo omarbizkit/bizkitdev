@@ -133,7 +133,7 @@ const getTechIcon = (tech: string) => {
 };
 ---
 
-<div class="flex flex-wrap items-center gap-2" role="list" aria-label="Technologies used">
+<div class="flex flex-wrap items-center gap-2" role="list" aria-label="Technologies used" data-testid="tech-stack">
   {displayTechs.map((tech) => (
     <div 
       class={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-sm font-medium bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:border-cyan-400/50 transition-colors ${showNames ? '' : 'tooltip-container'}`}

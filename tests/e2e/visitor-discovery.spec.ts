@@ -24,9 +24,10 @@ test.describe('Visitor Discovery Flow', () => {
       // Wait for project grid to load
       await expect(page.locator('[data-testid="project-grid"], .project-grid')).toBeVisible();
       
-      // Should have at least 3 featured projects
+      // Should have at least 3 project cards (minimum requirement)
       const projectCards = page.locator('[data-testid="project-card"], .project-card');
-      await expect(projectCards).toHaveCount(3, { timeout: 10000 });
+      const cardCount = await projectCards.count();
+      expect(cardCount).toBeGreaterThanOrEqual(3);
       
       // Each project card should have required elements
       const firstCard = projectCards.first();
@@ -50,9 +51,9 @@ test.describe('Visitor Discovery Flow', () => {
     test('should be responsive on mobile devices', async ({ page }) => {
       // Test mobile viewport
       await page.setViewportSize({ width: 375, height: 667 });
-      
-      // Hero section should still be visible
-      await expect(page.locator('h1')).toBeVisible();
+
+      // Hero section h1 should still be visible (using more specific selector)
+      await expect(page.getByText('The Mind Behind The Code', { exact: true })).toBeVisible();
       
       // Project grid should adapt to mobile
       await expect(page.locator('[data-testid="project-grid"], .project-grid')).toBeVisible();
@@ -93,23 +94,25 @@ test.describe('Visitor Discovery Flow', () => {
     });
 
     test('should navigate to project details', async ({ page }) => {
-      // Click on first project card
+      // Click on first project card's "View Details" link
+      const firstProjectLink = page.locator('[data-testid="project-card"], .project-card').first().locator('a[href*="/projects/"]');
+      await expect(firstProjectLink).toBeVisible();
+
+      // Get project title for verification
       const firstProject = page.locator('[data-testid="project-card"], .project-card').first();
       await expect(firstProject).toBeVisible();
-      
-      // Get project title for verification
       const projectTitle = await firstProject.locator('h3').textContent();
-      
+
       // Click to navigate to project details
-      await firstProject.click();
+      await firstProjectLink.click();
       
       // Should navigate to project detail page
       await expect(page).toHaveURL(/\/projects\/.+/);
       
       // Should show detailed project information
       await expect(page.locator('h1')).toContainText(projectTitle || '');
-      await expect(page.locator('[data-testid="project-description"], .project-description')).toBeVisible();
-      await expect(page.locator('[data-testid="tech-stack"], .tech-stack')).toBeVisible();
+      await expect(page.locator('[data-testid="project-description"]')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Technologies Used' })).toBeVisible();
     });
 
     test('should filter projects by technology', async ({ page }) => {
@@ -147,10 +150,10 @@ test.describe('Visitor Discovery Flow', () => {
     test('should have proper SEO meta tags', async ({ page }) => {
       // Check title tag
       await expect(page).toHaveTitle(/Omar Torres.*Data.*AI/i);
-      
-      // Check meta description
+
+      // Check meta description - matches current branding/tagline
       const metaDescription = page.locator('meta[name="description"]');
-      await expect(metaDescription).toHaveAttribute('content', /Omar Torres.*portfolio/i);
+      await expect(metaDescription).toHaveAttribute('content', /The Mind Behind The Code.*Portfolio/i);
       
       // Check Open Graph tags
       const ogTitle = page.locator('meta[property="og:title"]');
@@ -206,9 +209,10 @@ test.describe('Visitor Discovery Flow', () => {
             link.click()
           ]);
           
-          // Should not show 404 error
-          await expect(page.locator('main h1, h1')).not.toContainText('404');
-          await expect(page.locator('main h1, h1')).not.toContainText('Not Found');
+          // Should not show 404 error - check page content avoiding dev tools
+          const pageContent = page.locator('main').first();
+          await expect(pageContent).not.toContainText('404');
+          await expect(pageContent).not.toContainText('Not Found');
           
           // Go back for next test
           await page.goBack();
@@ -230,8 +234,8 @@ test.describe('Visitor Discovery Flow', () => {
       // Page should load within 3 seconds
       expect(loadTime).toBeLessThan(3000);
       
-      // Core content should be visible
-      await expect(page.locator('h1')).toBeVisible();
+      // Core content should be visible - target main content H1 specifically
+      await expect(page.locator('main h1, section h1, [class*="hero"] h1').first()).toBeVisible();
       await expect(page.locator('[data-testid="project-grid"], .project-grid')).toBeVisible();
     });
 
@@ -255,8 +259,8 @@ test.describe('Visitor Discovery Flow', () => {
       const loadingIndicators = page.locator('[data-testid="loading"], .loading, .skeleton');
       
       // Loading indicators might appear briefly
-      // Main content should eventually be visible
-      await expect(page.locator('h1')).toBeVisible();
+      // Main content should eventually be visible - target specific hero h1 to avoid dev tool interference
+      await expect(page.locator('h1').filter({ hasText: 'The Mind Behind The Code' })).toBeVisible();
       
       // Loading indicators should be hidden once content loads
       if (await loadingIndicators.count() > 0) {
@@ -269,8 +273,8 @@ test.describe('Visitor Discovery Flow', () => {
     test('should handle navigation to non-existent pages gracefully', async ({ page }) => {
       await page.goto('/non-existent-page');
       
-      // Should show 404 page
-      await expect(page.locator('main h1, h1')).toContainText(/404|Not Found/i);
+      // Should show 404 page - use specific class to avoid dev tool interference
+      await expect(page.locator('h1.title.animate-glow')).toContainText(/404|Not Found/i);
       
       // Should have navigation back to home
       const homeLink = page.getByRole('link', { name: 'Home', exact: true });
@@ -289,9 +293,9 @@ test.describe('Visitor Discovery Flow', () => {
       });
       
       await page.goto('/');
-      
-      // Core content should still be accessible
-      await expect(page.locator('h1')).toBeVisible();
+
+      // Core content should still be accessible - target specific hero h1 to avoid dev tool interference
+      await expect(page.locator('h1').filter({ hasText: 'The Mind Behind The Code' })).toBeVisible();
       
       // Basic navigation should work
       const aboutLink = page.getByRole('link', { name: 'About' });

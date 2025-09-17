@@ -1,14 +1,16 @@
 ---
+import StructuredData from './StructuredData.astro';
+
 interface Props {
   title?: string;
   description?: string;
   image?: string;
 }
 
-const { 
-  title = 'Omar Torres | Data & AI Enthusiast', 
-  description = 'The Mind Behind The Code - Portfolio of Omar Torres, Data and AI Enthusiast',
-  image = '/og-image.jpg' 
+const {
+  title = 'Omar Torres | Data & AI Enthusiast',
+  description = 'The Mind Behind The Code - Portfolio showcasing innovative data science, machine learning, and AI projects.',
+  image = '/og-image.jpg'
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -170,3 +172,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     }
   }
 </style>
+
+<!-- Structured Data for SEO -->
+<StructuredData type="portfolio" />
