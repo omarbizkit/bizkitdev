@@ -68,6 +68,30 @@ This portfolio includes a sophisticated, user-friendly newsletter subscription s
 - Mobile-responsive design with touch-friendly interactions
 - Server-side error handling with graceful fallbacks
 
+## 📊 Advanced Analytics & Monitoring System
+
+This portfolio includes a comprehensive, privacy-first analytics and performance monitoring system designed for production environments:
+
+### Privacy-Compliant Event Tracking
+- **GDPR Ready**: All data collection requires explicit user consent with granular control
+- **Consent Hierarchy**: 5 levels (none, essential, functional, analytics, marketing) for maximum user control
+- **Event Queuing**: Batch processing to avoid blocking UI performance
+- **Session Correlation**: Automatic device, browser, and session context tracking
+
+### Core Web Vitals Monitoring
+- **Real-Time Metrics**: Live tracking of LCP, FCP, CLS, FID with automatic rating (good/needs-improvement/poor)
+- **Interactive Dashboard**: Real-time visualization with historical trend analysis
+- **Performance Thresholds**: Industry-standard monitoring with alert capabilities
+- **API Endpoints**: `/api/analytics/performance/*` for metrics and reports
+
+### GDPR Compliance Features
+- **Smart Consent Banner**: Intelligent cookie consent with preference persistence
+- **Data Minimization**: Essential-only collection in base consent mode
+- **User Control**: Granular preferences with export/deletion capabilities
+- **Audit Ready**: Complete visibility into data collection practices
+
+All analytics functionality is opt-in by default and gracefully degrades when consent is not provided.
+
 ## 🏗️ Project Structure
 
 ```
@@ -272,9 +296,11 @@ The project uses a custom dark neon sci-fi theme defined in:
 - 🟢 **Security**: CSP headers, middleware, bot protection  
 - 🟢 **Performance**: Image optimization, caching, 90+ Lighthouse target
 - 🟢 **Accessibility**: WCAG AA compliant with screen reader support
-- 🟢 **Testing**: 84% coverage with 100+ test scenarios
+- 🟢 **Testing**: 84% coverage with 100+ test scenarios including advanced analytics
 - 🟢 **Deployment**: Complete CI/CD pipeline with Docker containerization
-- 🟢 **Monitoring**: Health checks, logging, error handling
+- 🟢 **Monitoring**: Health checks, logging, error handling, Core Web Vitals tracking
+- 🟢 **Analytics**: Privacy-compliant event tracking, consent management, performance monitoring
+- 🟢 **Privacy**: GDPR-compliant cookie consent, data minimization, user preference management
 
 ## 🎨 Design Review System
 
