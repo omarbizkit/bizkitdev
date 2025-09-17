@@ -66,13 +66,13 @@ const pageDescription = project.description_short;
                 <StatusBadge status={project.status} />
               </div>
               
-              <p class="text-xl text-gray-300 leading-relaxed">
+              <p class="text-xl text-gray-300 leading-relaxed" data-testid="project-description">
                 {project.description_short}
               </p>
             </div>
 
             <!-- Tech Stack -->
-            <div class="space-y-3">
+            <div class="space-y-3" data-testid="tech-stack">
               <h3 class="text-lg font-semibold text-gray-200">Technologies Used</h3>
               <TechStack techStack={project.tech_stack} showNames={true} />
             </div>
