@@ -38,13 +38,17 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   // Rate limiting headers (basic implementation) - only for non-prerendered routes
   // let clientIP: string | undefined; // Currently unused
   let userAgent = '';
-  try {
-    // clientIP = context.clientAddress; // Currently unused
-    userAgent = context.request.headers.get('user-agent') || '';
-  } catch {
-    // clientAddress and request headers are not available for prerendered routes
-    // clientIP = undefined; // Currently unused
-    userAgent = '';
+  
+  // Only try to access headers if this is not a prerendered route
+  if (context.url.pathname.startsWith('/api/') || context.url.pathname.startsWith('/admin/')) {
+    try {
+      // clientIP = context.clientAddress; // Currently unused
+      userAgent = context.request.headers.get('user-agent') || '';
+    } catch {
+      // clientAddress and request headers are not available for prerendered routes
+      // clientIP = undefined; // Currently unused
+      userAgent = '';
+    }
   }
   
   // Simple bot detection (only if userAgent is available)

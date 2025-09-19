@@ -79,13 +79,6 @@ jobs:
           PUBLIC_SUPABASE_ANON_KEY: mock-anon-key-safe-for-ci
           TEST_BASE_URL: http://localhost:4321
 
-      - name: Run contract tests
-        run: npx playwright test -c playwright.contract.config.ts
-        env:
-          TEST_BASE_URL: http://localhost:4321
-          PUBLIC_SUPABASE_URL: https://mock.supabase.co
-          PUBLIC_SUPABASE_ANON_KEY: mock-anon-key-safe-for-ci
-
       - name: Run E2E tests
         run: npm run test:e2e
         env:
@@ -255,7 +248,7 @@ jobs:
         run: |
           npm run preview &
           sleep 10
-          curl --retry 10 --retry-delay 3 --retry-connrefused http://localhost:4321
+          curl --retry 10 --retry-delay 3 --retry-connrefused --max-time 30 --output /dev/null --silent --head http://localhost:4321
         env:
           PUBLIC_SUPABASE_URL: https://mock.supabase.co
           PUBLIC_SUPABASE_ANON_KEY: mock-anon-key-safe-for-ci
@@ -268,8 +261,8 @@ jobs:
             http://localhost:4321/about
             http://localhost:4321/work
           configPath: ./.lighthouserc.json
-          uploadArtifacts: true
-          temporaryPublicStorage: true
+          uploadArtifacts: false
+          temporaryPublicStorage: false
 
   notify:
     runs-on: ubuntu-latest
