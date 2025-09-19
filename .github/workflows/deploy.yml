@@ -248,7 +248,7 @@ jobs:
         run: |
           npm run preview &
           sleep 10
-          curl --retry 10 --retry-delay 3 --retry-connrefused http://localhost:4321
+          curl --retry 10 --retry-delay 3 --retry-connrefused --max-time 30 --output /dev/null --silent --head http://localhost:4321
         env:
           PUBLIC_SUPABASE_URL: https://mock.supabase.co
           PUBLIC_SUPABASE_ANON_KEY: mock-anon-key-safe-for-ci

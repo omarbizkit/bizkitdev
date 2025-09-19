@@ -1,16 +1,7 @@
 ---
 export const prerender = true;
 
-import { getCollection } from 'astro:content'
-import ContactCTA from '../components/ContactCTA.astro'
-import Grid from '../components/Grid.astro'
-import Hero from '../components/Hero.astro'
-import PortfolioPreview from '../components/PortfolioPreview.astro'
 import BaseLayout from '../layouts/BaseLayout.astro'
-
-const projects = (await getCollection('work')).sort(
-  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
-)
 ---
 
 <BaseLayout
@@ -19,21 +10,16 @@ const projects = (await getCollection('work')).sort(
 >
   <div class="stack gap-20">
     <main class="wrapper stack gap-8">
-      <Hero
-        title="My Work"
-        tagline="See my most recent projects below to get an idea of my past experience."
-        align="start"
-      />
-      <Grid variant="offset">
-        {
-          projects.map(project => (
-            <li>
-              <PortfolioPreview project={project} />
-            </li>
-          ))
-        }
-      </Grid>
+      <div class="text-center py-20">
+        <h1 class="text-4xl font-bold mb-6">My Work</h1>
+        <p class="text-xl text-gray-400 mb-8">See my most recent projects below to get an idea of my past experience.</p>
+        <a href="/#projects" class="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-white font-medium rounded-lg transition-all duration-200 hover:shadow-md hover:shadow-cyan-400/20 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-gray-900">
+          View All Projects
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </a>
+      </div>
     </main>
-    <ContactCTA />
   </div>
 </BaseLayout>
