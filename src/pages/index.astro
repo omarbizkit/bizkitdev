@@ -1,7 +1,7 @@
 ---
 export const prerender = true;
 
-import CleanLayout from '../layouts/CleanLayout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import ModernHero from '../components/ModernHero.astro';
 import ProjectGrid from '../components/ProjectGrid.astro';
 import projectsData from '../content/projects.json';
@@ -11,7 +11,7 @@ import StructuredData from '../components/StructuredData.astro';
 const projects = projectsData.projects as Project[];
 ---
 
-<CleanLayout>
+<BaseLayout>
   <ModernHero />
   
   <!-- Projects Section -->
@@ -111,4 +111,4 @@ const projects = projectsData.projects as Project[];
 
   <!-- Structured Data for Homepage SEO -->
   <StructuredData type="homepage" />
-</CleanLayout>
+</BaseLayout>

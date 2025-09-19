@@ -53,7 +53,7 @@ test.describe('Homepage Display', () => {
     // Check for navigation
     const nav = page.locator('nav, [role="navigation"]');
     if (await nav.count() > 0) {
-      await expect(nav).toBeVisible();
+      await expect(nav.first()).toBeVisible();
       
       // Should have some navigation links
       const navLinks = nav.locator('a');

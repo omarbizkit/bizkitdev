@@ -79,7 +79,7 @@ test.describe('Project Navigation', () => {
     await page.goto('/projects/non-existent-project');
     
     // Should show 404 or error page
-    await expect(page.locator('h1')).toContainText(/404|not found|error/i);
+    await expect(page.locator('h1').first()).toContainText(/404|not found|error/i);
     
     // Should have link back to home
     const homeLink = page.getByRole('link', { name: /home/i });
