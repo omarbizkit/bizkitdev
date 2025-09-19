@@ -24,9 +24,9 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('/')'. */
     baseURL: 'http://localhost:4321',
 
-    /* Balanced timeouts for CI compatibility and speed */
-    actionTimeout: 10000,
-    navigationTimeout: 30000,
+    /* Simple timeouts for portfolio testing */
+    actionTimeout: 5000,
+    navigationTimeout: 10000,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -38,38 +38,11 @@ export default defineConfig({
     video: 'retain-on-failure'
   },
 
-  /* Configure projects for major browsers */
-  projects: process.env.CI ? [
-    // In CI, only run chromium for speed and reliability
+  /* Configure projects for portfolio testing - single browser for simplicity */
+  projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] }
-    }
-  ] : [
-    // Locally, run all browsers for comprehensive testing
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] }
-    },
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] }
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] }
-    },
-
-    /* Test against mobile viewports. */
-    {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] }
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] }
     }
   ],
 
@@ -96,10 +69,10 @@ export default defineConfig({
   /* Global setup and teardown */
   globalSetup: './tests/e2e/global-setup.ts',
 
-  /* Balanced test timeout for CI compatibility */
-  timeout: 30 * 1000,
+  /* Simple timeouts for portfolio testing */
+  timeout: 15 * 1000,
   expect: {
-    /* Balanced expect timeout for CI compatibility */
-    timeout: 10 * 1000
+    /* Simple expect timeout for portfolio testing */
+    timeout: 5 * 1000
   }
 })

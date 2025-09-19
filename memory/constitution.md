@@ -137,6 +137,23 @@
 - Always validate container builds with Podman before pushing to production
 - Verify environment variables work correctly in each environment (Vite, Podman, Zeabur)
 
+### E2E Testing Standards (Portfolio-Appropriate)
+
+- **Scope**: Test only core user journeys (6 tests maximum)
+  - Homepage display with projects
+  - Project navigation and details
+  - Contact information visibility
+  - Subscription form functionality
+  - Mobile responsive design
+  - 404 error handling
+- **Browsers**: Single browser (Chromium) for simplicity and reliability
+- **Coverage**: Basic functionality validation only - avoid enterprise patterns
+- **Performance**: Simple load time checks (< 3 seconds per test)
+- **Complexity**: Avoid analytics, consent management, performance monitoring
+- **Maintenance**: Keep tests simple, readable, and maintainable
+- **Execution Time**: Total E2E suite should complete in under 30 seconds
+- **Reliability**: Focus on stable, non-flaky tests that work consistently
+
 ### Build & Deployment Configuration
 
 - Use Node.js LTS version for consistency across all environments
