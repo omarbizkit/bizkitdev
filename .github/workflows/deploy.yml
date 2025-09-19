@@ -261,8 +261,8 @@ jobs:
             http://localhost:4321/about
             http://localhost:4321/work
           configPath: ./.lighthouserc.json
-          uploadArtifacts: true
-          temporaryPublicStorage: true
+          uploadArtifacts: false
+          temporaryPublicStorage: false
 
   notify:
     runs-on: ubuntu-latest
