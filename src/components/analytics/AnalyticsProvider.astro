@@ -11,9 +11,7 @@
  */
 
 // Import all analytics services and utilities
-import { getAnalyticsConfig } from '../../lib/analytics/config';
-import { getConsentLevel } from '../../lib/analytics/consent';
-import type { ConsentLevel } from '../../types/analytics';
+import { ANALYTICS_CONFIG, GA4_CONFIG, SENTRY_CONFIG, PERFORMANCE_THRESHOLDS } from '../../lib/analytics/config';
 
 // Get current consent via Astro's middleware context
 const { consent } = Astro.locals;
@@ -30,7 +28,7 @@ const shouldInitializePerformance = canTrackPerformance || consentLevel === 'ana
 const shouldInitializeSentry = consentLevel !== 'none'; // Always allow essential error tracking
 
 // Get analytics configuration
-const analyticsConfig = getAnalyticsConfig();
+const analyticsConfig = ANALYTICS_CONFIG;
 ---
 
 <!-- Server-side: Generate initialization data for client -->
@@ -44,20 +42,20 @@ const analyticsConfig = getAnalyticsConfig();
     canTrackSentry: shouldInitializeSentry,
     services: {
       ga4: {
-        enabled: shouldInitializeAnalytics && analyticsConfig.ga4.enabled,
-        measurementId: analyticsConfig.ga4.measurementId,
-        privacySettings: analyticsConfig.ga4.privacySettings
+        enabled: shouldInitializeAnalytics && GA4_CONFIG.enabled,
+        measurementId: GA4_CONFIG.config.measurementId,
+        privacySettings: GA4_CONFIG.config
       },
       sentry: {
-        enabled: shouldInitializeSentry && analyticsConfig.sentry.enabled,
-        dsn: analyticsConfig.sentry.dsn,
-        environment: analyticsConfig.sentry.environment,
-        release: analyticsConfig.sentry.release
+        enabled: shouldInitializeSentry && SENTRY_CONFIG.enabled,
+        dsn: SENTRY_CONFIG.config.dsn,
+        environment: SENTRY_CONFIG.config.environment,
+        release: SENTRY_CONFIG.config.release
       },
       performance: {
-        enabled: shouldInitializePerformance && analyticsConfig.performance.enabled,
-        vitals: analyticsConfig.performance.coreWebVitals,
-        thresholds: analyticsConfig.performance.thresholds
+        enabled: shouldInitializePerformance && analyticsConfig.enablePerformance,
+        vitals: true,
+        thresholds: PERFORMANCE_THRESHOLDS
       }
     }
   };
@@ -70,7 +68,7 @@ const analyticsConfig = getAnalyticsConfig();
   import { initializeGA4 } from '../../lib/analytics/ga4';
   import { initializeSentry } from '../../lib/analytics/sentry';
   import { initializePerformanceTracking } from '../../lib/analytics/performance';
-  import { trackEvent } from '../../lib/analytics/consent';
+  import { trackEvent } from '../../lib/analytics/events';
 
   class AnalyticsProvider {
     private static initialized = false;

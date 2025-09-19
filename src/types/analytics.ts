@@ -583,18 +583,5 @@ export type {
   DashboardData
 };
 
-export {
-  // Enums
-  EventCategory,
-  DeviceType,
-  VitalRating,
-  ErrorType,
-  ErrorSeverity,
-  ConsentLevel,
-  ConsentMethod,
-
-  // Validation Functions
-  validateAnalyticsEvent,
-  validatePerformanceMetrics,
-  validateConsentData
-};
+// Note: Enums and functions are already exported above with their declarations
+// The export type block above handles all type exports
