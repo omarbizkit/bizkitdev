@@ -210,6 +210,7 @@ const getDeviceTypeFromUA = (userAgent: string): string => {
   return 'desktop';
 };
 
+// Export object for legacy compatibility
 export default {
   trackEvent,
   trackEventServer,
@@ -217,15 +218,7 @@ export default {
   getEventQueue,
   clearEventQueue,
   trackConversion,
-  trackFormInteraction,
-  createAnalyticsEvent,
-  trackPageView,
-  trackProjectInteraction,
-  trackNewsletterInteraction,
-  trackNavigationClick,
-  trackPerformanceEvent,
-  trackErrorEvent,
-  validateEvent
+  trackFormInteraction
 };
 
 // =============================================================================

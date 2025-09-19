@@ -245,6 +245,203 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<!-- Analytics tracking for newsletter interactions -->
+<script>
+// Newsletter analytics tracking
+document.addEventListener('DOMContentLoaded', function() {
+  // Wait for analytics to be ready
+  function initializeNewsletterTracking() {
+    if (!window.analytics?.trackNewsletterInteraction) {
+      // Analytics not ready yet, try again in 100ms
+      setTimeout(initializeNewsletterTracking, 100);
+      return;
+    }
+
+    const heroForm = document.getElementById('hero-subscribe-form');
+    const emailInput = document.getElementById('hero-email');
+    const submitButton = document.getElementById('hero-submit-btn');
+    const viewWorkBtn = document.querySelector('a[href="#projects"]');
+    const contactBtn = document.querySelector('a[href="#contact"]');
+
+    if (!heroForm || !emailInput || !submitButton) {
+      console.error('Newsletter form elements not found for analytics');
+      return;
+    }
+
+    // Track newsletter form view when it becomes visible
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          window.analytics.trackNewsletterInteraction('form_view', {
+            source: 'hero_section',
+            formType: 'newsletter_signup',
+            viewportPosition: Math.round(entry.boundingClientRect.top)
+          });
+          // Only track once per page load
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    observer.observe(heroForm);
+
+    // Track email input focus and engagement
+    let inputFocused = false;
+    emailInput.addEventListener('focus', () => {
+      if (!inputFocused) {
+        window.analytics.trackNewsletterInteraction('email_input_focus', {
+          source: 'hero_section',
+          timestamp: Date.now()
+        });
+        inputFocused = true;
+      }
+    });
+
+    // Track email input validation events
+    emailInput.addEventListener('input', (e) => {
+      const email = e.target.value.trim();
+
+      // Track when user starts typing (first character)
+      if (email.length === 1) {
+        window.analytics.trackNewsletterInteraction('email_typing_start', {
+          source: 'hero_section'
+        });
+      }
+
+      // Track when valid email is entered
+      if (email.includes('@') && email.includes('.') && e.target.checkValidity()) {
+        window.analytics.trackNewsletterInteraction('valid_email_entered', {
+          source: 'hero_section',
+          emailDomain: email.split('@')[1]
+        });
+      }
+    });
+
+    // Track form submission attempts and outcomes
+    const originalFormHandler = heroForm.onsubmit;
+    heroForm.addEventListener('submit', (e) => {
+      const email = emailInput.value.trim();
+
+      window.analytics.trackNewsletterInteraction('form_submit_attempt', {
+        source: 'hero_section',
+        email: email,
+        emailDomain: email.includes('@') ? email.split('@')[1] : null,
+        timestamp: Date.now()
+      });
+    });
+
+    // Override success/error handlers to track outcomes
+    const originalShowSuccess = window.showSuccess;
+    const originalShowError = window.showError;
+
+    // Track successful subscription flow
+    const originalFetch = window.fetch;
+    window.fetch = async function(...args) {
+      const result = await originalFetch.apply(this, args);
+
+      // Track newsletter API responses
+      if (args[0] === '/api/subscribe/check') {
+        const clonedResponse = result.clone();
+        try {
+          const data = await clonedResponse.json();
+          const email = emailInput.value.trim();
+
+          if (result.status === 200 && data.message === 'EMAIL_AVAILABLE') {
+            window.analytics.trackNewsletterInteraction('email_check_available', {
+              source: 'hero_section',
+              email: email,
+              emailDomain: email.includes('@') ? email.split('@')[1] : null,
+              redirecting: true
+            });
+          } else if (result.status === 409 && data.message === 'ALREADY_SUBSCRIBED') {
+            window.analytics.trackNewsletterInteraction('email_already_subscribed', {
+              source: 'hero_section',
+              email: email,
+              emailDomain: email.includes('@') ? email.split('@')[1] : null
+            });
+          } else {
+            window.analytics.trackNewsletterInteraction('email_check_error', {
+              source: 'hero_section',
+              email: email,
+              error: data.message || 'Unknown error',
+              statusCode: result.status
+            });
+          }
+        } catch (error) {
+          window.analytics.trackNewsletterInteraction('email_check_parse_error', {
+            source: 'hero_section',
+            error: error.message
+          });
+        }
+      }
+
+      return result;
+    };
+
+    // Track CTA button clicks
+    if (viewWorkBtn) {
+      viewWorkBtn.addEventListener('click', (e) => {
+        window.analytics.trackNewsletterInteraction('cta_view_work_click', {
+          source: 'hero_section',
+          destination: e.target.href
+        });
+
+        // Also track as navigation click
+        if (window.analytics.trackNavigationClick) {
+          window.analytics.trackNavigationClick(e.target.href, false, {
+            source: 'hero_cta',
+            buttonType: 'view_work'
+          });
+        }
+      });
+    }
+
+    if (contactBtn) {
+      contactBtn.addEventListener('click', (e) => {
+        window.analytics.trackNewsletterInteraction('cta_contact_click', {
+          source: 'hero_section',
+          destination: e.target.href
+        });
+
+        // Also track as navigation click
+        if (window.analytics.trackNavigationClick) {
+          window.analytics.trackNavigationClick(e.target.href, false, {
+            source: 'hero_cta',
+            buttonType: 'contact'
+          });
+        }
+      });
+    }
+
+    // Track newsletter section engagement time
+    let engagementStartTime = Date.now();
+    let hasTrackedEngagement = false;
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && !hasTrackedEngagement) {
+        const engagementTime = Date.now() - engagementStartTime;
+        if (engagementTime > 5000) { // 5+ seconds engagement
+          window.analytics.trackNewsletterInteraction('section_engagement', {
+            source: 'hero_section',
+            engagementTime: engagementTime,
+            timestamp: Date.now()
+          });
+          hasTrackedEngagement = true;
+        }
+      }
+    });
+
+    console.log('[Analytics] Newsletter tracking initialized for hero section');
+  }
+
+  // Initialize tracking when DOM is ready
+  initializeNewsletterTracking();
+
+  // Also listen for analytics ready event
+  window.addEventListener('analyticsReady', initializeNewsletterTracking);
+});
+</script>
+
 <style>
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
