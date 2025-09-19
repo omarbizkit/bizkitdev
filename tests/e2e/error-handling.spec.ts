@@ -26,7 +26,7 @@ test.describe('Error Handling', () => {
     let errorFound = false;
     for (const indicator of errorIndicators) {
       if (await page.locator(indicator).count() > 0) {
-        await expect(page.locator(indicator)).toBeVisible();
+        await expect(page.locator(indicator).first()).toBeVisible();
         errorFound = true;
         break;
       }
@@ -108,7 +108,7 @@ test.describe('Error Handling', () => {
     let brandingFound = false;
     for (const element of brandingElements) {
       if (await page.locator(element).count() > 0) {
-        await expect(page.locator(element)).toBeVisible();
+        await expect(page.locator(element).first()).toBeVisible();
         brandingFound = true;
         break;
       }

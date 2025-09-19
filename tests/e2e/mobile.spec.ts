@@ -16,10 +16,7 @@ test.describe('Mobile Responsive Design', () => {
   });
 
   test('should display correctly on mobile viewport', async ({ page }) => {
-    // Hero section should be visible
-    await expect(page.locator('h1')).toBeVisible();
-    
-    // Should contain main branding
+    // Hero section should be visible (use more specific selector)
     const mainHeading = page.locator('h1').filter({ hasText: /The Mind Behind The Code|Omar Torres/i });
     await expect(mainHeading).toBeVisible();
     
@@ -100,7 +97,8 @@ test.describe('Mobile Responsive Design', () => {
     await page.waitForTimeout(500);
     
     // Hero section should still be visible
-    await expect(page.locator('h1')).toBeVisible();
+    const mainHeading = page.locator('h1').filter({ hasText: /The Mind Behind The Code|Omar Torres/i });
+    await expect(mainHeading).toBeVisible();
   });
 
   test('should maintain text readability on mobile', async ({ page }) => {
