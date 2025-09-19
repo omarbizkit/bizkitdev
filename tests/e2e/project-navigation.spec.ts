@@ -42,10 +42,10 @@ test.describe('Project Navigation', () => {
 
   test('should display project details page correctly', async ({ page }) => {
     // Navigate to a project detail page
-    await page.goto('/projects/sample-project');
+    await page.goto('/projects/ai-trading-system');
     
     // Should show project information
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('h1').first()).toBeVisible();
     // Description might be in various elements, so just check page has content
     const pageContent = await page.textContent('body');
     expect(pageContent).toBeTruthy();
@@ -53,13 +53,13 @@ test.describe('Project Navigation', () => {
     // Should have tech stack section (if it exists)
     const techStack = page.locator('[data-testid="tech-stack"], .tech-stack');
     if (await techStack.count() > 0) {
-      await expect(techStack).toBeVisible();
+      await expect(techStack.first()).toBeVisible();
     }
   });
 
   test('should have working Launch App and View Code links', async ({ page }) => {
     // Navigate to a project detail page
-    await page.goto('/projects/sample-project');
+    await page.goto('/projects/ai-trading-system');
     
     // Check for Launch App link
     const launchLink = page.locator('a[href*="http"], a[href*="https"]').filter({ hasText: /launch|view app|demo/i });
