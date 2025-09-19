@@ -7,10 +7,10 @@ interface Props {
   image?: string;
 }
 
-const { 
-  title = 'Omar Torres | Data & AI Enthusiast', 
-  description = 'Omar Torres portfolio - Data and AI Enthusiast showcasing machine learning projects and innovative solutions',
-  image = '/og-image.jpg' 
+const {
+  title = 'Omar Torres | Data & AI Enthusiast',
+  description = 'The Mind Behind The Code - Portfolio showcasing innovative data science, machine learning, and AI projects.',
+  image = '/og-image.jpg'
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -175,3 +175,152 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 <!-- Structured Data for SEO -->
 <StructuredData type="portfolio" />
+
+<!-- Analytics Initialization -->
+<script type="module">
+  import { initializeAnalytics } from '/src/lib/analytics/init.ts';
+  import { getCurrentConsent } from '/src/lib/analytics/consent.ts';
+
+  // Initialize analytics system on page load
+  document.addEventListener('DOMContentLoaded', async function() {
+    try {
+      // Get current consent level from cookies or localStorage
+      const currentConsent = getCurrentConsent();
+      const consentLevel = currentConsent ? currentConsent.level : 'none';
+
+      // Determine environment
+      const environment = window.location.hostname === 'localhost' ? 'development' :
+                         window.location.hostname.includes('staging') ? 'staging' : 'production';
+
+      // Generate session ID
+      const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
+      // Analytics configuration
+      const analyticsConfig = {
+        consentLevel: consentLevel,
+        environment: environment,
+        enableDebug: environment === 'development',
+        providers: {
+          ga4: true,
+          sentry: true,
+          performance: true
+        },
+        privacyMode: consentLevel === 'none' || consentLevel === 'essential',
+        sessionId: sessionId
+      };
+
+      console.log('[Analytics] Initializing analytics system...', {
+        consentLevel: consentLevel,
+        environment: environment,
+        sessionId: sessionId
+      });
+
+      // Initialize analytics
+      const state = await initializeAnalytics(analyticsConfig);
+
+      console.log('[Analytics] Analytics system initialized successfully', {
+        initialized: state.initialized,
+        providers: state.providers,
+        initializationTime: state.initializationTime,
+        errors: state.errors
+      });
+
+      // Track page view after initialization
+      if (window.analytics?.trackPageView && consentLevel !== 'none') {
+        window.analytics.trackPageView({
+          path: window.location.pathname,
+          title: document.title,
+          url: window.location.href,
+          referrer: document.referrer
+        });
+      }
+
+    } catch (error) {
+      console.error('[Analytics] Failed to initialize analytics system:', error);
+
+      // Track initialization failure if error tracking is available
+      if (window.analytics?.trackErrorEvent) {
+        window.analytics.trackErrorEvent(error, 'analytics_initialization', {
+          source: 'MainHead',
+          url: window.location.pathname
+        });
+      }
+    }
+  });
+
+  // Listen for consent changes
+  window.addEventListener('consentChanged', async (event) => {
+    try {
+      console.log('[Analytics] Consent changed, reinitializing...', event.detail);
+
+      const newConsentLevel = event.detail.consentLevel;
+      const environment = window.location.hostname === 'localhost' ? 'development' :
+                         window.location.hostname.includes('staging') ? 'staging' : 'production';
+
+      const analyticsConfig = {
+        consentLevel: newConsentLevel,
+        environment: environment,
+        enableDebug: environment === 'development',
+        providers: {
+          ga4: newConsentLevel === 'analytics' || newConsentLevel === 'marketing' || newConsentLevel === 'full',
+          sentry: newConsentLevel !== 'none',
+          performance: newConsentLevel === 'analytics' || newConsentLevel === 'marketing' || newConsentLevel === 'full'
+        },
+        privacyMode: newConsentLevel === 'none' || newConsentLevel === 'essential',
+        sessionId: window.analytics?.getState?.()?.sessionId || 'session_' + Date.now()
+      };
+
+      const state = await initializeAnalytics(analyticsConfig);
+      console.log('[Analytics] Analytics reinitilized after consent change', state);
+
+    } catch (error) {
+      console.error('[Analytics] Failed to reinitialize analytics after consent change:', error);
+    }
+  });
+
+  // Handle page visibility changes for performance tracking
+  document.addEventListener('visibilitychange', () => {
+    if (window.analytics?.trackPerformanceEvent) {
+      window.analytics.trackPerformanceEvent('page_visibility_change', Date.now(), {
+        hidden: document.hidden,
+        visibilityState: document.visibilityState,
+        pageTitle: document.title,
+        url: window.location.pathname
+      });
+    }
+  });
+
+  // Handle page unload for session tracking
+  window.addEventListener('beforeunload', () => {
+    if (window.analytics?.trackPerformanceEvent) {
+      window.analytics.trackPerformanceEvent('page_unload', Date.now(), {
+        sessionDuration: Date.now() - (window.sessionStartTime || Date.now()),
+        pageTitle: document.title,
+        url: window.location.pathname
+      });
+    }
+  });
+
+  // Set session start time
+  window.sessionStartTime = Date.now();
+</script>
+
+<!-- Consent Banner Component -->
+<script type="module" define:vars={{ pageTitle: title }}>
+  // Load and initialize consent banner if not already shown
+  document.addEventListener('DOMContentLoaded', function() {
+    // Check if consent banner should be shown
+    const consentShown = localStorage.getItem('consent_banner_shown');
+    const currentConsent = localStorage.getItem('user_consent_level');
+
+    if (!consentShown || !currentConsent) {
+      // Import and show consent banner
+      import('/src/components/analytics/PrivacyBanner.astro').then(module => {
+        // This would need to be implemented as a dynamic component
+        console.log('[Analytics] Consent banner would be shown here');
+      }).catch(error => {
+        console.warn('[Analytics] Failed to load consent banner:', error);
+      });
+    }
+  });
+</script>

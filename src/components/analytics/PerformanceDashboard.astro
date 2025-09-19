@@ -1,0 +1,1022 @@
+---
+/**
+ * Performance Dashboard Component
+ *
+ * Comprehensive performance monitoring and analytics dashboard.
+ * Displays real-time metrics, Core Web Vitals, and performance insights.
+ *
+ * Based on: specs/057-advanced-analytics-monitoring/research.md
+ * Feature: 057-advanced-analytics-monitoring
+ * Generated: 2025-09-17
+ */
+
+import type { ConsentLevel } from '../../types/analytics';
+import { debugUtils, dataUtils } from '../../lib/analytics/utils';
+
+// Server-side setup - get user's consent level
+const consentLevel: ConsentLevel = (Astro.locals.consent?.level as ConsentLevel) || 'none';
+const hasMarketingConsent = consentLevel === 'marketing';
+const canViewAdvancedMetrics = consentLevel === 'marketing' || consentLevel === 'analytics';
+
+const dashboardConfig = {
+  showAdvanced: canViewAdvancedMetrics,
+  showRecommendations: hasMarketingConsent,
+  showAlerts: hasMarketingConsent,
+  updateInterval: 30000, // 30 seconds
+  maxVisibleAlerts: 5
+};
+---
+
+{canViewAdvancedMetrics && (
+  <div id="performance-dashboard" class="performance-dashboard">
+    <div class="dashboard-container">
+      <!-- Dashboard Header -->
+      <header class="dashboard-header">
+        <div class="header-content">
+          <h2 class="dashboard-title">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            Performance Analytics Dashboard
+          </h2>
+
+          <div class="dashboard-meta">
+            <span class="consent-level consent-{consentLevel}">
+              Consent: {consentLevel}
+            </span>
+            <span class="update-status">
+              <span class="status-indicator" id="update-status"></span>
+              <span id="update-time">Live</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="dashboard-controls">
+          <select id="time-range" class="control-select">
+            <option value="1h">Last Hour</option>
+            <option value="24h" selected>Last 24 Hours</option>
+            <option value="7d">Last 7 Days</option>
+            <option value="30d">Last 30 Days</option>
+          </select>
+
+          <button id="refresh-dashboard" class="control-button">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            Refresh
+          </button>
+        </div>
+      </header>
+
+      <!-- Dashboard Grid -->
+      <main class="dashboard-main">
+        <div class="metrics-grid">
+
+          <!-- Core Web Vitals Section -->
+          <section class="metric-section">
+            <h3 class="section-title">
+              Core Web Vitals
+              <span class="section-tooltip" title="Key metrics measuring user experience: Largest Contentful Paint, First Input Delay, and Cumulative Layout Shift">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </span>
+            </h3>
+
+            <div class="vitals-grid" id="core-web-vitals">
+              <!-- LCP -->
+              <div class="vital-card" data-metric="lcp">
+                <div class="vital-header">
+                  <span class="vital-label">Largest Contentful Paint</span>
+                  <span class="vital-target">Target: &lt; 2.5s</span>
+                </div>
+                <div class="vital-value">
+                  <span class="value" id="lcp-value">--</span>
+                  <span class="unit">ms</span>
+                </div>
+                <div class="vital-rating">
+                  <span class="rating" id="lcp-rating">--</span>
+                  <span class="change" id="lcp-change">--</span>
+                </div>
+                <div class="vital-trend">
+                  <canvas class="trend-chart" id="lcp-chart"></canvas>
+                </div>
+              </div>
+
+              <!-- FID -->
+              <div class="vital-card" data-metric="fid">
+                <div class="vital-header">
+                  <span class="vital-label">First Input Delay</span>
+                  <span class="vital-target">Target: &lt; 100ms</span>
+                </div>
+                <div class="vital-value">
+                  <span class="value" id="fid-value">--</span>
+                  <span class="unit">ms</span>
+                </div>
+                <div class="vital-rating">
+                  <span class="rating" id="fid-rating">--</span>
+                  <span class="change" id="fid-change">--</span>
+                </div>
+                <div class="vital-trend">
+                  <canvas class="trend-chart" id="fid-chart"></canvas>
+                </div>
+              </div>
+
+              <!-- CLS -->
+              <div class="vital-card" data-metric="cls">
+                <div class="vital-header">
+                  <span class="vital-label">Cumulative Layout Shift</span>
+                  <span class="vital-target">Target: &lt; 0.1</span>
+                </div>
+                <div class="vital-value">
+                  <span class="value" id="cls-value">--</span>
+                  <span class="unit"></span>
+                </div>
+                <div class="vital-rating">
+                  <span class="rating" id="cls-rating">--</span>
+                  <span class="change" id="cls-change">--</span>
+                </div>
+                <div class="vital-trend">
+                  <canvas class="trend-chart" id="cls-chart"></canvas>
+                </div>
+              </div>
+
+              <!-- INP -->
+              <div class="vital-card vital-experimental" data-metric="inp">
+                <div class="vital-header">
+                  <span class="vital-label">Interaction to Next Paint</span>
+                  <span class="vital-experimental-badge">Experimental</span>
+                  <span class="vital-target">Target: &lt; 200ms</span>
+                </div>
+                <div class="vital-value">
+                  <span class="value" id="inp-value">--</span>
+                  <span class="unit">ms</span>
+                </div>
+                <div class="vital-rating">
+                  <span class="rating" id="inp-rating">--</span>
+                  <span class="change" id="inp-change">--</span>
+                </div>
+                <div class="vital-trend">
+                  <canvas class="trend-chart" id="inp-chart"></canvas>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- User Experience Metrics -->
+          <section class="metric-section">
+            <h3 class="section-title">
+              User Experience
+              <span class="section-tooltip" title="Metrics related to how users interact with the site">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </span>
+            </h3>
+
+            <div class="ux-metrics-grid" id="ux-metrics">
+              <div class="metric-card">
+                <div class="metric-icon">
+                  <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                  </svg>
+                </div>
+                <div class="metric-data">
+                  <div class="metric-value" id="active-sessions">--</div>
+                  <div class="metric-label">Active Sessions</div>
+                  <div class="metric-change" id="sessions-change">--</div>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-icon">
+                  <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div class="metric-data">
+                  <div class="metric-value" id="avg-load-time">--</div>
+                  <div class="metric-label">Avg Load Time</div>
+                  <div class="metric-change" id="load-time-change">--</div>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-icon">
+                  <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                  </svg>
+                </div>
+                <div class="metric-data">
+                  <div class="metric-value" id="bounce-rate">--%</div>
+                  <div class="metric-label">Bounce Rate</div>
+                  <div class="metric-change" id="bounce-rate-change">--</div>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-icon">
+                  <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                  </svg>
+                </div>
+                <div class="metric-data">
+                  <div class="metric-value" id="page-views">--</div>
+                  <div class="metric-label">Page Views</div>
+                  <div class="metric-change" id="page-views-change">--</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Performance Insights & Alerts -->
+          <aside class="dashboard-sidebar">
+
+            <!-- Performance Insights -->
+            <div class="insights-panel">
+              <h4 class="panel-title">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                Insights & Recommendations
+              </h4>
+
+              <div class="insights-list" id="insights-list">
+                <div class="insight-item loading">
+                  <div class="skeleton skeleton-text"></div>
+                  <div class="skeleton skeleton-text short"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Performance Alerts -->
+            <div class="alerts-panel">
+              <h4 class="panel-title">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+                Performance Alerts
+              </h4>
+
+              <div class="alerts-list" id="alerts-list">
+                <div class="alert-item loading">
+                  <div class="skeleton skeleton-text"></div>
+                  <div class="skeleton skeleton-text short"></div>
+                </div>
+              </div>
+            </div>
+
+          </aside>
+        </div>
+      </main>
+
+      <!-- Dashboard Footer -->
+      <footer class="dashboard-footer">
+        <div class="footer-content">
+          <p class="footer-text">
+            Performance data is collecting in real-time.
+            Some metrics may take time to appear as they require multiple page visits.
+          </p>
+          <p class="footer-meta">
+            Analytics collection follows GDPR/CCPA compliance standards.
+            <a href="/privacy-policy">Learn more about privacy</a>
+          </p>
+        </div>
+      </footer>
+    </div>
+  </div>
+)}
+
+<!-- Dashboard JavaScript -->
+<script define:vars={{ dashboardConfig, consentLevel }}>
+  import { debugUtils, dataUtils } from '../../lib/analytics/utils';
+
+  class PerformanceDashboard {
+    private updateInterval: number;
+    private refreshTimer: NodeJS.Timeout | null = null;
+    private currentPeriod = '24h';
+    private isInitialized = false;
+
+    constructor() {
+      this.updateInterval = dashboardConfig.updateInterval;
+      this.initialize();
+    }
+
+    private async initialize() {
+      if (this.isInitialized) return;
+      this.isInitialized = true;
+
+      try {
+        // Set up event listeners
+        this.setupEventListeners();
+
+        // Initial data load
+        await this.refreshData();
+
+        // Start periodic updates
+        this.startPeriodicUpdates();
+
+        debugUtils.log('info', '[Performance Dashboard] Initialized successfully');
+
+      } catch (error) {
+        debugUtils.log('error', '[Performance Dashboard] Initialization failed', error);
+        this.showError('Failed to initialize performance dashboard');
+      }
+    }
+
+    private setupEventListeners() {
+      const refreshBtn = document.getElementById('refresh-dashboard');
+      const timeRangeSelect = document.getElementById('time-range');
+
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => this.refreshData());
+      }
+
+      if (timeRangeSelect) {
+        timeRangeSelect.addEventListener('change', (e) => {
+          this.currentPeriod = (e.target as HTMLSelectElement).value;
+          this.refreshData();
+        });
+      }
+    }
+
+    private async refreshData() {
+      try {
+        this.showLoading();
+
+        const data = await this.fetchMetrics();
+
+        if (data) {
+          this.updateDashboard(data);
+          this.updateLastUpdated();
+        }
+
+      } catch (error) {
+        console.error('[Performance Dashboard] Refresh error:', error);
+        this.showError('Failed to refresh dashboard data');
+      }
+    }
+
+    private async fetchMetrics(): Promise<any> {
+      try {
+        const response = await fetch(`/api/analytics/performance/metrics?period=${this.currentPeriod}`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.error || 'API returned unsuccessful response');
+        }
+
+        return result.data;
+      } catch (error) {
+        console.error('[Performance Dashboard] API request failed:', error);
+        throw error;
+      }
+    }
+
+    private updateDashboard(data: any) {
+      try {
+        // Update Core Web Vitals
+        this.updateCoreWebVitals(data.metrics.coreWebVitals);
+
+        // Update User Experience metrics
+        this.updateUserExperienceMetrics(data.metrics.userExperience);
+
+        // Update trends
+        this.updateTrendIndicator(data.trends);
+
+        // Update alerts
+        this.updateAlerts(data.alerts);
+
+        // Update insights
+        this.updateInsights(data.insights || []);
+
+        // Update timestamp
+        this.updateLastUpdated(data.metadata?.generated);
+
+      } catch (error) {
+        console.error('[Performance Dashboard] Update error:', error);
+      }
+    }
+
+    private updateCoreWebVitals(vitals: any) {
+      const metrics = ['lcp', 'fid', 'cls', 'inp'];
+
+      metrics.forEach(metric => {
+        const data = vitals[metric];
+        if (data) {
+          this.updateVitalCard(metric, data);
+        }
+      });
+    }
+
+    private updateVitalCard(metric: string, data: any) {
+      const valueEl = document.getElementById(`${metric}-value`);
+      const ratingEl = document.getElementById(`${metric}-rating`);
+      const changeEl = document.getElementById(`${metric}-change`);
+
+      if (valueEl) {
+        const displayValue = metric === 'cls' ?
+          data.current.toFixed(3) :
+          dataUtils.formatTiming(data.current);
+        valueEl.textContent = displayValue;
+      }
+
+      if (ratingEl) {
+        ratingEl.textContent = data.rating;
+        ratingEl.className = `rating rating-${data.rating}`;
+      }
+
+      if (changeEl) {
+        const changePercent = data.change;
+        const changeClass = changePercent >= 0 ? 'positive' : 'negative';
+        const changeSymbol = changePercent >= 0 ? '+' : '';
+        changeEl.textContent = `${changeSymbol}${changePercent.toFixed(1)}%`;
+        changeEl.className = `change ${changeClass}`;
+      }
+
+      // Update trend chart if available
+      const chartEl = document.getElementById(`${metric}-chart`);
+      if (chartEl && data.history) {
+        this.updateTrendChart(chartEl, data.history);
+      }
+    }
+
+    private updateUserExperienceMetrics(ux: any) {
+      const metrics = {
+        activeSessions: ux.sessionDuration || 0,
+        avgLoadTime: '--', // Would come from different API endpoint
+        bounceRate: `${(ux.bounceRate * 100).toFixed(1)}%`,
+        pageViews: ux.pageViews || 0
+      };
+
+      Object.entries(metrics).forEach(([key, value]) => {
+        const el = document.getElementById(key.replace(/([A-Z])/g, '-$1').toLowerCase());
+        if (el) {
+          el.textContent = value.toString();
+        }
+      });
+    }
+
+    private updateTrendIndicator(trends: any) {
+      // Update overall trend indicator
+    }
+
+    private updateAlerts(alerts: any[]) {
+      const alertsList = document.getElementById('alerts-list');
+      if (!alertsList) return;
+
+      alertsList.innerHTML = '';
+
+      if (alerts.length === 0) {
+        alertsList.innerHTML = '<div class="no-alerts">No performance alerts</div>';
+        return;
+      }
+
+      alerts.slice(0, dashboardConfig.maxVisibleAlerts).forEach(alert => {
+        const alertElement = document.createElement('div');
+        alertElement.className = `alert-item alert-${alert.severity}`;
+        alertElement.innerHTML = `
+          <div class="alert-header">
+            <span class="alert-severity">${alert.severity.toUpperCase()}</span>
+            <span class="alert-time">${new Date(alert.timestamp).toLocaleTimeString()}</span>
+          </div>
+          <div class="alert-title">${alert.title}</div>
+          <div class="alert-description">${alert.description}</div>
+        `;
+        alertsList.appendChild(alertElement);
+      });
+    }
+
+    private updateInsights(insights: any[]) {
+      const insightsList = document.getElementById('insights-list');
+      if (!insightsList) return;
+
+      insightsList.innerHTML = '';
+
+      insights.slice(0, 10).forEach(insight => {
+        const insightElement = document.createElement('div');
+        insightElement.className = `insight-item insight-${insight.severity}`;
+        insightElement.innerHTML = `
+          <div class="insight-type">${insight.type.toUpperCase()}</div>
+          <div class="insight-title">${insight.message}</div>
+          ${insight.suggestedAction ? `<div class="insight-action">${insight.suggestedAction}</div>` : ''}
+        `;
+        insightsList.appendChild(insightElement);
+      });
+    }
+
+    private updateTrendChart(canvas: HTMLElement, history: any[]) {
+      // Simple trend visualization
+      const recentValues = history.slice(-6).map(h => h.value);
+      const max = Math.max(...recentValues);
+      const min = Math.min(...recentValues);
+
+      const points = recentValues.map((value, index) => {
+        const x = (index / (recentValues.length - 1)) * 100;
+        const y = 100 - ((value - min) / (max - min || 1)) * 100;
+        return `${x},${y}`;
+      });
+
+      canvas.setAttribute('data-path', `M ${points.join(' L ')}`);
+    }
+
+    private updateLastUpdated(timestamp?: number) {
+      const timeEl = document.getElementById('update-time');
+      const statusEl = document.getElementById('update-status');
+
+      if (timeEl) {
+        const now = timestamp || Date.now();
+        timeEl.textContent = new Date(now).toLocaleTimeString();
+      }
+
+      if (statusEl) {
+        statusEl.className = 'status-indicator active';
+      }
+    }
+
+    private showLoading() {
+      // Show loading states for metrics
+      const indicators = document.querySelectorAll('.metric-value, .vital-value .value');
+      indicators.forEach(el => el.classList.add('loading'));
+    }
+
+    private showError(message: string) {
+      // Show error message
+      console.error('[Performance Dashboard]', message);
+    }
+
+    private startPeriodicUpdates() {
+      if (this.refreshTimer) {
+        clearInterval(this.refreshTimer);
+      }
+
+      this.refreshTimer = setInterval(() => {
+        this.refreshData();
+      }, this.updateInterval);
+    }
+
+    public destroy() {
+      if (this.refreshTimer) {
+        clearInterval(this.refreshTimer);
+        this.refreshTimer = null;
+      }
+      this.isInitialized = false;
+    }
+  }
+
+  // Initialize dashboard when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('performance-dashboard')) {
+      const dashboard = new PerformanceDashboard();
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        dashboard.destroy();
+      });
+
+      // Listen for consent changes
+      window.addEventListener('consentChanged', (event: any) => {
+        if (event.detail.reinitializeAnalytics) {
+          // Reinitialize dashboard with new consent
+          setTimeout(() => new PerformanceDashboard(), 100);
+        }
+      });
+
+      debugUtils.log('info', '[Performance Dashboard] DOM initialization complete');
+    }
+  });
+</script>
+
+<style is:global>
+  /* Performance Dashboard CSS */
+  .performance-dashboard {
+    font-family: 'Monaco', 'Consolas', monospace;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100vh;
+    color: #f8fafc;
+  }
+
+  .dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem 2rem;
+  }
+
+  .dashboard-header {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid #374151;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+
+  .dashboard-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .dashboard-meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .consent-level {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .consent-essential { background: #fbbf24; color: #92400e; }
+  .consent-functional { background: #10b981; color: #064e3b; }
+  .consent-marketing { background: #8b5cf6; color: #5b21b6; }
+
+  .update-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #9ca3af;
+  }
+
+  .status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ef4444;
+  }
+
+  .status-indicator.active {
+    background: #10b981;
+  }
+
+  .dashboard-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .control-select,
+  .control-button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #374151;
+    border-radius: 0.375rem;
+    background: rgba(17, 24, 39, 0.5);
+    color: #f3f4f6;
+    font-size: 0.875rem;
+  }
+
+  .control-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .control-button:hover {
+    background: rgba(17, 24, 39, 0.8);
+    border-color: #4b5563;
+  }
+
+  .icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .metrics-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr;
+  }
+
+  .metric-section {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid #374151;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    padding: 1.5rem 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .section-tooltip {
+    cursor: help;
+    transition: opacity 0.2s;
+  }
+
+  .section-tooltip:hover {
+    opacity: 0.7;
+  }
+
+  .vitals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .vital-card {
+    background: rgba(17, 24, 39, 0.5);
+    border: 1px solid #374151;
+    border-radius: 0.375rem;
+    padding: 1.5rem;
+    position: relative;
+  }
+
+  .vital-card.vital-experimental {
+    border-color: #8b5cf6;
+  }
+
+  .vital-experimental-badge {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: #8b5cf6;
+    color: white;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .vital-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .vital-label {
+    font-weight: 600;
+    color: #f3f4f6;
+  }
+
+  .vital-target {
+    font-size: 0.75rem;
+    color: #9ca3af;
+  }
+
+  .vital-value {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #10b981;
+  }
+
+  .vital-rating {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .vital-rating .rating {
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+  }
+
+  .vital-rating .rating-good { background: #10b981; color: #064e3b; }
+  .vital-rating .rating-needs-improvement { background: #f59e0b; color: #92400e; }
+  .vital-rating .rating-poor { background: #ef4444; color: #991b1b; }
+
+  .change.positive { color: #10b981; }
+  .change.negative { color: #ef4444; }
+
+  .trend-chart {
+    width: 100%;
+    height: 60px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 0.25rem;
+    border: 1px solid #374151;
+  }
+
+  .ux-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  .metric-card {
+    background: rgba(17, 24, 39, 0.5);
+    border: 1px solid #374151;
+    border-radius: 0.375rem;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .metric-icon {
+    flex-shrink: 0;
+    padding: 0.75rem;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 0.5rem;
+  }
+
+  .metric-data {
+    flex: 1;
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #3b82f6;
+  }
+
+  .metric-label {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
+  .metric-change {
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-top: 0.125rem;
+  }
+
+  .dashboard-sidebar {
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: 1.5rem;
+  }
+
+  .insights-panel,
+  .alerts-panel {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid #374151;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+  }
+
+  .panel-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .alert-item {
+    padding: 1rem;
+    border-radius: 0.375rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .alert-critical { background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; }
+  .alert-warning { background: rgba(245, 158, 11, 0.1); border-left: 4px solid #f59e0b; }
+  .alert-info { background: rgba(59, 130, 246, 0.1); border-left: 4px solid #3b82f6; }
+
+  .alert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .alert-severity {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+  }
+
+  .alert-critical .alert-severity { background: #ef4444; color: white; }
+  .alert-warning .alert-severity { background: #f59e0b; color: #92400e; }
+  .alert-info .alert-severity { background: #3b82f6; color: white; }
+
+  .insight-item {
+    padding: 1rem;
+    border-radius: 0.375rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .insight-issue { background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; }
+  .insight-optimization { background: rgba(245, 158, 11, 0.1); border-left: 4px solid #f59e0b; }
+  .insight-trend { background: rgba(59, 130, 246, 0.1); border-left: 4px solid #3b82f6; }
+
+  .insight-type {
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    display: inline-block;
+  }
+
+  .dashboard-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #374151;
+    text-align: center;
+  }
+
+  .footer-text,
+  .footer-meta {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-meta a {
+    color: #3b82f6;
+    text-decoration: none;
+  }
+
+  .footer-meta a:hover {
+    text-decoration: underline;
+  }
+
+  /* Skeleton loading */
+  .skeleton {
+    background: linear-gradient(90deg, rgba(156, 163, 175, 0.2) 25%, rgba(156, 163, 175, 0.4) 50%, rgba(156, 163, 175, 0.2) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 0.25rem;
+  }
+
+  .skeleton-text {
+    height: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .skeleton-text.short {
+    width: 70%;
+  }
+
+  @keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  /* Responsive design */
+  @media (min-width: 768px) {
+    .metrics-grid {
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto 1fr;
+    }
+
+    .dashboard-main .metrics-grid section:first-child {
+      grid-column: 1;
+    }
+
+    .dashboard-sidebar {
+      grid-row: 1 / -1;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .vitals-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .dashboard-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+
+  .no-alerts {
+    text-align: center;
+    color: #9ca3af;
+    padding: 2rem;
+    font-style: italic;
+  }
+</style>
