@@ -642,6 +642,129 @@ export const integrationUtils = {
   }
 };
 
+/**
+ * Validation result interface
+ */
+export interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+}
+
+/**
+ * Event Validation Functions
+ */
+export const validationUtils = {
+  /**
+   * Validate analytics event structure (API request format)
+   */
+  validateEventRequest(eventData: any): ValidationResult {
+    const errors: string[] = [];
+
+    // Check required fields
+    if (!eventData.type) {
+      errors.push('Missing required field: type');
+    }
+
+    if (!eventData.data) {
+      errors.push('Missing required field: data');
+    }
+
+    if (!eventData.timestamp) {
+      errors.push('Missing required field: timestamp');
+    }
+
+    if (!eventData.session_id) {
+      errors.push('Missing required field: session_id');
+    }
+
+    if (!eventData.consent_level) {
+      errors.push('Missing required field: consent_level');
+    }
+
+    // Validate consent level
+    if (eventData.consent_level) {
+      const validConsentLevels = ['none', 'essential', 'functional', 'analytics', 'marketing', 'full'];
+      if (!validConsentLevels.includes(eventData.consent_level)) {
+        errors.push(`Invalid consent_level. Must be one of: ${validConsentLevels.join(', ')}`);
+      }
+    }
+
+    // Validate timestamp format
+    if (eventData.timestamp) {
+      const timestamp = new Date(eventData.timestamp);
+      if (isNaN(timestamp.getTime())) {
+        errors.push('Invalid timestamp format. Must be a valid ISO string or Unix timestamp');
+      }
+    }
+
+    // Validate data field structure
+    if (eventData.data && typeof eventData.data !== 'object') {
+      errors.push('Field "data" must be an object');
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  },
+
+  /**
+   * Validate consent level for analytics tracking
+   */
+  validateConsentForAnalytics(consentLevel: string): ValidationResult {
+    const errors: string[] = [];
+
+    if (consentLevel === 'none' || consentLevel === 'essential') {
+      errors.push('Insufficient consent level for analytics tracking. Required: analytics or higher');
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  },
+
+  /**
+   * Validate AnalyticsEvent structure (internal format)
+   */
+  validateAnalyticsEvent(event: AnalyticsEvent): ValidationResult {
+    const errors: string[] = [];
+
+    if (!event.id || event.id.length === 0) {
+      errors.push('Event ID is required and cannot be empty');
+    }
+
+    if (!event.timestamp || event.timestamp <= 0) {
+      errors.push('Valid timestamp is required');
+    }
+
+    if (!event.sessionId || event.sessionId.length === 0) {
+      errors.push('Session ID is required and cannot be empty');
+    }
+
+    if (!event.category) {
+      errors.push('Event category is required');
+    }
+
+    if (!event.action || event.action.length === 0) {
+      errors.push('Event action is required and cannot be empty');
+    }
+
+    if (!event.page || !event.page.path) {
+      errors.push('Event page information is required');
+    }
+
+    if (!event.consentLevel) {
+      errors.push('Consent level is required');
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  }
+};
+
 // Export default utilities bundle for easy importing
 export default {
   browser: browserUtils,
@@ -650,5 +773,6 @@ export default {
   performance: performanceUtils,
   storage: storageUtils,
   debug: debugUtils,
-  integration: integrationUtils
+  integration: integrationUtils,
+  validation: validationUtils
 };

@@ -13,6 +13,16 @@ import type { APIContext, MiddlewareNext } from 'astro';
 import type { AnalyticsEvent, ConsentLevel } from '../types/analytics';
 import { getCurrentEnvConfig } from '../lib/analytics/config';
 import { storageUtils, dataUtils, debugUtils } from '../lib/analytics/utils';
+import {
+  createAnalyticsEvent,
+  trackPageView,
+  trackProjectInteraction,
+  trackNewsletterInteraction,
+  trackNavigationClick,
+  trackPerformanceEvent,
+  trackErrorEvent,
+  validateEvent
+} from '../lib/analytics/events';
 
 // Analytics endpoints
 const ANALYTICS_EVENTS_ENDPOINT = '/api/analytics/events';
@@ -140,43 +150,49 @@ function sanitizeAnalyticsData(data: any): any {
 }
 
 /**
- * Validate analytics event structure
+ * Validate analytics event structure using core validation
  */
 function validateAnalyticsEvent(event: any): { isValid: boolean; errors?: string[] } {
-  const errors: string[] = [];
+  try {
+    // Use the core validateEvent function for comprehensive validation
+    const validation = validateEvent(event);
 
-  if (!event) {
-    errors.push('Event is required');
-    return { isValid: false, errors };
+    return {
+      isValid: validation.valid,
+      errors: validation.valid ? undefined : validation.errors
+    };
+  } catch (error) {
+    // Fallback validation if core function fails
+    const errors: string[] = [];
+
+    if (!event) {
+      errors.push('Event is required');
+      return { isValid: false, errors };
+    }
+
+    if (!event.category || typeof event.category !== 'string') {
+      errors.push('Event category must be a non-empty string');
+    }
+
+    if (!event.action || typeof event.action !== 'string') {
+      errors.push('Event action must be a non-empty string');
+    }
+
+    // Check for malicious patterns
+    if (event.action && /[<>{}[\]]|javascript:|data:|vbscript:/i.test(event.action)) {
+      errors.push('Event action contains potentially malicious content');
+    }
+
+    const maxEventSize = 1024 * 10; // 10KB
+    if (JSON.stringify(event).length > maxEventSize) {
+      errors.push(`Event size exceeds maximum (${maxEventSize} bytes)`);
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors: errors.length > 0 ? errors : undefined
+    };
   }
-
-  if (!event.name || typeof event.name !== 'string') {
-    errors.push('Event name must be a non-empty string');
-  }
-
-  if (!event.category || typeof event.category !== 'string') {
-    errors.push('Event category must be a non-empty string');
-  }
-
-  // Validate data integrity
-  if (event.properties && typeof event.properties !== 'object') {
-    errors.push('Event properties must be an object');
-  }
-
-  // Check for malicious patterns
-  if (event.name && /[<>{}[\]]|javascript:|data:|vbscript:/i.test(event.name)) {
-    errors.push('Event name contains potentially malicious content');
-  }
-
-  const maxEventSize = 1024 * 10; // 10KB
-  if (JSON.stringify(event).length > maxEventSize) {
-    errors.push(`Event size exceeds maximum (${maxEventSize} bytes)`);
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors: errors.length > 0 ? errors : undefined
-  };
 }
 
 /**
@@ -233,27 +249,6 @@ function processAnalyticsPayload(request: Request): Promise<any> {
   });
 }
 
-/**
- * Log analytics middleware activity (privacy-safe)
- */
-function logAnalyticsActivity(
-  request: Request,
-  activity: string,
-  details?: Record<string, any>,
-  consentLevel?: ConsentLevel
-) {
-  debugUtils.log(
-    'info',
-    `[Analytics Middleware] ${activity}`,
-    {
-      path: new URL(request.url).pathname,
-      method: request.method,
-      consentLevel,
-      ...details
-    },
-    consentLevel
-  );
-}
 
 /**
  * Enrichment middleware for analytics data
@@ -286,6 +281,89 @@ function enrichAnalyticsData(data: any, request: Request): any {
 }
 
 /**
+ * Create server-side analytics event using core functions
+ */
+function createServerAnalyticsEvent(
+  eventData: any,
+  request: Request,
+  consentLevel: ConsentLevel
+): AnalyticsEvent | null {
+  try {
+    // Extract event components
+    const category = eventData.category || 'server_event';
+    const action = eventData.action || 'middleware_processed';
+
+    // Create page context from request
+    const url = new URL(request.url);
+    const pageContext = {
+      path: url.pathname,
+      title: eventData.pageTitle || 'Server Event',
+      url: url.href,
+      referrer: request.headers.get('referer') || undefined
+    };
+
+    // Create user context from request
+    const userContext = {
+      userAgent: request.headers.get('user-agent') || 'Unknown',
+      language: request.headers.get('accept-language') || 'en'
+    };
+
+    // Use createAnalyticsEvent function
+    const analyticsEvent = createAnalyticsEvent(category, action, {
+      label: eventData.label,
+      value: eventData.value,
+      pageContext,
+      userContext,
+      sessionId: eventData.sessionId,
+      userId: eventData.userId,
+      consentLevel,
+      anonymized: true // Server events are always anonymized
+    });
+
+    return analyticsEvent;
+  } catch (error) {
+    debugUtils.log('error', 'Failed to create server analytics event', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      eventData
+    });
+    return null;
+  }
+}
+
+/**
+ * Track middleware activity using core analytics functions
+ */
+function trackMiddlewareEvent(
+  activity: string,
+  request: Request,
+  consentLevel: ConsentLevel,
+  details?: Record<string, any>
+) {
+  try {
+    const event = createServerAnalyticsEvent({
+      category: 'middleware',
+      action: activity,
+      label: new URL(request.url).pathname,
+      ...details
+    }, request, consentLevel);
+
+    if (event) {
+      // Log the event for server-side analytics
+      debugUtils.log('info', `[Analytics Middleware] ${activity}`, {
+        eventId: event.id,
+        path: event.page.path,
+        consentLevel: event.consentLevel
+      });
+    }
+  } catch (error) {
+    debugUtils.log('error', 'Failed to track middleware event', {
+      activity,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+}
+
+/**
  * Main analytics middleware function
  */
 export async function analyticsMiddleware(
@@ -312,7 +390,7 @@ export async function analyticsMiddleware(
 
   // Check consent at endpoint level
   if (consentLevel === 'none' && pathname !== ANALYTICS_CONSENT_ENDPOINT) {
-    logAnalyticsActivity(request, 'consent_blocked', { pathname }, consentLevel);
+    trackMiddlewareEvent('consent_blocked', request, consentLevel, { pathname });
     return new Response(
       JSON.stringify({
         success: false,
@@ -331,7 +409,7 @@ export async function analyticsMiddleware(
 
   // Rate limiting
   if (isRateLimitExceeded(clientIP, pathname)) {
-    logAnalyticsActivity(request, 'rate_limit_exceeded', { pathname, clientIP }, consentLevel);
+    trackMiddlewareEvent('rate_limit_exceeded', request, consentLevel, { pathname, clientIP });
     return new Response(
       JSON.stringify({
         success: false,
@@ -364,10 +442,10 @@ export async function analyticsMiddleware(
   // Validate HTTP method
   const allowedMethods = ['GET', 'POST', 'PUT', 'OPTIONS'];
   if (!allowedMethods.includes(request.method)) {
-    logAnalyticsActivity(request, 'method_not_allowed', {
+    trackMiddlewareEvent('method_not_allowed', request, consentLevel, {
       method: request.method,
       pathname
-    }, consentLevel);
+    });
 
     return new Response(
       JSON.stringify({
@@ -391,13 +469,13 @@ export async function analyticsMiddleware(
   if (request.method === 'POST' || request.method === 'PUT') {
     try {
       payload = await processAnalyticsPayload(request);
-      logAnalyticsActivity(request, 'payload_processed', {
+      trackMiddlewareEvent('payload_processed', request, consentLevel, {
         size: JSON.stringify(payload).length
-      }, consentLevel);
+      });
     } catch (error) {
-      logAnalyticsActivity(request, 'payload_error', {
+      trackMiddlewareEvent('payload_error', request, consentLevel, {
         error: error instanceof Error ? error.message : 'Unknown error'
-      }, consentLevel);
+      });
 
       return new Response(
         JSON.stringify({
@@ -417,9 +495,9 @@ export async function analyticsMiddleware(
     if (payload) {
       const validation = validateAnalyticsEvent(payload);
       if (!validation.isValid) {
-        logAnalyticsActivity(request, 'validation_failed', {
+        trackMiddlewareEvent('validation_failed', request, consentLevel, {
           errors: validation.errors
-        }, consentLevel);
+        });
 
         return new Response(
           JSON.stringify({
@@ -458,10 +536,10 @@ export async function analyticsMiddleware(
   }
 
   // Log successful processing
-  logAnalyticsActivity(request, 'request_completed', {
+  trackMiddlewareEvent('request_completed', request, consentLevel, {
     status: response.status,
     pathname
-  }, consentLevel);
+  });
 
   return response;
 }

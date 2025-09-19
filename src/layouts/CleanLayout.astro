@@ -61,6 +61,255 @@ const { title = 'Omar Torres | Data & AI Enthusiast', description = 'The Mind Be
   </body>
 </html>
 
+<!-- Performance monitoring for Core Web Vitals -->
+<script define:vars={{ pageTitle: title, pageDescription: description }}>
+// Performance monitoring for layout
+document.addEventListener('DOMContentLoaded', function() {
+  // Wait for analytics to be ready
+  function initializePerformanceMonitoring() {
+    if (!window.analytics?.trackPerformanceEvent) {
+      // Analytics not ready yet, try again in 100ms
+      setTimeout(initializePerformanceMonitoring, 100);
+      return;
+    }
+
+    // Track page load performance
+    const startTime = performance.now();
+    let pageLoadTracked = false;
+
+    // Track when page is fully loaded
+    window.addEventListener('load', () => {
+      if (!pageLoadTracked) {
+        const loadTime = performance.now() - startTime;
+
+        window.analytics.trackPerformanceEvent('page_load', loadTime, {
+          pageTitle: pageTitle,
+          pageType: 'clean_layout',
+          documentReadyState: document.readyState,
+          timestamp: Date.now()
+        });
+
+        pageLoadTracked = true;
+      }
+    });
+
+    // Track Core Web Vitals using Performance Observer
+    if ('PerformanceObserver' in window) {
+      // Largest Contentful Paint (LCP)
+      try {
+        const lcpObserver = new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          const lastEntry = entries[entries.length - 1];
+
+          window.analytics.trackPerformanceEvent('lcp', lastEntry.startTime, {
+            pageTitle: pageTitle,
+            pageType: 'clean_layout',
+            elementType: lastEntry.element?.tagName || 'unknown',
+            url: window.location.pathname
+          });
+        });
+        lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+      } catch (error) {
+        console.warn('[Performance] LCP tracking failed:', error);
+      }
+
+      // First Contentful Paint (FCP)
+      try {
+        const fcpObserver = new PerformanceObserver((list) => {
+          for (const entry of list.getEntries()) {
+            if (entry.name === 'first-contentful-paint') {
+              window.analytics.trackPerformanceEvent('fcp', entry.startTime, {
+                pageTitle: pageTitle,
+                pageType: 'clean_layout',
+                url: window.location.pathname
+              });
+            }
+          }
+        });
+        fcpObserver.observe({ entryTypes: ['paint'] });
+      } catch (error) {
+        console.warn('[Performance] FCP tracking failed:', error);
+      }
+
+      // Cumulative Layout Shift (CLS)
+      try {
+        let clsValue = 0;
+        const clsObserver = new PerformanceObserver((list) => {
+          for (const entry of list.getEntries()) {
+            if (!entry.hadRecentInput) {
+              clsValue += entry.value;
+            }
+          }
+
+          // Track CLS periodically
+          window.analytics.trackPerformanceEvent('cls', clsValue, {
+            pageTitle: pageTitle,
+            pageType: 'clean_layout',
+            url: window.location.pathname,
+            accumulated: true
+          });
+        });
+        clsObserver.observe({ entryTypes: ['layout-shift'] });
+      } catch (error) {
+        console.warn('[Performance] CLS tracking failed:', error);
+      }
+
+      // First Input Delay (FID)
+      try {
+        const fidObserver = new PerformanceObserver((list) => {
+          for (const entry of list.getEntries()) {
+            window.analytics.trackPerformanceEvent('fid', entry.processingStart - entry.startTime, {
+              pageTitle: pageTitle,
+              pageType: 'clean_layout',
+              eventType: entry.name,
+              url: window.location.pathname
+            });
+          }
+        });
+        fidObserver.observe({ entryTypes: ['first-input'] });
+      } catch (error) {
+        console.warn('[Performance] FID tracking failed:', error);
+      }
+    }
+
+    // Track navigation timing metrics
+    if (performance.timing) {
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const timing = performance.timing;
+          const navigationStart = timing.navigationStart;
+
+          // DNS Lookup Time
+          const dnsTime = timing.domainLookupEnd - timing.domainLookupStart;
+          if (dnsTime > 0) {
+            window.analytics.trackPerformanceEvent('dns_lookup', dnsTime, {
+              pageTitle: pageTitle,
+              pageType: 'clean_layout'
+            });
+          }
+
+          // Connection Time
+          const connectionTime = timing.connectEnd - timing.connectStart;
+          if (connectionTime > 0) {
+            window.analytics.trackPerformanceEvent('connection_time', connectionTime, {
+              pageTitle: pageTitle,
+              pageType: 'clean_layout'
+            });
+          }
+
+          // Server Response Time
+          const responseTime = timing.responseStart - timing.requestStart;
+          if (responseTime > 0) {
+            window.analytics.trackPerformanceEvent('server_response', responseTime, {
+              pageTitle: pageTitle,
+              pageType: 'clean_layout'
+            });
+          }
+
+          // DOM Content Loaded
+          const domContentLoaded = timing.domContentLoadedEventEnd - navigationStart;
+          if (domContentLoaded > 0) {
+            window.analytics.trackPerformanceEvent('dom_content_loaded', domContentLoaded, {
+              pageTitle: pageTitle,
+              pageType: 'clean_layout'
+            });
+          }
+
+          // Full Page Load
+          const fullPageLoad = timing.loadEventEnd - navigationStart;
+          if (fullPageLoad > 0) {
+            window.analytics.trackPerformanceEvent('full_page_load', fullPageLoad, {
+              pageTitle: pageTitle,
+              pageType: 'clean_layout'
+            });
+          }
+        }, 100);
+      });
+    }
+
+    // Track resource loading performance
+    if (performance.getEntriesByType) {
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const resources = performance.getEntriesByType('resource');
+
+          // Track critical resource timings
+          resources.forEach(resource => {
+            if (resource.name.includes('.css') || resource.name.includes('.js') || resource.name.includes('font')) {
+              const resourceType = resource.name.includes('.css') ? 'css' :
+                                 resource.name.includes('.js') ? 'javascript' :
+                                 resource.name.includes('font') ? 'font' : 'other';
+
+              window.analytics.trackPerformanceEvent('resource_load', resource.duration, {
+                pageTitle: pageTitle,
+                pageType: 'clean_layout',
+                resourceType: resourceType,
+                resourceSize: resource.transferSize || 0,
+                cached: resource.transferSize === 0 && resource.decodedBodySize > 0
+              });
+            }
+          });
+        }, 200);
+      });
+    }
+
+    // Track memory usage (if available)
+    if (performance.memory) {
+      window.analytics.trackPerformanceEvent('memory_usage', performance.memory.usedJSHeapSize, {
+        pageTitle: pageTitle,
+        pageType: 'clean_layout',
+        totalHeapSize: performance.memory.totalJSHeapSize,
+        heapSizeLimit: performance.memory.jsHeapSizeLimit
+      });
+    }
+
+    // Track viewport and device performance context
+    window.analytics.trackPerformanceEvent('viewport_context', 0, {
+      pageTitle: pageTitle,
+      pageType: 'clean_layout',
+      viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
+      devicePixelRatio: window.devicePixelRatio || 1,
+      connectionType: navigator.connection?.effectiveType || 'unknown',
+      hardwareConcurrency: navigator.hardwareConcurrency || 0
+    });
+
+    // Track performance budget violations
+    const performanceBudgets = {
+      lcp: 2500,  // 2.5s
+      fcp: 1800,  // 1.8s
+      fid: 100,   // 100ms
+      cls: 0.1    // 0.1 score
+    };
+
+    // Monitor for budget violations
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        // Check if any metrics exceeded budgets
+        const budgetViolations = [];
+
+        // This would be enhanced with actual metric collection
+        window.analytics.trackPerformanceEvent('performance_budget_check', 0, {
+          pageTitle: pageTitle,
+          pageType: 'clean_layout',
+          budgets: performanceBudgets,
+          violations: budgetViolations.length,
+          timestamp: Date.now()
+        });
+      }, 3000);
+    });
+
+    console.log('[Analytics] Performance monitoring initialized for CleanLayout');
+  }
+
+  // Initialize performance monitoring when DOM is ready
+  initializePerformanceMonitoring();
+
+  // Also listen for analytics ready event
+  window.addEventListener('analyticsReady', initializePerformanceMonitoring);
+});
+</script>
+
 <style>
   :root {
     --accent-cyan: #00ffff;

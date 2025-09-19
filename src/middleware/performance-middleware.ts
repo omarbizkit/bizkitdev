@@ -13,6 +13,7 @@ import type { APIContext, MiddlewareNext } from 'astro';
 import type { PerformanceMetrics, ConsentLevel } from '../../types/analytics';
 import { debugUtils, browserUtils, dataUtils } from '../analytics/utils';
 import { PERFORMANCE_THRESHOLDS } from '../analytics/config';
+import { trackPerformanceEvent, trackErrorEvent } from '../analytics/events';
 
 // Performance monitoring endpoints
 const PERFORMANCE_METRICS_ENDPOINT = '/api/analytics/performance';
@@ -199,7 +200,7 @@ function hasPerformanceConsent(context: APIContext): boolean {
 }
 
 /**
- * Send performance metrics to analytics endpoint
+ * Send performance metrics to analytics endpoint using core functions
  */
 async function sendPerformanceMetrics(metrics: ServerPerformanceMetrics, context: APIContext): Promise<void> {
   try {
@@ -211,6 +212,8 @@ async function sendPerformanceMetrics(metrics: ServerPerformanceMetrics, context
       navigationTiming: {},
       resourceTiming: [],
       timestamp: metrics.timestamp,
+      url: metrics.url,
+      deviceType: 'desktop', // Server-side, so assume desktop
       serverMetrics: {
         requestId: metrics.requestId,
         responseTime: metrics.responseTime,
@@ -222,33 +225,45 @@ async function sendPerformanceMetrics(metrics: ServerPerformanceMetrics, context
         consentLevel,
         slowResponse: metrics.slow,
         criticalResponse: metrics.critical
-      },
-      errors: metrics.errors
+      }
     };
 
     // Store in context for analytics middleware
     context.locals.performanceMetrics = performanceData;
 
-    // Log performance metrics based on severity
+    // Use core analytics function to track performance events
     if (metrics.critical) {
-      debugUtils.log('error', '[Performance] Critical response time detected', {
+      trackPerformanceEvent('critical_response_time', metrics.responseTime, {
         url: metrics.url,
-        time: metrics.responseTime,
-        threshold: PERFORMANCE_CONFIG.criticalThreshold
+        threshold: PERFORMANCE_CONFIG.criticalThreshold,
+        statusCode: metrics.statusCode,
+        responseSize: metrics.responseSize
       });
     } else if (metrics.slow) {
-      debugUtils.log('warn', '[Performance] Slow response time detected', {
+      trackPerformanceEvent('slow_response_time', metrics.responseTime, {
         url: metrics.url,
-        time: metrics.responseTime,
-        threshold: PERFORMANCE_CONFIG.slowThreshold
+        threshold: PERFORMANCE_CONFIG.slowThreshold,
+        statusCode: metrics.statusCode,
+        responseSize: metrics.responseSize
       });
     } else {
-      debugUtils.log('info', '[Performance] Request completed', {
+      // Track normal performance metrics
+      trackPerformanceEvent('response_time', metrics.responseTime, {
         url: metrics.url,
-        time: metrics.responseTime,
-        status: metrics.statusCode
-      }, consentLevel);
+        statusCode: metrics.statusCode,
+        responseSize: metrics.responseSize,
+        method: metrics.method
+      });
     }
+
+    // Log performance metrics for debugging
+    debugUtils.log('info', '[Performance] Performance event tracked', {
+      url: metrics.url,
+      time: metrics.responseTime,
+      status: metrics.statusCode,
+      critical: metrics.critical,
+      slow: metrics.slow
+    }, consentLevel);
 
   } catch (error) {
     debugUtils.log('error', '[Performance] Failed to send performance metrics', error);
@@ -256,17 +271,27 @@ async function sendPerformanceMetrics(metrics: ServerPerformanceMetrics, context
 }
 
 /**
- * Capture error information for performance monitoring
+ * Capture error information for performance monitoring using core functions
  */
 function captureRequestError(context: APIContext, error: Error): void {
   const requestId = (context.locals as any).performanceRequestId;
 
   if (requestId && error) {
     const sanitizedError = dataUtils.sanitizeError(error.message);
-    debugUtils.log('error', '[Performance] Request error captured', {
+
+    // Use core analytics function to track error
+    trackErrorEvent(error, 'performance_middleware', {
+      requestId,
+      url: context.url.pathname,
+      method: context.request.method,
+      userAgent: context.request.headers.get('user-agent'),
+      timestamp: Date.now()
+    });
+
+    debugUtils.log('error', '[Performance] Request error captured and tracked', {
       requestId,
       error: sanitizedError,
-      stack: error.stack?.split('\n')[0] // Only log first line for privacy
+      url: context.url.pathname
     });
 
     // Store error in context for performance metrics

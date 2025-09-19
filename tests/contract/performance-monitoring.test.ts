@@ -13,9 +13,15 @@ describe.skip('Performance Monitoring Contract Tests', () => {
   });
 });
 
-/*
-// ORIGINAL TEST CONTENT COMMENTED OUT ABOVE
-// Re-enable after fixing duplicate function declarations in src/lib/analytics/performance.ts
+/**
+ * Performance Monitoring Contract Tests
+ *
+ * Tests the performance monitoring functions for Core Web Vitals tracking,
+ * navigation timing, resource timing, and custom metrics collection.
+ *
+ * Feature: 057-advanced-analytics-monitoring
+ * Task: T098 - Contract test validation
+ */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import type {

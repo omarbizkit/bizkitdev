@@ -148,6 +148,144 @@ const isClickable = project.status !== 'idea';
   </div>
 </article>
 
+<!-- Analytics tracking for project interactions -->
+<script define:vars={{ projectId: project.id, projectName: project.name, projectStatus: project.status, techStack: project.tech_stack, featured }}>
+  // Wait for analytics to be ready
+  function initializeProjectTracking() {
+    if (!window.analytics?.trackProjectInteraction) {
+      // Analytics not ready yet, try again in 100ms
+      setTimeout(initializeProjectTracking, 100);
+      return;
+    }
+
+    const projectCard = document.querySelector(`[data-testid="project-card"]`);
+    if (!projectCard) return;
+
+    // Track project card view (when it becomes visible)
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          window.analytics.trackProjectInteraction(projectId, 'view', {
+            projectName,
+            projectStatus,
+            featured,
+            techStack: techStack?.slice(0, 3), // First 3 tech items
+            viewportPosition: Math.round(entry.boundingClientRect.top)
+          });
+          // Only track once per page load
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    observer.observe(projectCard);
+
+    // Track project card hover events
+    let hoverTimer = null;
+    projectCard.addEventListener('mouseenter', () => {
+      hoverTimer = setTimeout(() => {
+        window.analytics.trackProjectInteraction(projectId, 'hover', {
+          projectName,
+          projectStatus,
+          featured,
+          duration: 2000 // 2 second hover
+        });
+      }, 2000);
+    });
+
+    projectCard.addEventListener('mouseleave', () => {
+      if (hoverTimer) {
+        clearTimeout(hoverTimer);
+        hoverTimer = null;
+      }
+    });
+
+    // Track "View Details" button clicks
+    const viewDetailsBtn = projectCard.querySelector('a[href^="/projects/"]');
+    if (viewDetailsBtn) {
+      viewDetailsBtn.addEventListener('click', (e) => {
+        window.analytics.trackProjectInteraction(projectId, 'view_details_click', {
+          projectName,
+          projectStatus,
+          featured,
+          destination: e.target.href
+        });
+      });
+    }
+
+    // Track GitHub link clicks
+    const githubLink = projectCard.querySelector('a[href*="github.com"]');
+    if (githubLink) {
+      githubLink.addEventListener('click', (e) => {
+        window.analytics.trackProjectInteraction(projectId, 'github_click', {
+          projectName,
+          projectStatus,
+          featured,
+          destination: e.target.href
+        });
+
+        // Also track as navigation click for external links
+        if (window.analytics.trackNavigationClick) {
+          window.analytics.trackNavigationClick(e.target.href, true, {
+            source: 'project_card',
+            projectId,
+            linkType: 'github'
+          });
+        }
+      });
+    }
+
+    // Track live app link clicks
+    const liveAppLink = projectCard.querySelector('a[href*="subdomain_url"]');
+    if (liveAppLink) {
+      liveAppLink.addEventListener('click', (e) => {
+        window.analytics.trackProjectInteraction(projectId, 'live_app_click', {
+          projectName,
+          projectStatus,
+          featured,
+          destination: e.target.href
+        });
+
+        // Also track as navigation click for external links
+        if (window.analytics.trackNavigationClick) {
+          window.analytics.trackNavigationClick(e.target.href, true, {
+            source: 'project_card',
+            projectId,
+            linkType: 'live_app'
+          });
+        }
+      });
+    }
+
+    // Track tech stack interactions
+    const techStackItems = projectCard.querySelectorAll('[data-tech-item]');
+    techStackItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        const techName = e.target.textContent || e.target.dataset.techItem;
+        window.analytics.trackProjectInteraction(projectId, 'tech_stack_click', {
+          projectName,
+          projectStatus,
+          featured,
+          techName,
+          techStack: techStack?.slice(0, 3)
+        });
+      });
+    });
+
+    console.log(`[Analytics] Project tracking initialized for: ${projectName}`);
+  }
+
+  // Initialize tracking when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeProjectTracking);
+  } else {
+    initializeProjectTracking();
+  }
+
+  // Also listen for analytics ready event
+  window.addEventListener('analyticsReady', initializeProjectTracking);
+</script>
+
 <style>
 .line-clamp-3 {
   display: -webkit-box;

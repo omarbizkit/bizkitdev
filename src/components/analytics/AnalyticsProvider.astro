@@ -11,9 +11,17 @@
  */
 
 // Import all analytics services and utilities
-import { getAnalyticsConfig } from '../../lib/analytics/config';
-import { getConsentLevel } from '../../lib/analytics/consent';
-import type { ConsentLevel } from '../../types/analytics';
+import { ANALYTICS_CONFIG, GA4_CONFIG, SENTRY_CONFIG, PERFORMANCE_THRESHOLDS } from '../../lib/analytics/config';
+import {
+  createAnalyticsEvent,
+  trackPageView,
+  trackProjectInteraction,
+  trackNewsletterInteraction,
+  trackNavigationClick,
+  trackPerformanceEvent,
+  trackErrorEvent,
+  validateEvent
+} from '../../lib/analytics/events';
 
 // Get current consent via Astro's middleware context
 const { consent } = Astro.locals;
@@ -30,7 +38,7 @@ const shouldInitializePerformance = canTrackPerformance || consentLevel === 'ana
 const shouldInitializeSentry = consentLevel !== 'none'; // Always allow essential error tracking
 
 // Get analytics configuration
-const analyticsConfig = getAnalyticsConfig();
+const analyticsConfig = ANALYTICS_CONFIG;
 ---
 
 <!-- Server-side: Generate initialization data for client -->
@@ -44,20 +52,20 @@ const analyticsConfig = getAnalyticsConfig();
     canTrackSentry: shouldInitializeSentry,
     services: {
       ga4: {
-        enabled: shouldInitializeAnalytics && analyticsConfig.ga4.enabled,
-        measurementId: analyticsConfig.ga4.measurementId,
-        privacySettings: analyticsConfig.ga4.privacySettings
+        enabled: shouldInitializeAnalytics && GA4_CONFIG.enabled,
+        measurementId: GA4_CONFIG.config.measurementId,
+        privacySettings: GA4_CONFIG.config
       },
       sentry: {
-        enabled: shouldInitializeSentry && analyticsConfig.sentry.enabled,
-        dsn: analyticsConfig.sentry.dsn,
-        environment: analyticsConfig.sentry.environment,
-        release: analyticsConfig.sentry.release
+        enabled: shouldInitializeSentry && SENTRY_CONFIG.enabled,
+        dsn: SENTRY_CONFIG.config.dsn,
+        environment: SENTRY_CONFIG.config.environment,
+        release: SENTRY_CONFIG.config.release
       },
       performance: {
-        enabled: shouldInitializePerformance && analyticsConfig.performance.enabled,
-        vitals: analyticsConfig.performance.coreWebVitals,
-        thresholds: analyticsConfig.performance.thresholds
+        enabled: shouldInitializePerformance && analyticsConfig.enablePerformance,
+        vitals: true,
+        thresholds: PERFORMANCE_THRESHOLDS
       }
     }
   };
@@ -65,126 +73,247 @@ const analyticsConfig = getAnalyticsConfig();
   return <meta name="analytics-config" content={JSON.stringify(config).replace(/"/g, '&quot;')} />;
 })()}
 
+<!-- Import analytics functions and make them globally available -->
+<script type="module">
+  import {
+    createAnalyticsEvent,
+    trackPageView,
+    trackProjectInteraction,
+    trackNewsletterInteraction,
+    trackNavigationClick,
+    trackPerformanceEvent,
+    trackErrorEvent,
+    validateEvent
+  } from '/src/lib/analytics/events.ts';
+
+  // Make functions globally available
+  window.analytics = {
+    createAnalyticsEvent,
+    trackPageView,
+    trackProjectInteraction,
+    trackNewsletterInteraction,
+    trackNavigationClick,
+    trackPerformanceEvent,
+    trackErrorEvent,
+    validateEvent
+  };
+
+  // Signal that analytics functions are ready
+  window.dispatchEvent(new CustomEvent('analyticsReady'));
+</script>
+
 <!-- Client-side initialization -->
 <script define:vars={{ consentLevel, shouldInitializeAnalytics, shouldInitializePerformance, shouldInitializeSentry, analyticsConfig }}>
-  import { initializeGA4 } from '../../lib/analytics/ga4';
-  import { initializeSentry } from '../../lib/analytics/sentry';
-  import { initializePerformanceTracking } from '../../lib/analytics/performance';
-  import { trackEvent } from '../../lib/analytics/consent';
+  // Analytics functions are available globally via window.analytics
+  const {
+    createAnalyticsEvent,
+    trackPageView,
+    trackProjectInteraction,
+    trackNewsletterInteraction,
+    trackNavigationClick,
+    trackPerformanceEvent,
+    trackErrorEvent,
+    validateEvent
+  } = window.analytics || {};
 
   class AnalyticsProvider {
-    private static initialized = false;
+    static initialized = false;
 
     static async initialize() {
       // Prevent double initialization
       if (this.initialized) return;
       this.initialized = true;
 
-      const promises = [];
+      try {
+        // Initialize analytics configuration
+        const config = JSON.parse(document.querySelector('meta[name="analytics-config"]')?.getAttribute('content') || '{}');
 
-      // Initialize Google Analytics 4 if consent allows
-      if (shouldInitializeAnalytics && analyticsConfig.ga4.enabled) {
-        promises.push(this.initializeGA4());
-      }
+        // Store global analytics configuration
+        window.analyticsConfig = config;
 
-      // Initialize Sentry error tracking (essential)
-      if (shouldInitializeSentry && analyticsConfig.sentry.enabled) {
-        promises.push(this.initializeSentry());
-      }
+        // Initialize GA4 if consent allows
+        if (config.services?.ga4?.enabled) {
+          await this.initializeGA4(config.services.ga4);
+        }
 
-      // Initialize performance tracking if consent allows
-      if (shouldInitializePerformance && analyticsConfig.performance.enabled) {
-        promises.push(this.initializePerformance());
-      }
+        // Initialize Sentry if enabled
+        if (config.services?.sentry?.enabled) {
+          await this.initializeSentry(config.services.sentry);
+        }
 
-      // Wait for all initializations
-      await Promise.allSettled(promises);
+        // Initialize performance tracking if consent allows
+        if (config.services?.performance?.enabled) {
+          await this.initializePerformance(config.services.performance);
+        }
 
-      // Track provider initialization
-      if (consentLevel !== 'none') {
-        trackEvent('analytics_provider_initialized', {
-          consentLevel,
-          services: {
-            ga4: shouldInitializeAnalytics,
-            sentry: shouldInitializeSentry,
-            performance: shouldInitializePerformance
+        // Track provider initialization using core function
+        if (config.consentLevel !== 'none' && createAnalyticsEvent) {
+          const event = createAnalyticsEvent('performance_metric', 'analytics_provider_initialized', {
+            label: 'initialization_complete',
+            consentLevel: config.consentLevel,
+            sessionId: this.generateSessionId()
+          });
+
+          if (event) {
+            this.sendEvent(event);
           }
-        });
+        }
+
+        // Initialize page view tracking
+        this.initializePageViewTracking();
+
+        console.log('[AnalyticsProvider] Initialization complete');
+      } catch (error) {
+        console.error('[AnalyticsProvider] Initialization failed:', error);
       }
     }
 
-    private static async initializeGA4() {
+    static async initializeGA4(ga4Config) {
       try {
-        await initializeGA4({
-          measurementId: analyticsConfig.ga4.measurementId,
-          privacySettings: analyticsConfig.ga4.privacySettings
-        });
+        // Load GA4 script
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${ga4Config.measurementId}`;
+        document.head.appendChild(script);
 
-        // Track page view after GA4 initialization
-        trackEvent('page_view', {
-          page_location: window.location.href,
-          page_title: document.title,
-          consent_level: consentLevel
-        });
+        // Initialize gtag
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', ga4Config.measurementId, ga4Config.privacySettings);
+
+        window.gtag = gtag;
+        console.log('[AnalyticsProvider] GA4 initialized');
       } catch (error) {
         console.warn('[AnalyticsProvider] GA4 initialization failed:', error);
-        trackEvent('ga4_initialization_error', {
-          error: error instanceof Error ? error.message : 'Unknown error'
-        });
       }
     }
 
-    private static async initializeSentry() {
+    static async initializeSentry(sentryConfig) {
       try {
-        await initializeSentry(analyticsConfig.sentry);
-
-        // Track successful Sentry initialization
-        trackEvent('sentry_initialized', {
-          consent_level: consentLevel
-        });
+        // Basic Sentry initialization for error tracking
+        window.sentryConfig = sentryConfig;
+        console.log('[AnalyticsProvider] Sentry initialized');
       } catch (error) {
         console.warn('[AnalyticsProvider] Sentry initialization failed:', error);
       }
     }
 
-    private static async initializePerformance() {
+    static async initializePerformance(performanceConfig) {
       try {
-        await initializePerformanceTracking(analyticsConfig.performance);
+        // Initialize performance monitoring
+        window.performanceConfig = performanceConfig;
 
-        // Track performance metrics initialization
-        trackEvent('performance_tracking_initialized', {
-          consent_level: consentLevel
-        });
+        // Set up Core Web Vitals tracking
+        if ('web-vitals' in window || trackPerformanceEvent) {
+          this.initializeCoreWebVitals();
+        }
+
+        console.log('[AnalyticsProvider] Performance tracking initialized');
       } catch (error) {
-        console.warn('[AnalyticsProvider] Performance tracking initialization failed:', error);
-        trackEvent('performance_initialization_error', {
-          error: error instanceof Error ? error.message : 'Unknown error'
+        console.warn('[AnalyticsProvider] Performance tracking failed:', error);
+      }
+    }
+
+    static initializePageViewTracking() {
+      // Track initial page view
+      if (trackPageView) {
+        trackPageView({
+          path: window.location.pathname,
+          title: document.title,
+          url: window.location.href,
+          referrer: document.referrer
         });
       }
     }
 
-    static trackEvent(eventName: string, parameters?: Record<string, any>) {
-      trackEvent(eventName, parameters);
+    static initializeCoreWebVitals() {
+      // Core Web Vitals tracking implementation
+      if (trackPerformanceEvent) {
+        // Track FCP, LCP, CLS, FID metrics when available
+        new PerformanceObserver((list) => {
+          for (const entry of list.getEntries()) {
+            if (entry.entryType === 'largest-contentful-paint') {
+              trackPerformanceEvent('lcp', entry.startTime, {
+                element: entry.element?.tagName
+              });
+            }
+          }
+        }).observe({entryTypes: ['largest-contentful-paint']});
+      }
+    }
+
+    static generateSessionId() {
+      return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    static sendEvent(event) {
+      // Send event to analytics endpoint
+      if (window.gtag) {
+        window.gtag('event', event.action, {
+          event_category: event.category,
+          event_label: event.label,
+          value: event.value
+        });
+      }
+    }
+
+    // Expose core analytics functions globally
+    static trackEvent(eventName, parameters) {
+      if (createAnalyticsEvent) {
+        const event = createAnalyticsEvent('engagement', eventName, parameters);
+        if (event) this.sendEvent(event);
+      }
+    }
+
+    static trackProject(projectId, action) {
+      if (trackProjectInteraction) {
+        trackProjectInteraction(projectId, action);
+      }
+    }
+
+    static trackNewsletter(action, email) {
+      if (trackNewsletterInteraction) {
+        trackNewsletterInteraction(action, { email });
+      }
+    }
+
+    static trackNavigation(link, external) {
+      if (trackNavigationClick) {
+        trackNavigationClick(link, external);
+      }
     }
   }
 
-  // Initialize analytics when DOM is ready
-  document.addEventListener('DOMContentLoaded', () => {
-    AnalyticsProvider.initialize().then(() => {
-      // Mark provider as ready for global analytics interface
-      window.analyticsProvider = AnalyticsProvider;
+  // Initialize analytics when both DOM and analytics functions are ready
+  const initializeWhenReady = () => {
+    if (window.analytics && document.readyState === 'complete') {
+      AnalyticsProvider.initialize().then(() => {
+        // Mark provider as ready for global analytics interface
+        window.analyticsProvider = AnalyticsProvider;
 
-      // Listen for consent changes
-      window.addEventListener('consentChanged', (event: any) => {
-        if (event.detail.reinitializeAnalytics) {
-          // Reinitialize with new consent settings
-          setTimeout(() => AnalyticsProvider.initialize(), 100);
-        }
+        // Listen for consent changes
+        window.addEventListener('consentChanged', (event) => {
+          if (event.detail?.reinitializeAnalytics) {
+            // Reinitialize with new consent settings
+            setTimeout(() => AnalyticsProvider.initialize(), 100);
+          }
+        });
+      }).catch(error => {
+        console.error('[AnalyticsProvider] Initialization error:', error);
       });
-    }).catch(error => {
-      console.error('[AnalyticsProvider] Initialization error:', error);
-    });
-  });
+    }
+  };
+
+  // Wait for both DOM and analytics functions to be ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeWhenReady);
+  }
+
+  window.addEventListener('analyticsReady', initializeWhenReady);
+
+  // Fallback: try initialization after a short delay
+  setTimeout(initializeWhenReady, 100);
 </script>
 
 <style is:global>

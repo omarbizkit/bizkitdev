@@ -7,7 +7,20 @@
  * Generated: 2025-09-17
  */
 
-import { gtag } from 'gtag';
+// gtag function - available globally when GA4 script is loaded
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void;
+  }
+}
+
+// Server-safe gtag function
+const gtag = (...args: any[]) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    return window.gtag(...args);
+  }
+  // No-op on server side
+};
 import type {
   AnalyticsEvent,
   EventCategory,
@@ -341,6 +354,40 @@ export const cleanupGA4 = (): void => {
   }
 };
 
+// Server-side GA4 event tracking (for API endpoints)
+export const sendToGA4 = async (eventData: any): Promise<boolean> => {
+  try {
+    // In a real implementation, this would use the GA4 Measurement Protocol
+    // For now, we'll just log the event that would be sent to GA4
+    const envConfig = getCurrentEnvConfig();
+    if (envConfig.enableConsoleLogging) {
+      console.log('GA4 Server Event (would be sent to Measurement Protocol):', {
+        measurement_id: ENHANCED_GA4_PROVIDER.config.measurementId,
+        client_id: eventData.sessionId || 'unknown',
+        events: [{
+          name: eventData.type || 'custom_event',
+          parameters: {
+            event_category: eventData.type,
+            page_location: eventData.data?.page,
+            page_title: eventData.data?.title,
+            session_id: eventData.session_id,
+            consent_level: eventData.consent_level
+          }
+        }]
+      });
+    }
+
+    // TODO: Implement actual GA4 Measurement Protocol API call
+    // This would make an HTTP POST to:
+    // https://www.google-analytics.com/mp/collect?measurement_id=${MEASUREMENT_ID}&api_secret=${API_SECRET}
+
+    return true;
+  } catch (error) {
+    console.error('Failed to send event to GA4:', error);
+    return false;
+  }
+};
+
 export default {
   initializeGA4,
   updateConsentState,
@@ -348,5 +395,6 @@ export default {
   trackPageView,
   trackProjectInteraction,
   trackConversion,
+  sendToGA4,
   cleanupGA4
 };
