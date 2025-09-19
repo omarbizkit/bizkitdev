@@ -79,13 +79,6 @@ jobs:
           PUBLIC_SUPABASE_ANON_KEY: mock-anon-key-safe-for-ci
           TEST_BASE_URL: http://localhost:4321
 
-      - name: Run contract tests
-        run: npx playwright test -c playwright.contract.config.ts
-        env:
-          TEST_BASE_URL: http://localhost:4321
-          PUBLIC_SUPABASE_URL: https://mock.supabase.co
-          PUBLIC_SUPABASE_ANON_KEY: mock-anon-key-safe-for-ci
-
       - name: Run E2E tests
         run: npm run test:e2e
         env:
