@@ -2,7 +2,7 @@
 // Google OAuth sign-in endpoint
 
 import type { APIRoute } from 'astro'
-import { supabaseServer } from '../../../lib/auth/supabase-client'
+import { createClient } from '@supabase/supabase-js'
 
 export const prerender = false
 
@@ -16,7 +16,17 @@ export const POST: APIRoute = async ({ request, url }) => {
       ? 'https://bizkit.dev' 
       : (import.meta.env.PUBLIC_SITE_URL || url.origin)
 
-    const { data, error } = await supabaseServer.auth.signInWithOAuth({
+    // Create Supabase client for OAuth
+    const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Missing Supabase environment variables')
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${siteUrl}/api/auth/callback?next=${redirectTo}`
