@@ -1,0 +1,386 @@
+openapi: 3.0.0
+info:
+  title: Authentication API
+  version: 1.0.0
+  description: API contracts for Google OAuth authentication with Supabase
+
+servers:
+  - url: https://bizkit.dev
+    description: Production
+  - url: https://ai-trading.bizkit.dev
+    description: AI Trading subdomain
+  - url: http://localhost:4321
+    description: Local development
+
+paths:
+  /api/auth/signin:
+    post:
+      summary: Initiate Google OAuth sign-in
+      description: Redirects user to Google OAuth consent screen via Supabase
+      operationId: signIn
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                redirectTo:
+                  type: string
+                  format: uri
+                  description: URL to redirect to after successful authentication
+                  example: "/dashboard"
+      responses:
+        '200':
+          description: Sign-in initiated, redirect URL returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    format: uri
+                    description: Google OAuth authorization URL
+                    example: "https://accounts.google.com/o/oauth2/v2/auth?..."
+                  provider:
+                    type: string
+                    enum: [google]
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/callback:
+    get:
+      summary: OAuth callback handler
+      description: Handles OAuth callback from Supabase, exchanges code for session
+      operationId: authCallback
+      tags:
+        - Authentication
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Authorization code from OAuth provider
+        - name: next
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uri
+            default: "/"
+          description: URL to redirect to after session creation
+      responses:
+        '303':
+          description: See Other - Redirect to next URL with session cookie set
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: Redirect URL
+            Set-Cookie:
+              schema:
+                type: string
+              description: |
+                Auth session cookies (access token, refresh token)
+                Domain: .bizkit.dev
+                HttpOnly: true
+                Secure: true
+                SameSite: Lax
+        '400':
+          description: Missing or invalid code parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Session creation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/signout:
+    post:
+      summary: Sign out user
+      description: Revokes session and clears auth cookies across all subdomains
+      operationId: signOut
+      tags:
+        - Authentication
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Successfully signed out
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: |
+                Expired auth cookies
+                Domain: .bizkit.dev
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Successfully signed out"
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Sign out failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/session:
+    get:
+      summary: Get current session
+      description: Returns current user session if authenticated
+      operationId: getSession
+      tags:
+        - Authentication
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Session retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session:
+                    type: null
+                  user:
+                    type: null
+
+  /api/auth/user:
+    get:
+      summary: Get current user profile
+      description: Returns combined user data from auth.users and user_profiles
+      operationId: getUser
+      tags:
+        - Authentication
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: User profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sb-access-token
+      description: Supabase session access token
+
+  schemas:
+    SessionResponse:
+      type: object
+      properties:
+        session:
+          type: object
+          properties:
+            access_token:
+              type: string
+              description: JWT access token
+            refresh_token:
+              type: string
+              description: Refresh token
+            expires_at:
+              type: integer
+              description: Unix timestamp of token expiration
+            expires_in:
+              type: integer
+              description: Seconds until expiration
+            token_type:
+              type: string
+              enum: [bearer]
+            user:
+              $ref: '#/components/schemas/AuthUser'
+        user:
+          $ref: '#/components/schemas/AppUser'
+
+    AuthUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        email_confirmed_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        last_sign_in_at:
+          type: string
+          format: date-time
+          nullable: true
+        app_metadata:
+          type: object
+          properties:
+            provider:
+              type: string
+              enum: [google]
+        user_metadata:
+          type: object
+          properties:
+            name:
+              type: string
+            avatar_url:
+              type: string
+              format: uri
+            email:
+              type: string
+              format: email
+            email_verified:
+              type: boolean
+
+    AppUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+          nullable: true
+        avatar_url:
+          type: string
+          format: uri
+          nullable: true
+        provider:
+          type: string
+          example: "google"
+        email_confirmed_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_sign_in_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    UserResponse:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/AppUser'
+        profile:
+          $ref: '#/components/schemas/UserProfile'
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+          nullable: true
+        avatar_url:
+          type: string
+          format: uri
+          nullable: true
+        provider:
+          type: string
+          example: "google"
+        bio:
+          type: string
+          maxLength: 500
+          nullable: true
+        website_url:
+          type: string
+          format: uri
+          nullable: true
+        github_url:
+          type: string
+          format: uri
+          nullable: true
+        twitter_handle:
+          type: string
+          pattern: '^@'
+          nullable: true
+        preferences:
+          type: object
+          additionalProperties: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: "INVALID_CODE"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Invalid authorization code"
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true

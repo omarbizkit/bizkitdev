@@ -1,6 +1,6 @@
 # bizkitdev Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2025-09-17
+Auto-generated from all feature plans. Last updated: 2025-09-30
 
 ## 🎯 **PROJECT STATUS: FULLY PRODUCTION-READY & ADVANCED ANALYTICS ENHANCED** ✅
 
@@ -29,11 +29,19 @@ Auto-generated from all feature plans. Last updated: 2025-09-17
 - Navigation: Intuitive site navigation and user flows
 - Professional Branding: Consistent "The Mind Behind The Code" identity
 
-### 🎯 **PLAN 058: SIMPLIFY E2E TESTING (2025-09-17)**
-**Status**: IN PROGRESS - Simplifying over-engineered E2E tests for portfolio-appropriate scope
-- ✅ IDENTIFIED: Over-engineering sources in CLAUDE.md and feature specs
-- ✅ IN PROGRESS: Updating requirements to portfolio-appropriate level
-- 📋 NEXT STEPS: Archive complex specs, create simple E2E tests, reduce test complexity by 95%
+### 🎯 **PLAN 059: GOOGLE OAUTH AUTHENTICATION (2025-09-30)**
+**Status**: PLANNING - Implementing Supabase Google OAuth with cross-subdomain session sharing
+- ✅ RESEARCH COMPLETE: Cross-subdomain session sharing via cookie domain configuration
+- ✅ DESIGN COMPLETE: Data model, API contracts, test scenarios documented
+- 📋 NEXT STEPS: Generate tasks, implement OAuth flow, create auth components
+
+**Authentication Architecture**:
+- **Provider**: Supabase Auth + Google OAuth
+- **Session Sharing**: Cookie domain `.bizkit.dev` for cross-subdomain SSO
+- **Flow**: PKCE OAuth flow for enhanced security
+- **Storage**: HTTPOnly, Secure cookies (SameSite=Lax)
+- **Components**: SignInButton, UserProfile, SignOutButton
+- **API Routes**: /api/auth/signin, /api/auth/callback, /api/auth/signout, /api/auth/session, /api/auth/user
 
 ### 🔍 **Portfolio Implementation Summary**
 
