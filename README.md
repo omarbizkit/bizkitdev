@@ -67,6 +67,82 @@ This portfolio includes a sophisticated, user-friendly newsletter subscription s
 - Mobile-responsive design with touch-friendly interactions
 - Server-side error handling with graceful fallbacks
 
+## 🔐 Authentication System
+
+This portfolio features a complete Google OAuth authentication system with **cross-subdomain session sharing** powered by Supabase Auth.
+
+### Authentication Features
+- **Google OAuth**: One-click sign-in with Google account
+- **Cross-Subdomain SSO**: Authenticate once on bizkit.dev, stay signed in on all subdomains (e.g., ai-trading.bizkit.dev)
+- **Automatic Profile Creation**: User profiles auto-created in database on first login
+- **Session Management**: Secure HTTP-only cookies with automatic refresh
+- **Protected Routes**: Middleware-based route protection with automatic redirects
+- **Auth UI Components**: Pre-built SignInButton, UserProfile, and SignOutButton components
+
+### API Endpoints
+- `POST /api/auth/signin` - Initiates Google OAuth flow
+- `GET /api/auth/callback` - Handles OAuth callback and session creation
+- `POST /api/auth/signout` - Signs out user and clears session
+- `GET /api/auth/session` - Returns current session and user
+- `GET /api/auth/user` - Returns full user profile
+
+### Setup Instructions
+
+1. **Database Setup**
+   Run the migration in your Supabase project SQL Editor:
+   ```bash
+   supabase/migrations/001_create_user_profiles.sql
+   ```
+
+2. **Google OAuth Configuration**
+   - Create OAuth 2.0 Client ID in Google Cloud Console
+   - Set authorized redirect URI: `https://<your-project>.supabase.co/auth/v1/callback`
+   - Add Client ID and Secret to Supabase Dashboard → Authentication → Providers → Google
+
+3. **Environment Variables**
+   Add to `.env`:
+   ```bash
+   PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+   PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   SUPABASE_SERVICE_ROLE_KEY=your-service-key
+   PUBLIC_SITE_URL=https://bizkit.dev
+   PUBLIC_COOKIE_DOMAIN=.bizkit.dev  # For cross-subdomain sessions
+   ```
+
+4. **Usage in Pages**
+   Access authenticated user in any Astro page:
+   ```typescript
+   const { user } = Astro.locals
+
+   {user ? (
+     <p>Welcome, {user.email}!</p>
+   ) : (
+     <SignInButton />
+   )}
+   ```
+
+### File Structure
+```
+src/
+├── lib/auth/
+│   ├── supabase-client.ts    # Supabase client config
+│   ├── session.ts             # Session helpers
+│   └── user-profile.ts        # User profile utilities
+├── middleware/
+│   ├── auth.ts                # Auth middleware
+│   └── index.ts               # Middleware registration
+├── pages/api/auth/
+│   ├── signin.ts              # OAuth initiation
+│   ├── callback.ts            # OAuth callback
+│   ├── signout.ts             # Sign out
+│   ├── session.ts             # Get session
+│   └── user.ts                # Get user profile
+└── components/auth/
+    ├── SignInButton.astro     # Google sign-in button
+    ├── UserProfile.astro      # User profile display
+    └── SignOutButton.astro    # Sign-out button
+```
+
 ## 🎨 Portfolio Features
 
 ### Core Functionality
