@@ -29,7 +29,11 @@ export const POST: APIRoute = async ({ request, url }) => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${siteUrl}/api/auth/callback?next=${redirectTo}`
+        redirectTo: `${siteUrl}/api/auth/callback?next=${redirectTo}`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent'
+        }
       }
     })
 
