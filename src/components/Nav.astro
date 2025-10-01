@@ -2,6 +2,12 @@
 import Icon from './Icon.astro'
 import type { iconPaths } from './IconPaths'
 import ThemeToggle from './ThemeToggle.astro'
+import SignInButton from './auth/SignInButton.astro'
+import UserProfile from './auth/UserProfile.astro'
+import SignOutButton from './auth/SignOutButton.astro'
+
+// @ts-ignore - Type augmentation not being picked up by Astro TS server
+const { user } = Astro.locals
 
 /** Main menu items */
 const textLinks: { label: string; href: string }[] = [
@@ -126,6 +132,17 @@ const isCurrentPage = (href: string) => {
 
       <div class="theme-toggle">
         <ThemeToggle />
+      </div>
+
+      <div class="auth-section">
+        {user ? (
+          <>
+            <UserProfile />
+            <SignOutButton />
+          </>
+        ) : (
+          <SignInButton />
+        )}
       </div>
     </div>
   </div>
@@ -345,6 +362,12 @@ const isCurrentPage = (href: string) => {
     height: calc(var(--icon-size) + 2 * var(--icon-padding));
   }
 
+  .auth-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
   @media (min-width: 50em) {
     nav {
       display: grid;
@@ -413,6 +436,7 @@ const isCurrentPage = (href: string) => {
       padding: 0;
       background-color: transparent;
       box-shadow: none;
+      gap: 1.5rem;
     }
 
     .socials {

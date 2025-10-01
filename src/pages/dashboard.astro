@@ -1,0 +1,20 @@
+---
+// Test protected route for middleware
+const { user } = Astro.locals as any;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+</head>
+<body>
+  <h1>Dashboard</h1>
+  {user ? (
+    <p>Welcome, {user.email}!</p>
+  ) : (
+    <p>You should have been redirected...</p>
+  )}
+</body>
+</html>

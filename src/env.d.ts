@@ -4,6 +4,9 @@
  * This file extends global types to support analytics functionality.
  */
 
+/// <reference path="../.astro/types.d.ts" />
+/// <reference path="../app.d.ts" />
+
 import type { AnalyticsProvider } from '../components/analytics/AnalyticsProvider.astro';
 
 declare global {

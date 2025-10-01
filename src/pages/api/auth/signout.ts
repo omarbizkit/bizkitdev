@@ -1,31 +1,28 @@
-// src/pages/api/auth/session.ts
-// Get current session endpoint
+// src/pages/api/auth/signout.ts
+// Sign out endpoint
 
 import type { APIRoute } from 'astro'
 import { supabaseServer } from '../../../lib/auth/supabase-client'
-import { getUserProfile } from '../../../lib/auth/user-profile'
 
 export const prerender = false
 
-export const GET: APIRoute = async () => {
+export const POST: APIRoute = async () => {
   try {
-    const { data: { session }, error } = await supabaseServer.auth.getSession()
+    const { error } = await supabaseServer.auth.signOut()
 
-    if (error || !session) {
+    if (error) {
       return new Response(JSON.stringify({
-        session: null,
-        user: null
+        error: 'SIGNOUT_FAILED',
+        message: error.message
       }), {
-        status: 200,
+        status: 500,
         headers: { 'Content-Type': 'application/json' }
       })
     }
 
-    const user = await getUserProfile(session.user.id)
-
     return new Response(JSON.stringify({
-      session,
-      user
+      success: true,
+      message: 'Successfully signed out'
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
