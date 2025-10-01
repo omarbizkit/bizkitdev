@@ -152,6 +152,6 @@ test.describe('Error Handling', () => {
     // Should show some content even without CSS/JS
     const pageContent = await page.textContent('body');
     expect(pageContent).toBeTruthy();
-    expect(pageContent.length).toBeGreaterThan(0);
+    expect(pageContent?.length).toBeGreaterThan(0);
   });
 });
