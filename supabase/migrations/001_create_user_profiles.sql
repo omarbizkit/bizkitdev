@@ -44,10 +44,23 @@ CREATE POLICY "Service role can insert profiles"
   WITH CHECK (true);
 
 -- Indexes
-CREATE INDEX idx_user_profiles_provider ON public.user_profiles(provider);
-CREATE INDEX idx_user_profiles_updated_at ON public.user_profiles(updated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_user_profiles_provider ON public.user_profiles(provider);
+CREATE INDEX IF NOT EXISTS idx_user_profiles_updated_at ON public.user_profiles(updated_at DESC);
 
--- Trigger function for new users
+-- ============================================================================
+-- FUNCTIONS (Create functions BEFORE triggers)
+-- ============================================================================
+
+-- Function to update updated_at timestamp
+CREATE OR REPLACE FUNCTION public.update_updated_at()
+RETURNS trigger AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to create user profile on signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
@@ -67,22 +80,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Trigger on auth.users insert
+-- ============================================================================
+-- TRIGGERS (Create triggers AFTER functions)
+-- ============================================================================
+
+-- Drop existing triggers if they exist
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+DROP TRIGGER IF EXISTS update_user_profiles_updated_at ON public.user_profiles;
+
+-- Trigger to auto-create profile when user signs up
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW
   EXECUTE FUNCTION public.handle_new_user();
 
--- Trigger function for updated_at
-CREATE OR REPLACE FUNCTION public.update_updated_at()
-RETURNS trigger AS $$
-BEGIN
-  NEW.updated_at = now();
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- Trigger on user_profiles update
+-- Trigger to update updated_at on profile changes
 CREATE TRIGGER update_user_profiles_updated_at
   BEFORE UPDATE ON public.user_profiles
   FOR EACH ROW
