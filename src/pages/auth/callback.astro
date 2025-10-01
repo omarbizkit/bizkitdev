@@ -47,45 +47,27 @@ export const prerender = false
   </div>
 
   <script>
+    // Immediate redirect to prevent infinite loading
     console.log('OAuth callback page loaded');
     
-    // Simple fallback - redirect to home after a short delay
-    setTimeout(() => {
-      console.log('Redirecting to home page...');
-      const urlParams = new URLSearchParams(window.location.search);
-      const next = urlParams.get('next') || '/';
-      window.location.href = next + '?auth=callback_complete';
-    }, 2000);
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    const error = urlParams.get('error');
+    const next = urlParams.get('next') || '/';
     
-    // Try to handle Supabase OAuth callback
-    try {
-      // Check if we have URL parameters that indicate OAuth completion
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-      const error = urlParams.get('error');
-      
-      console.log('URL params:', { code: !!code, error });
-      
-      if (error) {
-        console.error('OAuth error:', error);
-        window.location.href = '/?error=oauth_error&message=' + encodeURIComponent(error);
-        return;
-      }
-      
-      if (code) {
-        console.log('OAuth code received, processing...');
-        // OAuth code is present, redirect to home
-        const next = urlParams.get('next') || '/';
-        window.location.href = next + '?auth=success&code_received=true';
-        return;
-      }
-      
-      // No code or error, just redirect after delay
-      console.log('No OAuth parameters found, redirecting...');
-      
-    } catch (error) {
-      console.error('Callback processing error:', error);
-      window.location.href = '/?error=callback_error&message=' + encodeURIComponent(error.message);
+    console.log('URL params:', { code: !!code, error, next });
+    
+    // Redirect immediately based on what we find
+    if (error) {
+      console.error('OAuth error:', error);
+      window.location.href = next + '?error=oauth_error&message=' + encodeURIComponent(error);
+    } else if (code) {
+      console.log('OAuth code received, redirecting...');
+      window.location.href = next + '?auth=success&code_received=true';
+    } else {
+      console.log('No OAuth parameters, redirecting...');
+      window.location.href = next + '?auth=callback_complete';
     }
   </script>
 </body>
