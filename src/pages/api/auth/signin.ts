@@ -29,7 +29,7 @@ export const POST: APIRoute = async ({ request, url }) => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${siteUrl}/api/auth/callback?next=${redirectTo}`,
+        redirectTo: `${siteUrl}/auth/callback?next=${redirectTo}`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent'
@@ -40,7 +40,7 @@ export const POST: APIRoute = async ({ request, url }) => {
     // Debug logging
     console.log('🔍 OAuth Sign-in Debug:')
     console.log('  - siteUrl:', siteUrl)
-    console.log('  - redirectTo:', `${siteUrl}/api/auth/callback?next=${redirectTo}`)
+    console.log('  - redirectTo:', `${siteUrl}/auth/callback?next=${redirectTo}`)
     console.log('  - Generated URL:', data?.url)
     console.log('  - Error:', error)
 
@@ -59,7 +59,7 @@ export const POST: APIRoute = async ({ request, url }) => {
       provider: 'google',
       debug: {
         siteUrl,
-        redirectTo: `${siteUrl}/api/auth/callback?next=${redirectTo}`,
+        redirectTo: `${siteUrl}/auth/callback?next=${redirectTo}`,
         generatedUrl: data.url
       }
     }), {
