@@ -1,9 +1,49 @@
 import type { MiddlewareHandler } from 'astro';
+import { createServerClient } from '@supabase/ssr';
 
 /**
- * Security middleware for adding headers and implementing CSP
+ * Security and authentication middleware
  */
 export const onRequest: MiddlewareHandler = async (context, next) => {
+  // Get authenticated user from Supabase session
+  const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+  const cookieDomain = import.meta.env.PUBLIC_COOKIE_DOMAIN || '.bizkit.dev';
+
+  if (supabaseUrl && supabaseAnonKey) {
+    try {
+      const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+        cookies: {
+          get(name) {
+            return context.cookies.get(name)?.value;
+          },
+          set(name, value, options) {
+            context.cookies.set(name, value, {
+              ...options,
+              domain: cookieDomain,
+              path: '/',
+              sameSite: 'lax',
+              secure: true
+            });
+          },
+          remove(name, options) {
+            context.cookies.delete(name, {
+              ...options,
+              domain: cookieDomain,
+              path: '/'
+            });
+          }
+        }
+      });
+
+      const { data: { user } } = await supabase.auth.getUser();
+      context.locals.user = user;
+    } catch (error) {
+      console.error('Auth middleware error:', error);
+      context.locals.user = null;
+    }
+  }
+
   // Process the request
   const response = await next();
 
