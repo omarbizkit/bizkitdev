@@ -47,28 +47,55 @@ export const prerender = false
   </div>
 
   <script>
-    // Immediate redirect to prevent infinite loading
+    // Exchange OAuth code for session, then redirect
     console.log('OAuth callback page loaded');
-    
+
     // Get URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
     const error = urlParams.get('error');
     const next = urlParams.get('next') || '/';
-    
+
     console.log('URL params:', { code: !!code, error, next });
-    
-    // Redirect immediately based on what we find
-    if (error) {
-      console.error('OAuth error:', error);
-      window.location.href = next + '?error=oauth_error&message=' + encodeURIComponent(error);
-    } else if (code) {
-      console.log('OAuth code received, redirecting...');
-      window.location.href = next + '?auth=success&code_received=true';
-    } else {
-      console.log('No OAuth parameters, redirecting...');
-      window.location.href = next + '?auth=callback_complete';
+
+    async function handleCallback() {
+      if (error) {
+        console.error('OAuth error:', error);
+        window.location.href = next + '?error=oauth_error&message=' + encodeURIComponent(error);
+        return;
+      }
+
+      if (!code) {
+        console.log('No code found, redirecting...');
+        window.location.href = next;
+        return;
+      }
+
+      try {
+        // Call the API endpoint to exchange code for session
+        const apiUrl = `/api/auth/callback?code=${encodeURIComponent(code)}&next=${encodeURIComponent(next)}`;
+        console.log('Calling API:', apiUrl);
+
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.error('API error:', errorData);
+          window.location.href = next + '?error=auth_failed';
+          return;
+        }
+
+        // Success - the API will handle the redirect
+        console.log('Auth successful, following redirect...');
+        window.location.href = next + '?auth=success';
+      } catch (err) {
+        console.error('Callback error:', err);
+        window.location.href = next + '?error=auth_exception';
+      }
     }
+
+    // Execute callback handling
+    handleCallback();
   </script>
 </body>
 </html>
