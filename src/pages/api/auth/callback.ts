@@ -2,11 +2,11 @@
 // OAuth callback handler
 
 import type { APIRoute } from 'astro'
-import { supabaseServer } from '../../../lib/auth/supabase-client'
+import { createServerClient } from '@supabase/ssr'
 
 export const prerender = false
 
-export const GET: APIRoute = async ({ url, redirect }) => {
+export const GET: APIRoute = async ({ url, redirect, cookies }) => {
   const code = url.searchParams.get('code')
   const next = url.searchParams.get('next') ?? '/'
 
@@ -32,7 +32,45 @@ export const GET: APIRoute = async ({ url, redirect }) => {
   }
 
   try {
-    const { error } = await supabaseServer.auth.exchangeCodeForSession(code)
+    const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+    const cookieDomain = import.meta.env.PUBLIC_COOKIE_DOMAIN || '.bizkit.dev'
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Missing Supabase environment variables')
+    }
+
+    // Create server client with cookie handling
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        get(name) {
+          return cookies.get(name)?.value
+        },
+        set(name, value, options) {
+          cookies.set(name, value, {
+            ...options,
+            domain: cookieDomain,
+            path: '/',
+            sameSite: 'lax',
+            secure: true
+          })
+        },
+        remove(name, options) {
+          cookies.delete(name, {
+            ...options,
+            domain: cookieDomain,
+            path: '/'
+          })
+        }
+      }
+    })
+
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+
+    console.log('🔍 Session exchange result:')
+    console.log('  - Session created:', !!data.session)
+    console.log('  - User ID:', data.session?.user?.id)
+    console.log('  - Error:', error)
 
     if (error) {
       return new Response(JSON.stringify({
