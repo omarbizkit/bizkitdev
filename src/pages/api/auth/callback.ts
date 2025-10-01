@@ -77,6 +77,7 @@ export const GET: APIRoute = async ({ url, redirect, cookies }) => {
     console.log('  - Error:', error)
 
     if (error) {
+      console.error('❌ Session exchange failed:', error)
       return new Response(JSON.stringify({
         error: 'AUTH_FAILED',
         message: error.message
@@ -86,6 +87,9 @@ export const GET: APIRoute = async ({ url, redirect, cookies }) => {
       })
     }
 
+    console.log('✅ Session created successfully, redirecting...')
+
+    // Return redirect response - cookies are already set by supabase client above
     return redirect(next, 303)
   } catch (error) {
     return new Response(JSON.stringify({
