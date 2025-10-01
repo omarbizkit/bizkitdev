@@ -37,8 +37,8 @@ export async function getUserProfile(userId: string): Promise<AppUser | null> {
     full_name: profile.full_name,
     avatar_url: profile.avatar_url,
     provider: profile.provider,
-    email_confirmed_at: authData.user.email_confirmed_at,
-    last_sign_in_at: authData.user.last_sign_in_at,
+    email_confirmed_at: authData.user.email_confirmed_at || null,
+    last_sign_in_at: authData.user.last_sign_in_at || null,
     created_at: profile.created_at
   }
 }

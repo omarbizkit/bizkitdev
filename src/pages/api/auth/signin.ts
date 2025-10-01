@@ -2,7 +2,7 @@
 // Google OAuth sign-in endpoint
 
 import type { APIRoute } from 'astro'
-import { supabaseBrowser } from '../../../lib/auth/supabase-client'
+import { supabaseServer } from '../../../lib/auth/supabase-client'
 
 export const prerender = false
 
@@ -11,7 +11,7 @@ export const POST: APIRoute = async ({ request }) => {
     const body = await request.json()
     const redirectTo = body.redirectTo || '/'
 
-    const { data, error } = await supabaseBrowser.auth.signInWithOAuth({
+    const { data, error } = await supabaseServer.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${import.meta.env.PUBLIC_SITE_URL}/api/auth/callback?next=${redirectTo}`

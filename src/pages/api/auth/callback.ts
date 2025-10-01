@@ -2,7 +2,7 @@
 // OAuth callback handler
 
 import type { APIRoute } from 'astro'
-import { supabaseBrowser } from '../../../lib/auth/supabase-client'
+import { supabaseServer } from '../../../lib/auth/supabase-client'
 
 export const prerender = false
 
@@ -21,7 +21,7 @@ export const GET: APIRoute = async ({ url, redirect }) => {
   }
 
   try {
-    const { error } = await supabaseBrowser.auth.exchangeCodeForSession(code)
+    const { error } = await supabaseServer.auth.exchangeCodeForSession(code)
 
     if (error) {
       return new Response(JSON.stringify({

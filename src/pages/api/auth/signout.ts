@@ -2,13 +2,13 @@
 // Sign out endpoint
 
 import type { APIRoute } from 'astro'
-import { supabaseBrowser } from '../../../lib/auth/supabase-client'
+import { supabaseServer } from '../../../lib/auth/supabase-client'
 
 export const prerender = false
 
 export const POST: APIRoute = async () => {
   try {
-    const { error } = await supabaseBrowser.auth.signOut()
+    const { error } = await supabaseServer.auth.signOut()
 
     if (error) {
       return new Response(JSON.stringify({

@@ -2,14 +2,14 @@
 // Get current session endpoint
 
 import type { APIRoute } from 'astro'
-import { supabaseBrowser } from '../../../lib/auth/supabase-client'
+import { supabaseServer } from '../../../lib/auth/supabase-client'
 import { getUserProfile } from '../../../lib/auth/user-profile'
 
 export const prerender = false
 
 export const GET: APIRoute = async () => {
   try {
-    const { data: { session }, error } = await supabaseBrowser.auth.getSession()
+    const { data: { session }, error } = await supabaseServer.auth.getSession()
 
     if (error || !session) {
       return new Response(JSON.stringify({

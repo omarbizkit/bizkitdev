@@ -28,6 +28,17 @@ export const supabaseBrowser = createBrowserClient(supabaseUrl, supabaseAnonKey,
 })
 
 /**
+ * Server client for API routes (respects RLS, uses anon key)
+ * Use this in server-side API routes instead of browser client
+ */
+export const supabaseServer = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+})
+
+/**
  * Admin client for server-side operations (bypasses RLS)
  * Only available on server-side with service role key
  */

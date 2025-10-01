@@ -2,14 +2,14 @@
 // Get current user endpoint
 
 import type { APIRoute } from 'astro'
-import { supabaseBrowser, supabaseAdmin } from '../../../lib/auth/supabase-client'
+import { supabaseServer, supabaseAdmin } from '../../../lib/auth/supabase-client'
 import { getUserProfile } from '../../../lib/auth/user-profile'
 
 export const prerender = false
 
 export const GET: APIRoute = async () => {
   try {
-    const { data: { user: authUser }, error } = await supabaseBrowser.auth.getUser()
+    const { data: { user: authUser }, error } = await supabaseServer.auth.getUser()
 
     if (error || !authUser) {
       return new Response(JSON.stringify({
