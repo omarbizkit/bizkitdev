@@ -1,0 +1,119 @@
+---
+// SignOutButton.astro
+// Sign-out button component
+---
+
+<button
+  id="signout-button"
+  class="signout-button"
+  aria-label="Sign out"
+  type="button"
+  data-testid="signout-button"
+>
+  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <line x1="21" y1="12" x2="9" y2="12"/>
+  </svg>
+  <span>Sign Out</span>
+</button>
+
+<script>
+  const button = document.getElementById('signout-button') as HTMLButtonElement
+
+  if (button) {
+    button.addEventListener('click', async () => {
+      try {
+        button.disabled = true
+        button.textContent = 'Signing out...'
+
+        const response = await fetch('/api/auth/signout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        })
+
+        if (!response.ok) {
+          throw new Error('Sign-out failed')
+        }
+
+        // Redirect to home page after successful sign-out
+        window.location.href = '/'
+      } catch (error) {
+        console.error('Sign-out error:', error)
+        button.disabled = false
+        button.innerHTML = `
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          <span>Sign Out</span>
+        `
+        alert('Failed to sign out. Please try again.')
+      }
+    })
+  }
+</script>
+
+<style>
+  .signout-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--gray-300);
+    background: transparent;
+    border: 1px solid var(--gray-700);
+    border-radius: 999rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .signout-button:hover {
+    color: var(--gray-0);
+    background: radial-gradient(var(--gray-900), var(--gray-800) 150%);
+    border-color: var(--gray-600);
+  }
+
+  .signout-button:focus-visible {
+    outline: 2px solid #00ffff;
+    outline-offset: 2px;
+  }
+
+  .signout-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .icon {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 50em) {
+    .signout-button span {
+      display: none;
+    }
+
+    .signout-button {
+      padding: 0.5rem;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .signout-button {
+      border: 2px solid currentColor;
+    }
+  }
+
+  /* Reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .signout-button {
+      transition: none;
+    }
+  }
+</style>

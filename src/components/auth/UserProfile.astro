@@ -1,0 +1,103 @@
+---
+// UserProfile.astro
+// User profile display component
+
+// @ts-ignore - Type augmentation not being picked up by Astro TS server
+const { user } = Astro.locals
+
+if (!user) {
+  return null
+}
+
+// Get user display name (prefer full name, fallback to email)
+const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'User'
+const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture
+---
+
+{user && (
+  <div class="user-profile" data-testid="user-profile">
+    {avatarUrl ? (
+      <img
+        src={avatarUrl}
+        alt={displayName}
+        class="avatar"
+        width="32"
+        height="32"
+      />
+    ) : (
+      <div class="avatar-placeholder" aria-label="User avatar">
+        <span>{displayName.charAt(0).toUpperCase()}</span>
+      </div>
+    )}
+    <span class="user-name">{displayName}</span>
+  </div>
+)}
+
+<style>
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999rem;
+    background: radial-gradient(var(--gray-900), var(--gray-800) 150%);
+    border: 1px solid var(--gray-700);
+    position: relative;
+  }
+
+  .user-profile::before {
+    position: absolute;
+    inset: -1px;
+    content: '';
+    background: var(--gradient-stroke);
+    border-radius: 999rem;
+    z-index: -1;
+    opacity: 0.5;
+  }
+
+  .avatar,
+  .avatar-placeholder {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #00ffff 0%, #0080ff 100%);
+    color: var(--gray-999);
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .user-name {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--gray-0);
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 50em) {
+    .user-name {
+      display: none;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .user-profile {
+      border: 2px solid currentColor;
+    }
+
+    .avatar-placeholder {
+      border: 2px solid var(--gray-0);
+    }
+  }
+</style>
