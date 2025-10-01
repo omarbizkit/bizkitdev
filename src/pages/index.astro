@@ -1,5 +1,6 @@
 ---
-export const prerender = true;
+// Disable prerendering to allow middleware to read cookies for auth
+export const prerender = false;
 
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ModernHero from '../components/ModernHero.astro';
