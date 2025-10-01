@@ -10,10 +10,21 @@ export const GET: APIRoute = async ({ url, redirect }) => {
   const code = url.searchParams.get('code')
   const next = url.searchParams.get('next') ?? '/'
 
+  // Debug logging
+  console.log('🔍 OAuth Callback Debug:')
+  console.log('  - Full URL:', url.href)
+  console.log('  - Search params:', Object.fromEntries(url.searchParams))
+  console.log('  - Code present:', !!code)
+  console.log('  - Next redirect:', next)
+
   if (!code) {
     return new Response(JSON.stringify({
       error: 'MISSING_CODE',
-      message: 'Authorization code is required'
+      message: 'Authorization code is required',
+      debug: {
+        fullUrl: url.href,
+        searchParams: Object.fromEntries(url.searchParams)
+      }
     }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' }
