@@ -6,15 +6,20 @@ import { supabaseServer } from '../../../lib/auth/supabase-client'
 
 export const prerender = false
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, url }) => {
   try {
     const body = await request.json()
     const redirectTo = body.redirectTo || '/'
 
+    // Force production URL in production environment to prevent localhost redirects
+    const siteUrl = import.meta.env.PROD 
+      ? 'https://bizkit.dev' 
+      : (import.meta.env.PUBLIC_SITE_URL || url.origin)
+
     const { data, error } = await supabaseServer.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${import.meta.env.PUBLIC_SITE_URL}/api/auth/callback?next=${redirectTo}`
+        redirectTo: `${siteUrl}/api/auth/callback?next=${redirectTo}`
       }
     })
 
