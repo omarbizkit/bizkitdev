@@ -47,13 +47,15 @@ export const GET: APIRoute = async ({ url, redirect, cookies }) => {
           return cookies.get(name)?.value
         },
         set(name, value, options) {
-          cookies.set(name, value, {
+          // Ensure our domain always takes precedence
+          const cookieOptions = {
             ...options,
-            domain: cookieDomain,
             path: '/',
-            sameSite: 'lax',
-            secure: true
-          })
+            sameSite: 'lax' as const,
+            secure: true,
+            domain: cookieDomain  // Set domain last to override any SDK defaults
+          }
+          cookies.set(name, value, cookieOptions)
         },
         remove(name, options) {
           cookies.delete(name, {
@@ -68,8 +70,10 @@ export const GET: APIRoute = async ({ url, redirect, cookies }) => {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
     console.log('🔍 Session exchange result:')
+    console.log('  - Cookie domain:', cookieDomain)
     console.log('  - Session created:', !!data.session)
     console.log('  - User ID:', data.session?.user?.id)
+    console.log('  - User email:', data.session?.user?.email)
     console.log('  - Error:', error)
 
     if (error) {

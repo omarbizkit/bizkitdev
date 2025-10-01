@@ -18,13 +18,15 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
             return context.cookies.get(name)?.value;
           },
           set(name, value, options) {
-            context.cookies.set(name, value, {
+            // Ensure our domain always takes precedence
+            const cookieOptions = {
               ...options,
-              domain: cookieDomain,
               path: '/',
-              sameSite: 'lax',
-              secure: true
-            });
+              sameSite: 'lax' as const,
+              secure: true,
+              domain: cookieDomain  // Set domain last to override any SDK defaults
+            }
+            context.cookies.set(name, value, cookieOptions);
           },
           remove(name, options) {
             context.cookies.delete(name, {
@@ -36,7 +38,15 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
         }
       });
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user }, error } = await supabase.auth.getUser();
+
+      console.log('🔍 Middleware auth check:')
+      console.log('  - Cookie domain:', cookieDomain)
+      console.log('  - User detected:', !!user)
+      console.log('  - User ID:', user?.id)
+      console.log('  - User email:', user?.email)
+      console.log('  - Error:', error)
+
       context.locals.user = user;
     } catch (error) {
       console.error('Auth middleware error:', error);
