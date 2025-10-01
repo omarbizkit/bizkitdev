@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import type { SubscribeRequest, SubscribeResponse, ErrorResponse } from '../../types/api';
-import { supabase } from '../../lib/supabase';
+import { supabase, supabaseAdmin } from '../../lib/supabase';
 import { isValidEmail, generateSecureToken, generateUUID, sanitizeInput } from '../../utils/crypto';
 
 // Global type extension for test environment in-memory storage
@@ -125,8 +125,11 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Production mode - full Supabase operations
+    // Use admin client to bypass RLS policies for server-side operations
+    const dbClient = supabaseAdmin || supabase;
+
     // Check if email is already subscribed
-    const { data: existingSubscriber, error: checkError } = await supabase
+    const { data: existingSubscriber, error: checkError } = await dbClient
       .from('subscribers')
       .select('id, email, confirmed')
       .eq('email', email)
@@ -172,7 +175,7 @@ export const POST: APIRoute = async ({ request }) => {
     const confirmationToken = generateSecureToken();
     const unsubscribeToken = generateSecureToken();
 
-    const { error: insertError } = await supabase
+    const { error: insertError } = await dbClient
       .from('subscribers')
       .insert({
         id: subscriberId,
