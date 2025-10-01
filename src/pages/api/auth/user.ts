@@ -1,31 +1,36 @@
-// src/pages/api/auth/session.ts
-// Get current session endpoint
+// src/pages/api/auth/user.ts
+// Get current user endpoint
 
 import type { APIRoute } from 'astro'
-import { supabaseBrowser } from '../../../lib/auth/supabase-client'
+import { supabaseBrowser, supabaseAdmin } from '../../../lib/auth/supabase-client'
 import { getUserProfile } from '../../../lib/auth/user-profile'
 
 export const prerender = false
 
 export const GET: APIRoute = async () => {
   try {
-    const { data: { session }, error } = await supabaseBrowser.auth.getSession()
+    const { data: { user: authUser }, error } = await supabaseBrowser.auth.getUser()
 
-    if (error || !session) {
+    if (error || !authUser) {
       return new Response(JSON.stringify({
-        session: null,
-        user: null
+        error: 'UNAUTHORIZED',
+        message: 'Not authenticated'
       }), {
-        status: 200,
+        status: 401,
         headers: { 'Content-Type': 'application/json' }
       })
     }
 
-    const user = await getUserProfile(session.user.id)
+    const user = await getUserProfile(authUser.id)
+
+    // Also fetch full profile
+    const profile = supabaseAdmin 
+      ? await supabaseAdmin.from('user_profiles').select('*').eq('id', authUser.id).single()
+      : { data: null }
 
     return new Response(JSON.stringify({
-      session,
-      user
+      user,
+      profile: profile.data
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }

@@ -1,31 +1,36 @@
-// src/pages/api/auth/session.ts
-// Get current session endpoint
+// src/pages/api/auth/signin.ts
+// Google OAuth sign-in endpoint
 
 import type { APIRoute } from 'astro'
 import { supabaseBrowser } from '../../../lib/auth/supabase-client'
-import { getUserProfile } from '../../../lib/auth/user-profile'
 
 export const prerender = false
 
-export const GET: APIRoute = async () => {
+export const POST: APIRoute = async ({ request }) => {
   try {
-    const { data: { session }, error } = await supabaseBrowser.auth.getSession()
+    const body = await request.json()
+    const redirectTo = body.redirectTo || '/'
 
-    if (error || !session) {
+    const { data, error } = await supabaseBrowser.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${import.meta.env.PUBLIC_SITE_URL}/api/auth/callback?next=${redirectTo}`
+      }
+    })
+
+    if (error) {
       return new Response(JSON.stringify({
-        session: null,
-        user: null
+        error: 'AUTH_ERROR',
+        message: error.message
       }), {
-        status: 200,
+        status: 500,
         headers: { 'Content-Type': 'application/json' }
       })
     }
 
-    const user = await getUserProfile(session.user.id)
-
     return new Response(JSON.stringify({
-      session,
-      user
+      url: data.url,
+      provider: 'google'
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
