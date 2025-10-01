@@ -87,9 +87,33 @@ export const GET: APIRoute = async ({ url, redirect, cookies }) => {
       })
     }
 
-    console.log('✅ Session created successfully, redirecting...')
+    console.log('✅ Session created successfully')
 
-    // Return redirect response - cookies are already set by supabase client above
+    // Manually set session cookies
+    if (data.session) {
+      const maxAge = 100000000 // ~3 years
+      const cookieOptions = `Path=/; Domain=${cookieDomain}; Max-Age=${maxAge}; SameSite=Lax; Secure; HttpOnly`
+
+      // Set access token
+      cookies.set(`sb-${supabaseUrl.split('//')[1].split('.')[0]}-auth-token`, JSON.stringify({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+        expires_at: data.session.expires_at,
+        expires_in: data.session.expires_in,
+        token_type: data.session.token_type,
+        user: data.session.user
+      }), {
+        path: '/',
+        domain: cookieDomain,
+        maxAge,
+        sameSite: 'lax',
+        secure: true,
+        httpOnly: false // Must be false for Supabase client to read
+      })
+
+      console.log('✅ Cookies set, redirecting...')
+    }
+
     return redirect(next, 303)
   } catch (error) {
     return new Response(JSON.stringify({
