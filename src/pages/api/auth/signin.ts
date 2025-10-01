@@ -33,6 +33,13 @@ export const POST: APIRoute = async ({ request, url }) => {
       }
     })
 
+    // Debug logging
+    console.log('🔍 OAuth Sign-in Debug:')
+    console.log('  - siteUrl:', siteUrl)
+    console.log('  - redirectTo:', `${siteUrl}/api/auth/callback?next=${redirectTo}`)
+    console.log('  - Generated URL:', data?.url)
+    console.log('  - Error:', error)
+
     if (error) {
       return new Response(JSON.stringify({
         error: 'AUTH_ERROR',
@@ -45,7 +52,12 @@ export const POST: APIRoute = async ({ request, url }) => {
 
     return new Response(JSON.stringify({
       url: data.url,
-      provider: 'google'
+      provider: 'google',
+      debug: {
+        siteUrl,
+        redirectTo: `${siteUrl}/api/auth/callback?next=${redirectTo}`,
+        generatedUrl: data.url
+      }
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
